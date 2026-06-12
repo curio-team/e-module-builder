@@ -2,6 +2,18 @@
   "name": "@curio-sd/e-module-builder",
   "version": "0.1.0",
   "type": "module",
+  "description": "A tool for building e-modules for Curio SD",
+  "license": "MIT",
+  "main": "./bin/cli.js",
+  "files": [
+    "bin",
+    "src",
+    "templates",
+    "public",
+    "build.mjs",
+    "vite.config.js",
+    "vite-plugin-html-includes.js"
+  ],
   "bin": {
     "e-module-builder": "./bin/cli.js"
   },
