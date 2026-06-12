@@ -2,7 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import matter from 'gray-matter'
-import { marked } from 'marked'
+import { Marked } from 'marked'
+import { markedHighlight } from "marked-highlight";
+import hljs from 'highlight.js';
 
 const PKG_DIR = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_DIR = process.env.E_MODULE_PROJECT_DIR ?? process.cwd()
@@ -10,6 +12,17 @@ const CONTENT = path.join(PROJECT_DIR, 'content')
 const SRC_DATA = path.join(PROJECT_DIR, 'src/data')
 const PAGES = path.join(PROJECT_DIR, 'pages')
 const TEMPLATES = path.join(PKG_DIR, 'templates/pages')
+
+const marked = new Marked(
+  markedHighlight({
+    emptyLangClass: 'hljs',
+    langPrefix: 'hljs language-',
+    highlight(code, lang, info) {
+      const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+      return hljs.highlight(code, { language }).value;
+    }
+  })
+)
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
