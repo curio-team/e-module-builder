@@ -30,19 +30,23 @@ function applyTemplate(tpl, vars) {
   )
 }
 
-// Convert markdown body field → paragraphs array (HTML strings).
-// Sections without a body field keep their existing paragraphs field as-is.
-function processSection(section) {
-  if (!section.body) return section
-  const html = marked.parse(String(section.body))
-  // Split on paragraph boundaries while keeping inline HTML intact
-  const paragraphs = html
-    .split(/<\/p>\s*<p[^>]*>/i)
-    .map(s => s.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '').trim())
-    .filter(Boolean)
-  const { body: _body, ...rest } = section
-  return { ...rest, paragraphs }
-}
+// Recognize <x-*> tags as block-level elements so marked doesn't wrap them in <p>.
+marked.use({
+  extensions: [{
+    name: 'customElement',
+    level: 'block',
+    start(src) { return src.indexOf('<x-') },
+    tokenizer(src) {
+      const match = /^<(x-[a-z-]+)([^>]*)>([\s\S]*?)<\/\1>/.exec(src)
+      if (match) {
+        return { type: 'customElement', raw: match[0], tag: match[1], attrs: match[2].trim(), html: match[3] }
+      }
+    },
+    renderer(token) {
+      return `<${token.tag}${token.attrs ? ' ' + token.attrs : ''}>${marked.parse(token.html)}</${token.tag}>\n`
+    },
+  }],
+})
 
 // ─── 1. parse module.md ─────────────────────────────────────────────────────
 
@@ -74,7 +78,7 @@ for (const weekDir of activeWeeks) {
     title: theoryMd.data.title,
     goal: theoryMd.data.goal,
     accent: theoryMd.data.accent,
-    sections: (theoryMd.data.sections ?? []).map(processSection),
+    html: marked.parse(theoryMd.content ?? ''),
   }
   writeJson(SRC_DATA, `theory-week${weekNum}.json`, theoryOut)
 
@@ -93,7 +97,13 @@ for (const weekDir of activeWeeks) {
   const exerciseFiles = fs.readdirSync(exDir)
     .filter(f => f.endsWith('.md') && f !== '_meta.md')
     .sort((a, b) => parseInt(a) - parseInt(b))
-  const exercises = exerciseFiles.map(f => readMd(path.join(exDir, f)).data)
+  const exercises = exerciseFiles.map(f => {
+    const ex = readMd(path.join(exDir, f)).data
+    if (!ex.type || ex.type === 'text') {
+      ex.descriptionHtml = marked.parse(ex.description ?? '')
+    }
+    return ex
+  })
   const exOut = {
     week: metaMd.data.week ?? weekNum,
     title: metaMd.data.title,

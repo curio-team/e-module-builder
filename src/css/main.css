@@ -8,6 +8,10 @@
 @theme {
   --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 8px 30px rgba(0,0,0,0.06);
+  --shadow-editor: 0 1px 2px rgba(0,0,0,0.08);
 }
 
 @layer base {
@@ -34,7 +38,7 @@
   }
 
   .sidebar-logo {
-    @apply h-auto w-[155px] max-w-full;
+    @apply h-auto w-38.75 max-w-full;
   }
 
   .sidebar-scroll {
@@ -72,11 +76,11 @@
   }
 
   .card {
-    @apply bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)];
+    @apply bg-white p-6 shadow-card;
   }
 
   .card-interactive {
-    @apply bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition duration-200 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)];
+    @apply bg-white p-6 shadow-card transition duration-200 hover:shadow-card-hover;
   }
 
   .card-muted {
@@ -112,11 +116,11 @@
   }
 
   .editor-panel {
-    @apply overflow-hidden bg-zinc-950 shadow-[0_1px_2px_rgba(0,0,0,0.08)];
+    @apply overflow-hidden bg-zinc-950 shadow-editor;
   }
 
   .preview-panel {
-    @apply overflow-hidden bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)];
+    @apply overflow-hidden bg-white shadow-card;
   }
 
   .panel-header {
@@ -140,7 +144,7 @@
   }
 
   .monaco-container {
-    @apply h-80 min-h-[320px] w-full overflow-hidden;
+    @apply h-80 min-h-80 w-full overflow-hidden;
   }
 
   .nav-overlay {
@@ -149,5 +153,106 @@
 
   .nav-cta {
     @apply mx-3 mb-2 mt-1 flex items-center gap-2 border border-zinc-600 bg-zinc-900 px-3 py-2.5 text-[13px] font-medium text-zinc-100 transition hover:border-zinc-500 hover:bg-zinc-800 hover:text-white;
+  }
+
+  /* ── Theory prose typography ─────────────────────────────────────────────── */
+
+  .prose-theory {
+    @apply space-y-6 text-zinc-700;
+  }
+
+  .prose-theory h2 {
+    @apply mt-8 text-xl font-semibold text-zinc-900 first:mt-0;
+  }
+
+  .prose-theory h3 {
+    @apply mt-4 text-base font-semibold text-zinc-900;
+  }
+
+  .prose-theory p {
+    @apply leading-relaxed;
+  }
+
+  .prose-theory ul {
+    @apply list-inside list-disc space-y-1.5 pl-1;
+  }
+
+  .prose-theory ol {
+    @apply list-inside list-decimal space-y-1.5 pl-1;
+  }
+
+  .prose-theory li {
+    @apply leading-relaxed;
+  }
+
+  .prose-theory a {
+    @apply font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 transition hover:decoration-zinc-900;
+  }
+
+  .prose-theory code {
+    @apply rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-sm text-zinc-800;
+  }
+
+  .prose-theory pre {
+    @apply overflow-x-auto bg-zinc-950 p-5 font-mono text-[13px] leading-relaxed text-zinc-300;
+  }
+
+  .prose-theory pre code {
+    @apply bg-transparent p-0 text-inherit;
+  }
+
+  .prose-theory blockquote {
+    @apply border-l-4 border-zinc-300 pl-4 italic text-zinc-500;
+  }
+
+  .prose-theory table {
+    @apply w-full text-left text-sm;
+  }
+
+  .prose-theory thead tr {
+    @apply border-b border-zinc-200 text-zinc-500;
+  }
+
+  .prose-theory tbody tr {
+    @apply border-b border-zinc-100 last:border-0;
+  }
+
+  .prose-theory th,
+  .prose-theory td {
+    @apply py-2 pr-4;
+  }
+
+  /* ── Custom components ───────────────────────────────────────────────────── */
+
+  x-card {
+    @apply block bg-white p-6 shadow-card;
+  }
+
+  x-card>h2 {
+    @apply text-lg font-medium text-zinc-900;
+  }
+
+  x-callout {
+    @apply block bg-zinc-50 p-4 text-sm leading-relaxed text-zinc-600;
+  }
+
+  x-callout[type="tip"] {
+    @apply border-l-4 border-l-emerald-500 bg-emerald-50 text-emerald-800;
+  }
+
+  x-callout[type="warning"] {
+    @apply border-l-4 border-l-amber-500 bg-amber-50 text-amber-800;
+  }
+
+  x-compare {
+    @apply grid gap-4 sm:grid-cols-2;
+  }
+
+  x-compare-item {
+    @apply block bg-zinc-50 p-5;
+  }
+
+  x-compare-item>h3 {
+    @apply font-medium text-zinc-900;
   }
 }

@@ -23,8 +23,8 @@ export function initQuiz(quizData, containerSelector = '[data-quiz]') {
   container.innerHTML = `
     <form data-quiz-form class="space-y-6">
       ${quizData.questions
-        .map(
-          (q, qi) => `
+      .map(
+        (q, qi) => `
         <fieldset class="card" data-question="${q.id}">
           <legend class="mb-4 text-base font-medium text-zinc-900">
             <span class="mr-3 font-mono text-sm text-zinc-400">${String(qi + 1).padStart(2, '0')}</span>
@@ -33,21 +33,21 @@ export function initQuiz(quizData, containerSelector = '[data-quiz]') {
           ${renderPreview(q.preview)}
           <div class="space-y-2">
             ${q.options
-              .map(
-                (opt, oi) => `
-              <label class="flex cursor-pointer items-center gap-3 border border-zinc-200 p-3 transition hover:bg-zinc-50 has-[:checked]:border-zinc-900 has-[:checked]:bg-zinc-50">
+            .map(
+              (opt, oi) => `
+              <label class="flex cursor-pointer items-center gap-3 border border-zinc-200 p-3 transition hover:bg-zinc-50 has-checked:border-zinc-900 has-checked:bg-zinc-50">
                 <input type="radio" name="${q.id}" value="${oi}" class="h-4 w-4 border-zinc-300 text-zinc-900 focus:ring-zinc-900" required />
                 <span class="text-sm text-zinc-700">${opt}</span>
               </label>
             `
-              )
-              .join('')}
+            )
+            .join('')}
           </div>
           <p data-explanation="${q.id}" class="mt-3 hidden text-sm"></p>
         </fieldset>
       `
-        )
-        .join('')}
+      )
+      .join('')}
       <button type="submit" class="btn-primary">Indienen</button>
     </form>
   `

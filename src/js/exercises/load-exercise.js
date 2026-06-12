@@ -103,6 +103,23 @@ export async function initExercisePage(weekNum) {
 
 
 
+  if (!exercise.type || exercise.type === 'text') {
+    const panel = document.querySelector('[data-exercise-content]')
+    panel?.querySelector('[data-exercise-interactive]')?.classList.add('hidden')
+    panel?.querySelector('[data-exercise-external]')?.classList.add('hidden')
+    panel?.querySelector('[data-exercise-actions]')?.classList.add('hidden')
+
+    const descEl = document.querySelector('[data-exercise-description]')
+    if (descEl) {
+      descEl.classList.remove('hidden')
+      descEl.innerHTML = exercise.descriptionHtml ?? ''
+    }
+
+    renderExerciseMeta(exercise)
+    renderNavButtons(weekNum, id, weekData.exercises.length)
+    return
+  }
+
   if (isExternalMode(weekData, exercise)) {
 
     const missing = !exercise.task?.trim() && !exercise.description?.trim()
