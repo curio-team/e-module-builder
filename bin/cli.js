@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { fileURLToPath, pathToFileURL } from 'url'
 import path from 'path'
-import { cpSync, existsSync } from 'fs'
-import { spawnSync } from 'child_process'
+import { cpSync, existsSync, watch } from 'fs'
+import { spawn, spawnSync } from 'child_process'
 
 const PKG_DIR = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const PROJECT_DIR = process.cwd()
@@ -22,17 +22,19 @@ function copyAssets() {
   }
 }
 
+const PIPELINE_ENV = { ...process.env, E_MODULE_PROJECT_DIR: PROJECT_DIR, E_MODULE_PKG_DIR: PKG_DIR }
+const PIPELINE_ARGS = [path.join(PKG_DIR, 'build.mjs')]
+
 function runContentPipeline() {
-  const result = spawnSync(process.execPath, [path.join(PKG_DIR, 'build.mjs')], {
-    cwd: PROJECT_DIR,
-    stdio: 'inherit',
-    env: {
-      ...process.env,
-      E_MODULE_PROJECT_DIR: PROJECT_DIR,
-      E_MODULE_PKG_DIR: PKG_DIR,
-    },
-  })
+  const result = spawnSync(process.execPath, PIPELINE_ARGS, { cwd: PROJECT_DIR, stdio: 'inherit', env: PIPELINE_ENV })
   if (result.status !== 0) process.exit(result.status ?? 1)
+}
+
+function runContentPipelineAsync() {
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, PIPELINE_ARGS, { cwd: PROJECT_DIR, stdio: 'inherit', env: PIPELINE_ENV })
+    child.on('close', code => code === 0 ? resolve() : reject(new Error(`build.mjs exited with code ${code}`)))
+  })
 }
 
 async function main() {
@@ -60,6 +62,21 @@ async function main() {
     const server = await createServer(cfg)
     await server.listen()
     server.printUrls()
+
+    const contentDir = path.join(PROJECT_DIR, 'content')
+    let rebuildTimer = null
+    watch(contentDir, { recursive: true }, () => {
+      clearTimeout(rebuildTimer)
+      rebuildTimer = setTimeout(async () => {
+        try {
+          await runContentPipelineAsync()
+          server.ws.send({ type: 'full-reload' })
+        } catch {
+          // build.mjs already printed the error
+        }
+      }, 80)
+    })
+    console.log(`\n  watching content/`)
   }
 }
 
