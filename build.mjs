@@ -98,8 +98,8 @@ for (const weekDir of activeWeeks) {
   }
   writeJson(path.join(SRC_DATA, 'exercises'), `week${weekNum}.json`, exOut)
 
-  // homework.md → src/data/thuiswerk-weekN.json
-  const hwMd = readMd(path.join(dir, 'homework.md'))
+  // assignment.md → src/data/inleveropdracht-weekN.json
+  const hwMd = readMd(path.join(dir, 'assignment.md'))
   const hwBody = hwMd.content.trim()
   const hwParas = hwBody.split(/\n\n+/)
   const hwOut = {
@@ -114,7 +114,7 @@ for (const weekDir of activeWeeks) {
     maxPoints: hwMd.data.maxPoints ?? 0,
     tips: hwMd.data.tips ?? [],
   }
-  writeJson(SRC_DATA, `thuiswerk-week${weekNum}.json`, hwOut)
+  writeJson(SRC_DATA, `inleveropdracht-week${weekNum}.json`, hwOut)
 
   weeksData.push({
     week: weekNum,
@@ -124,11 +124,11 @@ for (const weekDir of activeWeeks) {
     leeruitkomsten: theoryMd.data.leeruitkomsten ?? [],
     color: theoryMd.data.accent,
     pages: [
-      { key: 'theorie',    href: `/pages/week${weekNum}-theorie.html`,    label: 'Theorie' },
+      { key: 'theorie', href: `/pages/week${weekNum}-theorie.html`, label: 'Theorie' },
       { key: 'oefeningen', href: `/pages/week${weekNum}-oefeningen.html`, label: 'Oefeningen' },
-      { key: 'toets',      href: `/pages/week${weekNum}-toets.html`,      label: 'Tussentoets' },
-      { key: 'oefening',   href: `/pages/week${weekNum}-oefening.html`,   label: 'Oefening' },
-      { key: 'thuiswerk',  href: `/pages/week${weekNum}-thuiswerk.html`,  label: 'Inleveropdracht' },
+      { key: 'toets', href: `/pages/week${weekNum}-toets.html`, label: 'Tussentoets' },
+      { key: 'oefening', href: `/pages/week${weekNum}-oefening.html`, label: 'Oefening' },
+      { key: 'inleveropdracht', href: `/pages/week${weekNum}-inleveropdracht.html`, label: 'Inleveropdracht' },
     ],
   })
 }
@@ -156,7 +156,7 @@ const manifest = {
         { href: `/pages/week${wk.week}-theorie.html`, label: 'Theorie' },
         { href: `/pages/week${wk.week}-oefeningen.html`, label: 'Oefeningen' },
         { href: `/pages/week${wk.week}-toets.html`, label: 'Tussentoets' },
-        { href: `/pages/week${wk.week}-thuiswerk.html`, label: 'Inleveropdracht' },
+        { href: `/pages/week${wk.week}-inleveropdracht.html`, label: 'Inleveropdracht' },
       ],
     })),
     examPages: [
@@ -177,7 +177,7 @@ const manifest = {
       `pages/week${wk.week}-oefeningen.html`,
       `pages/week${wk.week}-toets.html`,
       `pages/week${wk.week}-oefening.html`,
-      `pages/week${wk.week}-thuiswerk.html`,
+      `pages/week${wk.week}-inleveropdracht.html`,
     ]),
   },
   content: {
@@ -261,8 +261,8 @@ const PAGE_TYPES = [
     pageTitle: wk => `Oefening — Week ${wk.week}`,
   },
   {
-    tplFile: 'thuiswerk.html',
-    suffix: 'thuiswerk',
+    tplFile: 'inleveropdracht.html',
+    suffix: 'inleveropdracht',
     pageTitle: wk => `Inleveropdracht Week ${wk.week} — ${wk.title}`,
   },
 ]
