@@ -117,7 +117,10 @@ export function initMobileNav() {
 
   if (!toggle || !sidebar) return
 
+  const isMobile = () => !window.matchMedia('(min-width: 768px)').matches
+
   const close = () => {
+    if (!isMobile()) return
     sidebar.classList.add('-translate-x-full')
     overlay?.classList.add('hidden')
     document.body.classList.remove('overflow-hidden')
