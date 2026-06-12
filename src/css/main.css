@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+/* Scan generated pages and copied JS — paths are relative to src/css/ in PROJECT_DIR */
+@source "../../index.html";
+@source "../../pages/**/*.html";
+@source "../js/**/*.js";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply text-zinc-800;
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply min-h-screen bg-[#f4f4f5];
+  }
+
+  .sidebar-panel {
+    @apply fixed inset-y-0 left-0 z-50 flex w-60 -translate-x-full flex-col overflow-hidden bg-zinc-950 transition-transform duration-300 ease-out md:translate-x-0;
+  }
+
+  .sidebar-panel [data-module-nav] {
+    @apply flex min-h-0 flex-1 flex-col;
+  }
+
+  .sidebar-logo {
+    @apply h-auto w-[155px] max-w-full;
+  }
+
+  .sidebar-scroll {
+    @apply min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4;
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.zinc.700') transparent;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-zinc-700;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+    @apply bg-zinc-600;
+  }
+
+  .topbar {
+    @apply sticky top-0 z-30 border-b border-zinc-200/80 bg-[#f4f4f5]/90 backdrop-blur-md;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center border border-zinc-300 bg-white px-5 py-2.5 text-sm font-medium text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2;
+  }
+
+  .card {
+    @apply bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)];
+  }
+
+  .card-interactive {
+    @apply bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition duration-200 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)];
+  }
+
+  .card-muted {
+    @apply bg-zinc-50 p-6;
+  }
+
+  .week-label {
+    @apply mb-3 block text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400;
+  }
+
+  .text-link {
+    @apply text-sm font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 transition hover:decoration-zinc-900;
+  }
+
+  .progress-track {
+    @apply h-px overflow-hidden bg-zinc-200;
+  }
+
+  .progress-fill {
+    @apply h-full bg-zinc-900 transition-all duration-500;
+  }
+
+  .code-block {
+    @apply overflow-x-auto bg-zinc-950 p-5 font-mono text-[13px] leading-relaxed text-zinc-300;
+  }
+
+  .callout {
+    @apply mt-4 bg-zinc-50 p-4 text-sm leading-relaxed text-zinc-600;
+  }
+
+  .compare-cell {
+    @apply bg-zinc-50 p-5;
+  }
+
+  .editor-panel {
+    @apply overflow-hidden bg-zinc-950 shadow-[0_1px_2px_rgba(0,0,0,0.08)];
+  }
+
+  .preview-panel {
+    @apply overflow-hidden bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)];
+  }
+
+  .panel-header {
+    @apply border-b border-zinc-800 px-4 py-2.5 text-[11px] font-medium uppercase tracking-wider text-zinc-500;
+  }
+
+  .panel-header-light {
+    @apply border-b border-zinc-100 px-4 py-2.5 text-[11px] font-medium uppercase tracking-wider text-zinc-400;
+  }
+
+  .feedback-box {
+    @apply border border-zinc-200 bg-white p-4 text-sm;
+  }
+
+  .badge {
+    @apply inline-block text-[11px] font-medium uppercase tracking-wider text-zinc-500;
+  }
+
+  .badge-done {
+    @apply text-[11px] font-medium uppercase tracking-wider text-zinc-600;
+  }
+
+  .monaco-container {
+    @apply h-80 min-h-[320px] w-full overflow-hidden;
+  }
+
+  .nav-overlay {
+    @apply fixed inset-0 z-40 hidden bg-black/40 backdrop-blur-sm md:hidden;
+  }
+
+  .nav-cta {
+    @apply mx-3 mb-2 mt-1 flex items-center gap-2 border border-zinc-600 bg-zinc-900 px-3 py-2.5 text-[13px] font-medium text-zinc-100 transition hover:border-zinc-500 hover:bg-zinc-800 hover:text-white;
+  }
+}
