@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <!-- include:head -->
+    <title>{{pageTitle}}</title>
+  </head>
+  <body class="font-sans antialiased">
+    <div data-page-content>
+      <main class="px-4 py-10 md:px-10">
+        <div class="mx-auto max-w-3xl">
+          <span class="week-label">Week {{weekPadded}} — Inleveropdracht</span>
+          <h1 class="text-3xl font-semibold tracking-tight text-zinc-900" data-thuiswerk-title></h1>
+          <p class="mt-2 text-zinc-600">Werk de casus uit en lever in via het kanaal van je docent.</p>
+          <div data-thuiswerk class="mt-8"></div>
+        </div>
+      </main>
+    </div>
+    <script type="module">
+      import { initPage } from '/src/js/nav.js'
+      import { initThuiswerk } from '/src/js/thuiswerk.js'
+      import thuiswerkData from '/src/data/thuiswerk-week{{week}}.json'
+      initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: 'Week {{week}}', href: '/pages/week{{week}}-theorie.html' }, { label: 'Inleveropdracht' }] })
+      const titleEl = document.querySelector('[data-thuiswerk-title]')
+      if (titleEl) titleEl.textContent = thuiswerkData.title
+      initThuiswerk(thuiswerkData)
+    </script>
+  </body>
+</html>

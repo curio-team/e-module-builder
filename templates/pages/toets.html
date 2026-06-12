@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <!-- include:head -->
+    <title>{{pageTitle}}</title>
+  </head>
+  <body class="font-sans antialiased">
+    <div data-page-content>
+      <main class="px-4 py-10 md:px-10">
+        <div class="mx-auto max-w-3xl">
+          <span class="week-label">Week {{weekPadded}} — Tussentoets</span>
+          <h1 class="text-3xl font-semibold tracking-tight text-zinc-900">{{weekTitle}}</h1>
+          <p class="mt-2 text-zinc-600">Test je kennis van week {{week}}. Minimaal 70% om te slagen.</p>
+          <div data-quiz class="mt-8"></div>
+          <div class="card mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p class="font-medium text-zinc-900">Toets afgerond?</p>
+              <p class="mt-1 text-sm text-zinc-500">Werk de inleveropdracht uit.</p>
+            </div>
+            <a href="week{{week}}-thuiswerk.html" class="btn-primary shrink-0">Naar inleveropdracht</a>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script type="module">
+      import { initPage } from '/src/js/nav.js'
+      import { initQuiz } from '/src/js/quiz.js'
+      import quizData from '/src/data/tussentoets-week{{week}}.json'
+      initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: 'Week {{week}}', href: '/pages/week{{week}}-theorie.html' }, { label: 'Tussentoets' }] })
+      initQuiz(quizData)
+    </script>
+  </body>
+</html>
