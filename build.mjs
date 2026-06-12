@@ -87,14 +87,19 @@ for (const weekDir of activeWeeks) {
   }
   writeJson(SRC_DATA, `tussentoets-week${weekNum}.json`, quizOut)
 
-  // exercises.md → src/data/exercises/weekN.json
-  const exMd = readMd(path.join(dir, 'exercises.md'))
+  // exercises/ subfolder → src/data/exercises/weekN.json
+  const exDir = path.join(dir, 'exercises')
+  const metaMd = readMd(path.join(exDir, '_meta.md'))
+  const exerciseFiles = fs.readdirSync(exDir)
+    .filter(f => f.endsWith('.md') && f !== '_meta.md')
+    .sort((a, b) => parseInt(a) - parseInt(b))
+  const exercises = exerciseFiles.map(f => readMd(path.join(exDir, f)).data)
   const exOut = {
-    week: exMd.data.week ?? weekNum,
-    title: exMd.data.title,
-    color: exMd.data.color,
-    ...(exMd.data.mode ? { mode: exMd.data.mode } : {}),
-    exercises: exMd.data.exercises ?? [],
+    week: metaMd.data.week ?? weekNum,
+    title: metaMd.data.title,
+    color: metaMd.data.color,
+    ...(metaMd.data.mode ? { mode: metaMd.data.mode } : {}),
+    exercises,
   }
   writeJson(path.join(SRC_DATA, 'exercises'), `week${weekNum}.json`, exOut)
 
