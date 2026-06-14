@@ -17,13 +17,24 @@
   "bin": {
     "e-module-builder": "./bin/cli.js"
   },
+  "scripts": {
+    "dev": "node scripts/dev-testbed.mjs",
+    "build:testbed": "node scripts/build-testbed.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.8",
     "gray-matter": "^4.0.3",
+    "highlight.js": "^11.11.1",
     "marked": "^18.0.5",
+    "marked-highlight": "^2.2.4",
     "monaco-editor": "^0.55.1",
     "tailwindcss": "^4.1.8",
     "vite": "^6.3.5",
     "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
   }
 }

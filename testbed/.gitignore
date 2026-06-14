@@ -1,0 +1,13 @@
+node_modules
+dist
+.DS_Store
+*.log
+
+# frontend assets managed by e-module-builder (overwritten on every build)
+src/
+
+# generated home page
+index.html
+
+# all generated page stubs
+pages/

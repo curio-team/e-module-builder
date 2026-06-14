@@ -18,7 +18,7 @@
     <script type="module">
       import { initPage } from '/src/js/nav.js'
       import { initThuiswerk } from '/src/js/thuiswerk.js'
-      import thuiswerkData from '/src/data/thuiswerk-week{{week}}.json'
+      import thuiswerkData from '/src/data/inleveropdracht-week{{week}}.json'
       initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: 'Week {{week}}', href: '/pages/week{{week}}-theorie.html' }, { label: 'Inleveropdracht' }] })
       const titleEl = document.querySelector('[data-thuiswerk-title]')
       if (titleEl) titleEl.textContent = thuiswerkData.title

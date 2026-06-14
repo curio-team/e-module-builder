@@ -1,0 +1,116 @@
+# Contributing to e-module-builder
+
+## Prerequisites
+
+- Node.js ≥ 20
+- npm ≥ 10
+
+## Setup
+
+```bash
+git clone <repo-url>
+cd e-module-builder
+npm install
+```
+
+## Dev workflow
+
+```bash
+npm run dev
+```
+
+This starts a Vite dev server at `http://localhost:5173` using the testbed module (`testbed/content/`). The server shows a working 2-week CSS Grid module immediately — no separate content project needed.
+
+**How it works:**
+- `scripts/dev-testbed.mjs` spawns `bin/cli.js dev` with its working directory set to `testbed/`, so `process.cwd()` resolves to the testbed.
+- The CLI copies `src/js/`, `src/css/`, and `src/partials/` into `testbed/src/`, then runs the content pipeline (`build.mjs`), then starts Vite.
+- Any change to a file under `testbed/content/` triggers a full content-pipeline rebuild and a browser reload automatically (80 ms debounce).
+- Changes to `src/js/**` or `src/css/**` are picked up by Vite's HMR without a full rebuild.
+
+Generated files (`testbed/src/`, `testbed/pages/`, `testbed/index.html`) are listed in `testbed/.gitignore` and should not be committed.
+
+## Modifying the testbed
+
+The testbed lives in `testbed/content/` and mirrors the structure of a real content project:
+
+```
+testbed/content/
+  module.md            ← module-level metadata (name, weeks, exerciseMode, …)
+  week1/
+    theory.md          ← week theory page (YAML frontmatter + Markdown body)
+    quiz.md            ← mid-week quiz (questions in YAML frontmatter)
+    assignment.md      ← hand-in assignment (criteria + Markdown case description)
+    exercises/
+      _meta.md         ← exercise hub metadata (title, color)
+      1.md             ← exercise (type: css-playground | areas | responsive | external | text)
+      2.md
+      …
+  week2/
+    …
+  exams/
+    theory-exam.md     ← final theory exam (questions in YAML)
+    practical-exam.md  ← final practical exam
+```
+
+**To add a week:** create `testbed/content/weekN/` with the same structure, then increment `weeks:` in `module.md`.
+
+**Exercise types** are controlled by the `type:` field in each exercise file:
+| Type | What it renders |
+|------|----------------|
+| `css-playground` | Monaco CSS editor with live preview and automated checks |
+| `areas` | Drag-and-drop grid-template-areas builder |
+| `responsive` | Monaco CSS editor with resizable viewport preview |
+| `external` | Link-out card with a URL |
+| `text` | Description-only card (no interactive element) |
+
+## Running tests
+
+```bash
+npm test           # run all tests once (CI-friendly)
+npm run test:watch # watch mode for development
+```
+
+Test output:
+- **Unit tests** (`tests/validators.test.js`, `tests/html-includes.test.js`) — fast, no filesystem side-effects.
+- **Integration test** (`tests/build-pipeline.test.js`) — copies testbed content to a temp directory, runs `build.mjs`, asserts the generated JSON and HTML files. Takes a few seconds; skipping it is not recommended before committing.
+
+## Adding tests
+
+| What you're testing | Where to add |
+|--------------------|-------------|
+| A pure function exported from `src/js/` | `tests/validators.test.js` or a new `tests/<module>.test.js` |
+| The HTML-includes Vite plugin | `tests/html-includes.test.js` |
+| `build.mjs` output (new JSON shape, new page type) | `tests/build-pipeline.test.js` |
+
+Vitest is configured in `vitest.config.js`. Timeouts are set to 60 s to accommodate the integration test's build step.
+
+## Build output
+
+```bash
+npm run build:testbed
+```
+
+Produces a static site in `testbed/dist/` — the same output a real content project would get. Useful for checking the production build of a UI change.
+
+## Package layout
+
+| Path | Purpose |
+|------|---------|
+| `bin/cli.js` | CLI entry point — `e-module-builder <build\|dev\|preview>` |
+| `build.mjs` | Content pipeline — reads `content/`, writes `src/data/` + `pages/` |
+| `vite.config.js` | Vite configuration factory (`createConfig`) |
+| `vite-plugin-html-includes.js` | Custom plugin: replaces `<!-- include:name -->` with partials |
+| `src/js/` | Frontend JavaScript (exercises, quiz, nav, …) |
+| `src/css/` | Tailwind CSS entry |
+| `src/partials/` | Shared HTML snippets (e.g. `head.html`) |
+| `templates/` | HTML stubs filled in by `build.mjs` |
+| `public/` | Static assets (logo, favicon) |
+| `testbed/` | Self-contained dev environment for working on the builder |
+| `scripts/` | Helper scripts for `npm run dev` and `npm run build:testbed` |
+| `tests/` | Vitest unit and integration tests |
+
+## Publishing
+
+1. Bump the version in `package.json` following semver.
+2. Ensure `npm test` passes.
+3. `npm publish --access public`
