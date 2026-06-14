@@ -1,11 +1,11 @@
 import { getItem, setItem } from './storage.js'
 
 function storageKey(week) {
-  return `thuiswerk:week${week}`
+  return `inleveropdracht:week${week}`
 }
 
-export function initThuiswerk(data) {
-  const container = document.querySelector('[data-thuiswerk]')
+export function initInleveropdracht(data) {
+  const container = document.querySelector('[data-inleveropdracht]')
   if (!container) return
 
   const state = getItem(storageKey(data.week), { criteria: {}, notes: '', submitted: false })
@@ -69,7 +69,7 @@ export function initThuiswerk(data) {
         <p class="text-sm font-medium text-zinc-900">Notities / link naar je bestanden</p>
         <p class="mt-1 text-sm text-zinc-500">Bijv. GitHub-link, Google Drive, of een korte toelichting voor je docent.</p>
         <textarea
-          data-thuiswerk-notes
+          data-inleveropdracht-notes
           class="mt-3 min-h-[120px] w-full border border-zinc-200 bg-white p-4 text-sm text-zinc-700 focus:border-zinc-900 focus:outline-none"
           placeholder="Plak hier je inlever-link of notities..."
         >${state.notes || ''}</textarea>
@@ -82,7 +82,7 @@ export function initThuiswerk(data) {
     </section>
 
     <div class="flex flex-wrap gap-3">
-      <button type="button" data-export-thuiswerk class="btn-secondary">Exporteer checklist</button>
+      <button type="button" data-export-inleveropdracht class="btn-secondary">Exporteer checklist</button>
       <button type="button" data-mark-submitted class="btn-primary">${state.submitted ? 'Ingeleverd ✓' : 'Markeer als ingeleverd'}</button>
     </div>
     <p data-submitted-hint class="mt-3 text-sm text-zinc-500 ${state.submitted ? '' : 'hidden'}">Je hebt deze opdracht gemarkeerd als ingeleverd. Lever ook in via het kanaal van je docent.</p>
@@ -115,12 +115,12 @@ export function initThuiswerk(data) {
     })
   })
 
-  const notesEl = container.querySelector('[data-thuiswerk-notes]')
+  const notesEl = container.querySelector('[data-inleveropdracht-notes]')
   notesEl?.addEventListener('input', () => {
     saveState({ notes: notesEl.value })
   })
 
-  container.querySelector('[data-export-thuiswerk]')?.addEventListener('click', async () => {
+  container.querySelector('[data-export-inleveropdracht]')?.addEventListener('click', async () => {
     const criteria = getItem(storageKey(data.week), {}).criteria || {}
     const notes = notesEl?.value || ''
     const lines = [
@@ -141,7 +141,7 @@ export function initThuiswerk(data) {
     }
     try {
       await navigator.clipboard.writeText(lines.join('\n'))
-      const btn = container.querySelector('[data-export-thuiswerk]')
+      const btn = container.querySelector('[data-export-inleveropdracht]')
       btn.textContent = 'Gekopieerd!'
       setTimeout(() => { btn.textContent = 'Exporteer checklist' }, 2000)
     } catch { /* ignore */ }
