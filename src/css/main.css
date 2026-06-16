@@ -23,6 +23,39 @@
   body {
     @apply text-zinc-800;
   }
+
+  /* Given that markdown is placed inside main, we want some basic styling for headings */
+  main h2 {
+    @apply mt-8 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400;
+  }
+
+  main h3 {
+    @apply mt-4 text-base font-bold text-zinc-900
+  }
+
+  main h4 {
+    @apply mt-3 text-sm font-semibold text-zinc-900
+  }
+
+  main h5 {
+    @apply mt-2 text-sm font-normal uppercase text-zinc-900
+  }
+
+  main h6 {
+    @apply mt-2 text-sm font-light uppercase text-zinc-900
+  }
+
+  main p {
+    @apply mt-2 text-sm leading-relaxed text-zinc-700;
+  }
+
+  main ul {
+    @apply mt-2 text-sm list-inside list-disc space-y-1.5 pl-1;
+  }
+
+  main ol {
+    @apply mt-2 text-sm list-inside list-decimal space-y-1.5 pl-1;
+  }
 }
 
 @layer components {
