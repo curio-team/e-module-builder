@@ -92,10 +92,34 @@ describe('build pipeline — exercises', () => {
 })
 
 describe('build pipeline — assignment', () => {
-  it('generates inleveropdracht-week1.json with criteria and maxPoints', () => {
+  it('generates inleveropdracht-week1.json with required fields', () => {
     const hw = readJson('src/data/inleveropdracht-week1.json')
+    expect(hw).toMatchObject({
+      week: 1,
+      title: expect.any(String),
+      client: expect.any(String),
+      html: expect.any(String),
+    })
     expect(hw.criteria.length).toBeGreaterThan(0)
     expect(hw.maxPoints).toBeGreaterThan(0)
+  })
+
+  it('assignment HTML contains rendered markdown', () => {
+    const hw = readJson('src/data/inleveropdracht-week1.json')
+    expect(hw.html).toContain('<h2>')
+    expect(hw.html).toContain('<strong>')
+  })
+
+  it('does not contain legacy case or assignment fields', () => {
+    const hw = readJson('src/data/inleveropdracht-week1.json')
+    expect(hw.case).toBeUndefined()
+    expect(hw.assignment).toBeUndefined()
+  })
+
+  it('generates inleveropdracht-week2.json with html field', () => {
+    const hw = readJson('src/data/inleveropdracht-week2.json')
+    expect(hw.html).toContain('<h2>')
+    expect(hw.html).toContain('<code>')
   })
 })
 

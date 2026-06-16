@@ -41,16 +41,15 @@ export function initInleveropdracht(data) {
     <section class="card mb-6">
       <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">Casus</p>
       <h2 class="mt-2 text-xl font-medium text-zinc-900">${data.client}</h2>
-      <p class="mt-4 leading-relaxed text-zinc-600">${data.case}</p>
+    </section>
+
+    <section class="card prose-inleveropdracht mb-6">
+      ${data.html}
     </section>
 
     <section class="card mb-6">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">Opdracht</p>
-      <p class="mt-3 leading-relaxed text-zinc-600">${data.assignment}</p>
-      <div class="mt-6">
-        <p class="text-sm font-medium text-zinc-900">Inleveren</p>
-        <ul class="mt-2 list-inside list-disc space-y-1">${deliverablesHtml}</ul>
-      </div>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">Inleveren</p>
+      <ul class="mt-2 list-inside list-disc space-y-1">${deliverablesHtml}</ul>
     </section>
 
     <section class="card mb-6">

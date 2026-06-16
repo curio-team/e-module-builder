@@ -128,15 +128,12 @@ for (const weekDir of activeWeeks) {
 
   // assignment.md → src/data/inleveropdracht-weekN.json
   const hwMd = readMd(path.join(dir, 'assignment.md'))
-  const hwBody = hwMd.content.trim()
-  const hwParas = hwBody.split(/\n\n+/)
   const hwOut = {
     week: hwMd.data.week ?? weekNum,
     title: hwMd.data.title,
     subtitle: hwMd.data.subtitle ?? '',
     client: hwMd.data.client ?? '',
-    case: hwParas[0] ?? '',
-    assignment: hwParas.slice(1).join('\n\n'),
+    html: marked.parse(hwMd.content ?? ''),
     deliverables: hwMd.data.deliverables ?? [],
     criteria: hwMd.data.criteria ?? [],
     maxPoints: hwMd.data.maxPoints ?? 0,

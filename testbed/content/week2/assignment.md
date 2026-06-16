@@ -24,4 +24,8 @@ tips:
 
 Studio Kleur is een creatief bureau dat een portfolio-pagina wil. De lay-out moet een header over de volle breedte hebben, een zijbalk links voor navigatie, het hoofdgedeelte rechts voor projecten, en een footer onderaan.
 
-Bouw de pagina met `grid-template-areas` en zorg dat de layout op mobiel naar één kolom schakelt via een media query op max-width 768px.
+## Opdracht
+
+Bouw de pagina met `grid-template-areas` en zorg dat de layout op mobiel naar één kolom schakelt via een media query op `max-width: 768px`.
+
+Let op: gebruik **betekenisvolle namen** voor je grid-areas.
