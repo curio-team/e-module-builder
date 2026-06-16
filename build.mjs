@@ -132,7 +132,6 @@ for (const weekDir of activeWeeks) {
     week: hwMd.data.week ?? weekNum,
     title: hwMd.data.title,
     subtitle: hwMd.data.subtitle ?? '',
-    client: hwMd.data.client ?? '',
     html: marked.parse(hwMd.content ?? ''),
     deliverables: hwMd.data.deliverables ?? [],
     criteria: hwMd.data.criteria ?? [],

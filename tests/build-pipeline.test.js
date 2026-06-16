@@ -97,7 +97,6 @@ describe('build pipeline — assignment', () => {
     expect(hw).toMatchObject({
       week: 1,
       title: expect.any(String),
-      client: expect.any(String),
       html: expect.any(String),
     })
     expect(hw.criteria.length).toBeGreaterThan(0)

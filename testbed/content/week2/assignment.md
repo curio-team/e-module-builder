@@ -2,7 +2,6 @@
 week: 2
 title: PortfolioGrid — benoemde gebieden
 subtitle: Inleveropdracht Week 2
-client: Studio Kleur
 maxPoints: 10
 deliverables:
   - index.html met semantische HTML

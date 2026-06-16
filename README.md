@@ -131,7 +131,6 @@ The Markdown **body** is split on blank lines: the first paragraph becomes the `
 week: 1
 title: Build a page layout
 subtitle: Practical assignment
-client: Acme Corp
 deliverables:
   - A working HTML/CSS page
 criteria:

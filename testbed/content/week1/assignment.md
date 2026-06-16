@@ -2,7 +2,6 @@
 week: 1
 title: GridCafé — je eerste klantpagina
 subtitle: Inleveropdracht Week 1
-client: GridCafé Amsterdam
 maxPoints: 8
 deliverables:
   - index.html met semantische HTML (header, main, footer)

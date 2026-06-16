@@ -38,11 +38,6 @@ export function initInleveropdracht(data) {
   const tipsHtml = data.tips.map((t) => `<li class="text-sm text-zinc-600">${t}</li>`).join('')
 
   container.innerHTML = `
-    <section class="card mb-6">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">Casus</p>
-      <h2 class="mt-2 text-xl font-medium text-zinc-900">${data.client}</h2>
-    </section>
-
     <section class="card prose-inleveropdracht mb-6">
       ${data.html}
     </section>
@@ -108,8 +103,6 @@ export function initInleveropdracht(data) {
       data.subtitle,
       data.title,
       '='.repeat(40),
-      '',
-      `Klant: ${data.client}`,
       '',
       'Criteria:',
     ]
