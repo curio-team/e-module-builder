@@ -15,7 +15,6 @@ export async function initTheory(week) {
   } catch {
     container.innerHTML = `
       <p class="text-red-600">Theorie voor week ${week} niet gevonden.</p>
-      <p class="mt-2 text-sm text-zinc-500">Run <code class="font-mono">npm run generate-content</code> om content te genereren.</p>
     `
     return
   }
@@ -23,7 +22,6 @@ export async function initTheory(week) {
   if (!data?.html) {
     container.innerHTML = `
       <p class="text-amber-700">Theorie voor week ${week} is nog leeg.</p>
-      <p class="mt-2 text-sm text-zinc-500">Run <code class="font-mono">npm run generate-content</code> om content te genereren.</p>
     `
     return
   }

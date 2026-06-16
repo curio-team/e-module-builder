@@ -66,6 +66,9 @@ export function initAreasExercise(exercise, { onSolved } = {}) {
 
   if (!containerInput || !preview) return
 
+  const outerClassMatch = exercise.previewHtml.match(/<\w+[^>]*\bclass="([^"]*)"/)
+  const gridClass = (outerClassMatch?.[1] ?? '').split(/\s+/)[0] || 'grid-container'
+
   const updatePreview = () => {
     const areas = containerInput.value.trim()
     const itemStyles = Array.from(selects)
@@ -74,7 +77,7 @@ export function initAreasExercise(exercise, { onSolved } = {}) {
 
     preview.innerHTML = `
       <style>
-        .news-grid {
+        .${gridClass} {
           display: grid;
           grid-template-columns: ${exercise.gridColumns || '1fr 1fr 1fr'};
           grid-template-areas: ${areas || '"a b c"'};
