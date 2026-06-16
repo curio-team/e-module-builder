@@ -9,7 +9,9 @@ export function createConfig({ projectDir, pkgDir }) {
   return defineConfig({
     root: projectDir,
     base: './',
-    publicDir: path.join(pkgDir, 'public'),
+    publicDir: existsSync(path.join(projectDir, 'public'))
+      ? path.join(projectDir, 'public')
+      : path.join(pkgDir, 'public'),
     plugins: [
       htmlIncludes({ partialsDir: path.join(pkgDir, 'src', 'partials') }),
       tailwindcss(),

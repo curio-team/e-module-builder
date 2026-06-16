@@ -26,6 +26,44 @@ const marked = new Marked(
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
+function rewriteAssetPaths(html, basePath) {
+  if (!basePath || !html) return html
+  const prefix = `../${basePath}/`
+  html = html.replace(
+    /(<img\s[^>]*\bsrc=")(?!https?:\/\/|\/|data:|\.\.)([^"]+)(")/g,
+    `$1${prefix}$2$3`
+  )
+  html = html.replace(
+    /(<a\s[^>]*\bhref=")(?!https?:\/\/|\/|#|mailto:|\.\.)([^"]+)(")/g,
+    `$1${prefix}$2$3`
+  )
+  return html
+}
+
+function copyStaticAssets() {
+  const PUBLIC_DIR = path.join(PROJECT_DIR, 'public')
+
+  const pkgPublic = path.join(PKG_DIR, 'public')
+  if (fs.existsSync(pkgPublic)) {
+    fs.cpSync(pkgPublic, PUBLIC_DIR, { recursive: true })
+  }
+
+  function walkAndCopy(srcDir, relPath) {
+    for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
+      const srcPath = path.join(srcDir, entry.name)
+      const destRel = relPath ? `${relPath}/${entry.name}` : entry.name
+      if (entry.isDirectory()) {
+        walkAndCopy(srcPath, destRel)
+      } else if (!entry.name.endsWith('.md') && !entry.name.endsWith('.html')) {
+        const destPath = path.join(PUBLIC_DIR, destRel)
+        fs.mkdirSync(path.dirname(destPath), { recursive: true })
+        fs.copyFileSync(srcPath, destPath)
+      }
+    }
+  }
+  walkAndCopy(CONTENT, '')
+}
+
 function readMd(filePath) {
   const raw = fs.readFileSync(filePath, 'utf8')
   return matter(raw)
@@ -91,7 +129,7 @@ for (const weekDir of activeWeeks) {
     title: theoryMd.data.title,
     goal: theoryMd.data.goal,
     accent: theoryMd.data.accent,
-    html: marked.parse(theoryMd.content ?? ''),
+    html: rewriteAssetPaths(marked.parse(theoryMd.content ?? ''), `week${weekNum}`),
   }
   writeJson(SRC_DATA, `theory-week${weekNum}.json`, theoryOut)
 
@@ -113,7 +151,7 @@ for (const weekDir of activeWeeks) {
   const exercises = exerciseFiles.map(f => {
     const ex = readMd(path.join(exDir, f)).data
     if (!ex.type || ex.type === 'text') {
-      ex.descriptionHtml = marked.parse(ex.description ?? '')
+      ex.descriptionHtml = rewriteAssetPaths(marked.parse(ex.description ?? ''), `week${weekNum}/exercises`)
     }
     return ex
   })
@@ -132,7 +170,7 @@ for (const weekDir of activeWeeks) {
     week: hwMd.data.week ?? weekNum,
     title: hwMd.data.title,
     subtitle: hwMd.data.subtitle ?? '',
-    html: marked.parse(hwMd.content ?? ''),
+    html: rewriteAssetPaths(marked.parse(hwMd.content ?? ''), `week${weekNum}`),
     deliverables: hwMd.data.deliverables ?? [],
     criteria: hwMd.data.criteria ?? [],
     maxPoints: hwMd.data.maxPoints ?? 0,
@@ -331,5 +369,7 @@ for (const f of htmlFiles) {
 
 const indexTpl = fs.readFileSync(path.join(PKG_DIR, 'templates/index.html'), 'utf8')
 fs.writeFileSync(path.join(PROJECT_DIR, 'index.html'), applyTemplate(indexTpl, { pageTitle: mod.name }))
+
+copyStaticAssets()
 
 console.log(`Build complete: ${weekCount} weeks → src/data/ and pages/`)

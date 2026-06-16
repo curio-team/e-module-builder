@@ -53,6 +53,12 @@ Items staan in **rijen én kolommen** tegelijk. Ideaal voor pagina-layouts.
 </x-compare-item>
 </x-compare>
 
+## Visueel overzicht
+
+![Grid diagram](grid-diagram.svg)
+
+![Extern voorbeeld](https://example.com/external.png)
+
 <x-nav label="Klaar met de theorie?">
 [Oefeningen](/pages/week1-oefeningen.html)
 [Toets](/pages/week1-toets.html)

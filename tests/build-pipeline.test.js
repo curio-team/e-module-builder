@@ -149,6 +149,43 @@ describe('build pipeline — exams', () => {
   })
 })
 
+describe('build pipeline — static assets', () => {
+  it('copies non-markdown files from content/weekN/ to public/weekN/', () => {
+    expect(existsSync(join(tmpDir, 'public/week1/grid-diagram.svg'))).toBe(true)
+    expect(existsSync(join(tmpDir, 'public/week1/wireframe.svg'))).toBe(true)
+  })
+
+  it('copies exercise assets preserving subfolder structure', () => {
+    expect(existsSync(join(tmpDir, 'public/week2/exercises/ex-image.svg'))).toBe(true)
+  })
+
+  it('copies package public files (logo, favicon) to public/', () => {
+    expect(existsSync(join(tmpDir, 'public/logo.svg'))).toBe(true)
+    expect(existsSync(join(tmpDir, 'public/favicon.svg'))).toBe(true)
+  })
+
+  it('rewrites relative image src in theory HTML to ../weekN/ prefix', () => {
+    const theory = readJson('src/data/theory-week1.json')
+    expect(theory.html).toContain('<img src="../week1/grid-diagram.svg"')
+  })
+
+  it('does not rewrite external image URLs in theory HTML', () => {
+    const theory = readJson('src/data/theory-week1.json')
+    expect(theory.html).toContain('src="https://example.com/external.png"')
+  })
+
+  it('rewrites relative image src in assignment HTML to ../weekN/ prefix', () => {
+    const hw = readJson('src/data/inleveropdracht-week1.json')
+    expect(hw.html).toContain('<img src="../week1/wireframe.svg"')
+  })
+
+  it('rewrites relative image src in exercise descriptionHtml to ../weekN/exercises/ prefix', () => {
+    const ex = readJson('src/data/exercises/week2.json')
+    const textEx = ex.exercises.find(e => e.type === 'text')
+    expect(textEx.descriptionHtml).toContain('<img src="../week2/exercises/ex-image.svg"')
+  })
+})
+
 describe('build pipeline — HTML pages', () => {
   it('generates per-week page stubs for both weeks', () => {
     expect(existsSync(join(tmpDir, 'pages/week1-theorie.html'))).toBe(true)

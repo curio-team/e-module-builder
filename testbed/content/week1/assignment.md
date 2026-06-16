@@ -31,3 +31,5 @@ GridCafé is een nieuwe koffiebar die binnenkort opent. De eigenaar wil een simp
 Bouw een HTML-pagina met een complete layout: header met logo, hoofdinhoud en footer. Alles moet netjes op zijn plek staan met **CSS Grid** — geen floats of positionering.
 
 Zorg dat de pagina er op alle schermen goed uitziet.
+
+![Wireframe](wireframe.svg)
