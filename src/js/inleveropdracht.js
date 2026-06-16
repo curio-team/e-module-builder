@@ -8,7 +8,7 @@ export function initInleveropdracht(data) {
   const container = document.querySelector('[data-inleveropdracht]')
   if (!container) return
 
-  const state = getItem(storageKey(data.week), { criteria: {}, notes: '', submitted: false })
+  const state = getItem(storageKey(data.week), { criteria: {}, submitted: false })
 
   const criteriaHtml = data.criteria
     .map((c) => {
@@ -63,18 +63,6 @@ export function initInleveropdracht(data) {
       <div data-criteria-list>${criteriaHtml}</div>
     </section>
 
-    <section class="card mb-6">
-      <label class="block">
-        <p class="text-sm font-medium text-zinc-900">Notities / link naar je bestanden</p>
-        <p class="mt-1 text-sm text-zinc-500">Bijv. GitHub-link, Google Drive, of een korte toelichting voor je docent.</p>
-        <textarea
-          data-inleveropdracht-notes
-          class="mt-3 min-h-[120px] w-full border border-zinc-200 bg-white p-4 text-sm text-zinc-700 focus:border-zinc-900 focus:outline-none"
-          placeholder="Plak hier je inlever-link of notities..."
-        >${state.notes || ''}</textarea>
-      </label>
-    </section>
-
     <section class="card-muted mb-6">
       <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">Tips</p>
       <ul class="mt-3 list-inside list-disc space-y-1">${tipsHtml}</ul>
@@ -88,7 +76,7 @@ export function initInleveropdracht(data) {
   `
 
   const saveState = (updates) => {
-    const current = getItem(storageKey(data.week), { criteria: {}, notes: '', submitted: false })
+    const current = getItem(storageKey(data.week), { criteria: {}, submitted: false })
     setItem(storageKey(data.week), { ...current, ...updates })
   }
 
@@ -114,14 +102,8 @@ export function initInleveropdracht(data) {
     })
   })
 
-  const notesEl = container.querySelector('[data-inleveropdracht-notes]')
-  notesEl?.addEventListener('input', () => {
-    saveState({ notes: notesEl.value })
-  })
-
   container.querySelector('[data-export-inleveropdracht]')?.addEventListener('click', async () => {
     const criteria = getItem(storageKey(data.week), {}).criteria || {}
-    const notes = notesEl?.value || ''
     const lines = [
       data.subtitle,
       data.title,
@@ -134,9 +116,6 @@ export function initInleveropdracht(data) {
     for (const c of data.criteria) {
       const mark = criteria[c.id] ? '[x]' : '[ ]'
       lines.push(`  ${mark} (${c.points}p) ${c.text}`)
-    }
-    if (notes) {
-      lines.push('', 'Notities:', notes)
     }
     try {
       await navigator.clipboard.writeText(lines.join('\n'))
