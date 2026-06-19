@@ -36,7 +36,7 @@ describe('build pipeline — manifest', () => {
   it('generates manifest.json with correct module name and week count', () => {
     const manifest = readJson('src/data/manifest.json')
     expect(manifest.module.name).toBe('CSS Grid Basis')
-    expect(manifest.weeks).toHaveLength(2)
+    expect(manifest.weeks).toHaveLength(3)
     expect(manifest.nav).toBeDefined()
   })
 })
@@ -277,5 +277,47 @@ describe('build pipeline — optional quiz.md', () => {
   it('includes meetmoment page in manifest pages.week for week1', () => {
     const manifest = readNoQuizJson('src/data/manifest.json')
     expect(manifest.pages.week).toContain('pages/week1-meetmoment.html')
+  })
+})
+
+describe('build pipeline — week3 (no quiz.md)', () => {
+  it('generates theory-week3.json with required fields', () => {
+    const theory = readJson('src/data/theory-week3.json')
+    expect(theory).toMatchObject({
+      week: 3,
+      title: expect.any(String),
+      goal: expect.any(String),
+      html: expect.any(String),
+    })
+  })
+
+  it('generates inleveropdracht-week3.json with required fields', () => {
+    const hw = readJson('src/data/inleveropdracht-week3.json')
+    expect(hw).toMatchObject({
+      week: 3,
+      title: expect.any(String),
+      html: expect.any(String),
+    })
+    expect(hw.criteria.length).toBeGreaterThan(0)
+  })
+
+  it('does not generate meetmoment-quiz-week3.json because quiz.md is absent', () => {
+    expect(existsSync(join(tmpDir, 'src/data/meetmoment-quiz-week3.json'))).toBe(false)
+  })
+
+  it('does not generate week3-meetmoment.html because quiz.md is absent', () => {
+    expect(existsSync(join(tmpDir, 'pages/week3-meetmoment.html'))).toBe(false)
+  })
+
+  it('excludes Quiz link from week3 nav in the manifest', () => {
+    const manifest = readJson('src/data/manifest.json')
+    const week3Nav = manifest.nav.weeks.find(w => w.children.some(c => c.href.includes('week3')))
+    expect(week3Nav).toBeDefined()
+    expect(week3Nav.children.some(c => c.label === 'Quiz')).toBe(false)
+  })
+
+  it('generates week3-theorie.html and week3-oefeningen.html', () => {
+    expect(existsSync(join(tmpDir, 'pages/week3-theorie.html'))).toBe(true)
+    expect(existsSync(join(tmpDir, 'pages/week3-oefeningen.html'))).toBe(true)
   })
 })

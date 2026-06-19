@@ -1,9 +1,9 @@
 ---
 name: CSS Grid Basis
 subtitle: E-module
-weeks: 2
+weeks: 3
 language: nl
-description: Leer in 2 weken de basis van CSS Grid — van eerste kolommen tot benoemde gebieden.
+description: Leer in 3 weken de basis van CSS Grid — van eerste kolommen tot benoemde gebieden en subgrid.
 logoAlt: Schaalbaar
 exerciseMode: interactive
 algemeen:
