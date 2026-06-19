@@ -143,9 +143,10 @@ describe('build pipeline — assessments', () => {
     expect(assessment.questions.length).toBeGreaterThan(0)
   })
 
-  it('generates meetmoment-praktijk.json with questions', () => {
+  it('generates meetmoment-praktijk.json with html content', () => {
     const assessment = readJson('src/data/meetmoment-praktijk.json')
-    expect(assessment.questions.length).toBeGreaterThan(0)
+    expect(typeof assessment.html).toBe('string')
+    expect(assessment.html.length).toBeGreaterThan(0)
   })
 })
 

@@ -213,17 +213,29 @@ function buildAssessmentData(filePath, fallbackTitle, fallbackNavLabel, fallback
   return { title: fallbackTitle, navLabel: fallbackNavLabel, description: fallbackDescription, passScore: 70, questions: [] }
 }
 
+function buildPracticalAssessmentData(filePath, fallbackTitle, fallbackNavLabel) {
+  if (fs.existsSync(filePath)) {
+    const md = readMd(filePath)
+    return {
+      title: md.data.title ?? fallbackTitle,
+      navLabel: md.data.navLabel ?? fallbackNavLabel,
+      description: md.data.description ?? '',
+      html: marked.parse(md.content ?? ''),
+    }
+  }
+  return { title: fallbackTitle, navLabel: fallbackNavLabel, description: '', html: '' }
+}
+
 const theoryAssessmentData = buildAssessmentData(
   path.join(ASSESSMENTS_DIR, 'theory-assessment.md'),
   `Meetmoment theorie — ${mod.name}`,
   'Meetmoment Theorie',
   'Meerkeuzevragen over de module. Minimaal 70% om te slagen.'
 )
-const practicalAssessmentData = buildAssessmentData(
+const practicalAssessmentData = buildPracticalAssessmentData(
   path.join(ASSESSMENTS_DIR, 'practical-assessment.md'),
   `Meetmoment praktijk — ${mod.name}`,
-  'Meetmoment Praktijk',
-  'Praktijkvragen over de module. Minimaal 70% om te slagen.'
+  'Meetmoment Praktijk'
 )
 
 // ─── 5. manifest.json ────────────────────────────────────────────────────────
