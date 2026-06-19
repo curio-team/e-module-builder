@@ -24,6 +24,12 @@ const marked = new Marked(
   })
 )
 
+const SECTION_RE = /^([a-zA-Z]+)(\d+)$/
+
+function sectionLabel(prefix, num) {
+  return `${prefix.charAt(0).toUpperCase()}${prefix.slice(1)} ${num}`
+}
+
 // ─── helpers ────────────────────────────────────────────────────────────────
 
 function rewriteAssetPaths(html, basePath) {
@@ -108,8 +114,8 @@ const mod = moduleMd.data
 
 const weekDirs = fs
   .readdirSync(CONTENT)
-  .filter(d => /^week\d+$/.test(d) && fs.statSync(path.join(CONTENT, d)).isDirectory())
-  .sort((a, b) => parseInt(a.slice(4)) - parseInt(b.slice(4)))
+  .filter(d => SECTION_RE.test(d) && fs.statSync(path.join(CONTENT, d)).isDirectory())
+  .sort((a, b) => parseInt(a.match(SECTION_RE)[2]) - parseInt(b.match(SECTION_RE)[2]))
 
 const weekCount = mod.weeks > 0 ? mod.weeks : weekDirs.length
 const activeWeeks = weekDirs.slice(0, weekCount)
@@ -119,7 +125,8 @@ const activeWeeks = weekDirs.slice(0, weekCount)
 const weeksData = []
 
 for (const weekDir of activeWeeks) {
-  const weekNum = parseInt(weekDir.slice(4))
+  const [, sectionPrefix, sectionNumStr] = weekDir.match(SECTION_RE)
+  const weekNum = parseInt(sectionNumStr)
   const dir = path.join(CONTENT, weekDir)
 
   // theory.md → src/data/theory-weekN.json
@@ -180,17 +187,19 @@ for (const weekDir of activeWeeks) {
 
   weeksData.push({
     week: weekNum,
+    dirName: weekDir,
+    prefix: sectionPrefix,
     title: theoryMd.data.title,
     summary: theoryMd.data.summary ?? '',
     goal: theoryMd.data.goal,
     leeruitkomsten: theoryMd.data.leeruitkomsten ?? [],
     color: theoryMd.data.accent,
     pages: [
-      { key: 'theorie', href: `/pages/week${weekNum}-theorie.html`, label: 'Theorie' },
-      { key: 'oefeningen', href: `/pages/week${weekNum}-oefeningen.html`, label: 'Oefeningen' },
-      { key: 'meetmoment', href: `/pages/week${weekNum}-meetmoment.html`, label: 'Meetmoment' },
-      { key: 'oefening', href: `/pages/week${weekNum}-oefening.html`, label: 'Oefening' },
-      { key: 'inleveropdracht', href: `/pages/week${weekNum}-inleveropdracht.html`, label: 'Inleveropdracht' },
+      { key: 'theorie', href: `/pages/${weekDir}-theorie.html`, label: 'Theorie' },
+      { key: 'oefeningen', href: `/pages/${weekDir}-oefeningen.html`, label: 'Oefeningen' },
+      { key: 'meetmoment', href: `/pages/${weekDir}-meetmoment.html`, label: 'Meetmoment' },
+      { key: 'oefening', href: `/pages/${weekDir}-oefening.html`, label: 'Oefening' },
+      { key: 'inleveropdracht', href: `/pages/${weekDir}-inleveropdracht.html`, label: 'Inleveropdracht' },
     ],
   })
 }
@@ -255,13 +264,13 @@ const manifest = {
   nav: {
     home: { href: '/index.html', label: 'Home' },
     weeks: weeksData.map(wk => ({
-      label: `Week ${wk.week}`,
+      label: sectionLabel(wk.prefix, wk.week),
       title: wk.title,
       children: [
-        { href: `/pages/week${wk.week}-theorie.html`, label: 'Theorie' },
-        { href: `/pages/week${wk.week}-oefeningen.html`, label: 'Oefeningen' },
-        { href: `/pages/week${wk.week}-meetmoment.html`, label: 'Quiz' },
-        { href: `/pages/week${wk.week}-inleveropdracht.html`, label: 'Inleveropdracht' },
+        { href: `/pages/${wk.dirName}-theorie.html`, label: 'Theorie' },
+        { href: `/pages/${wk.dirName}-oefeningen.html`, label: 'Oefeningen' },
+        { href: `/pages/${wk.dirName}-meetmoment.html`, label: 'Quiz' },
+        { href: `/pages/${wk.dirName}-inleveropdracht.html`, label: 'Inleveropdracht' },
       ],
     })),
     assessmentSection: {
@@ -281,11 +290,11 @@ const manifest = {
       'pages/meetmoment-praktijk.html',
     ],
     week: weeksData.flatMap(wk => [
-      `pages/week${wk.week}-theorie.html`,
-      `pages/week${wk.week}-oefeningen.html`,
-      `pages/week${wk.week}-meetmoment.html`,
-      `pages/week${wk.week}-oefening.html`,
-      `pages/week${wk.week}-inleveropdracht.html`,
+      `pages/${wk.dirName}-theorie.html`,
+      `pages/${wk.dirName}-oefeningen.html`,
+      `pages/${wk.dirName}-meetmoment.html`,
+      `pages/${wk.dirName}-oefening.html`,
+      `pages/${wk.dirName}-inleveropdracht.html`,
     ]),
   },
   content: {
@@ -299,11 +308,11 @@ writeJson(SRC_DATA, 'manifest.json', manifest)
 // ─── 5. checklist.json ───────────────────────────────────────────────────────
 
 const checklistGroups = weeksData.map(wk => ({
-  id: `week${wk.week}`,
-  title: `Week ${wk.week} — ${wk.title}`,
+  id: wk.dirName,
+  title: `${sectionLabel(wk.prefix, wk.week)} — ${wk.title}`,
   color: wk.color,
   items: (wk.leeruitkomsten ?? []).map((text, i) => ({
-    id: `week${wk.week}-item-${i}`,
+    id: `${wk.dirName}-item-${i}`,
     text,
   })),
 }))
@@ -330,27 +339,27 @@ const PAGE_TYPES = [
   {
     tplFile: 'theorie.html',
     suffix: 'theorie',
-    pageTitle: wk => `Theorie Week ${wk.week} — ${wk.title}`,
+    pageTitle: wk => `Theorie ${sectionLabel(wk.prefix, wk.week)} — ${wk.title}`,
   },
   {
     tplFile: 'meetmoment.html',
     suffix: 'meetmoment',
-    pageTitle: wk => `Meetmoment Week ${wk.week} — ${wk.title}`,
+    pageTitle: wk => `Meetmoment ${sectionLabel(wk.prefix, wk.week)} — ${wk.title}`,
   },
   {
     tplFile: 'oefeningen.html',
     suffix: 'oefeningen',
-    pageTitle: wk => `Oefeningen Week ${wk.week} — ${wk.title}`,
+    pageTitle: wk => `Oefeningen ${sectionLabel(wk.prefix, wk.week)} — ${wk.title}`,
   },
   {
     tplFile: 'oefening.html',
     suffix: 'oefening',
-    pageTitle: wk => `Oefening — Week ${wk.week}`,
+    pageTitle: wk => `Oefening — ${sectionLabel(wk.prefix, wk.week)}`,
   },
   {
     tplFile: 'inleveropdracht.html',
     suffix: 'inleveropdracht',
-    pageTitle: wk => `Inleveropdracht Week ${wk.week} — ${wk.title}`,
+    pageTitle: wk => `Inleveropdracht ${sectionLabel(wk.prefix, wk.week)} — ${wk.title}`,
   },
 ]
 
@@ -365,7 +374,7 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
       weekTitle: wk.title,
       pageTitle: pageTitle(wk),
     })
-    fs.writeFileSync(path.join(PAGES, `week${wk.week}-${suffix}.html`), out)
+    fs.writeFileSync(path.join(PAGES, `${wk.dirName}-${suffix}.html`), out)
   }
 }
 
