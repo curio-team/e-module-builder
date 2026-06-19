@@ -15,7 +15,12 @@
     <script type="module">
       import { initPage } from '/src/js/nav.js'
       import { initTheory } from '/src/js/theory.js'
-      initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: 'Week {{week}}', href: '/pages/week{{week}}-theorie.html' }, { label: 'Theorie' }] })
+      const embedded = new URLSearchParams(location.search).has('embedded')
+      if (!embedded) {
+        initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: 'Week {{week}}', href: '/pages/week{{week}}-theorie.html' }, { label: 'Theorie' }] })
+      } else {
+        document.body.setAttribute('data-embedded', '')
+      }
       initTheory({{week}})
     </script>
   </body>

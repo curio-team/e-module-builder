@@ -19,6 +19,8 @@ criteria:
 tips:
   - Teken eerst op papier hoe de layout eruit moet zien.
   - Test op verschillende schermbreedtes met de DevTools.
+linked_theory:
+  - week2
 ---
 
 Studio Kleur is een creatief bureau dat een portfolio-pagina wil. De lay-out moet een header over de volle breedte hebben, een zijbalk links voor navigatie, het hoofdgedeelte rechts voor projecten, en een footer onderaan.

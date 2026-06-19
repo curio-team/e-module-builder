@@ -310,4 +310,81 @@
   x-nav>p>a:last-child {
     @apply border-transparent bg-zinc-900 text-white hover:border-transparent hover:bg-zinc-800 focus-visible:ring-zinc-900;
   }
+
+  /* ── Theory side panel ───────────────────────────────────────────────────── */
+
+  .theory-panel {
+    @apply fixed inset-y-0 right-0 z-40 flex w-[480px] max-w-[90vw] flex-col border-l border-zinc-200 bg-white shadow-xl;
+  }
+
+  .theory-panel.panel-ready {
+    @apply transition-transform duration-300 ease-out;
+  }
+
+  .theory-panel.panel-hidden {
+    @apply translate-x-full;
+  }
+
+  .theory-panel-header {
+    @apply flex shrink-0 items-center border-b border-zinc-200 bg-zinc-50;
+  }
+
+  .theory-panel-tabs {
+    @apply flex flex-1 overflow-x-auto;
+    scrollbar-width: none;
+  }
+
+  .theory-panel-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .theory-tab {
+    @apply whitespace-nowrap border-b-2 border-transparent px-4 py-3 text-sm font-medium text-zinc-500 transition hover:text-zinc-900;
+  }
+
+  .theory-tab-active {
+    @apply border-zinc-900 text-zinc-900;
+  }
+
+  .theory-panel-close {
+    @apply shrink-0 p-3 text-zinc-400 transition hover:text-zinc-700;
+  }
+
+  .theory-panel-body {
+    @apply relative min-h-0 flex-1 flex flex-col;
+  }
+
+  .theory-panel-loader {
+    @apply absolute inset-0 z-10 flex items-center justify-center bg-white/80 backdrop-blur-sm;
+  }
+
+  .theory-panel-loader-hidden {
+    @apply hidden;
+  }
+
+  .theory-panel-spinner {
+    @apply h-8 w-8 animate-spin rounded-full border-2 border-zinc-200 border-t-zinc-700;
+  }
+
+  .theory-panel-iframe {
+    @apply min-h-0 flex-1 w-full border-0;
+  }
+
+  .theory-panel-toggle {
+    @apply fixed bottom-6 right-6 shadow z-50 flex items-center gap-2 bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white shadow-lg transition hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2;
+  }
+
+  /* ── Embedded theory mode (inside iframe) ────────────────────────────────── */
+
+  [data-embedded] {
+    @apply bg-white;
+  }
+
+  [data-embedded] [data-theory] {
+    @apply px-6 py-8;
+  }
+
+  [data-embedded] main {
+    @apply !p-0;
+  }
 }

@@ -196,6 +196,27 @@ description: Create a grid with two equal columns.
 
 When both a body and a `description` field are present the body takes precedence.
 
+**Linking theory pages (optional):**
+
+Use `linked_theory` to attach one or more theory pages to an exercise. A collapsible panel slides in from the right with a tab per week, embedding the theory page so students can look up content without leaving the exercise.
+
+```yaml
+---
+id: 3
+type: text
+title: Columns
+linked_theory:
+  - week1
+  - week2
+---
+```
+
+| Field | Required | Description |
+| ----- | -------- | ----------- |
+| `linked_theory` | no | List of week identifiers (e.g. `week1`). Renders a collapsible right-side panel with tabbed iframes — one per linked week. When absent, no panel or toggle button is shown. Theory pages load without their own navbar inside the panel. |
+
+---
+
 **Interactive (Monaco editor) exercise:**
 
 ```yaml

@@ -1,6 +1,7 @@
 import { renderExerciseMeta, markExerciseSolved } from './exercise-shared.js'
 import { sitePath } from '../site-path.js'
 import { initExternalExercise } from './external-exercise.js'
+import { initTheoryPanel } from './theory-panel.js'
 
 async function loadWeekData(weekNum) {
   return import(`../../data/exercises/week${weekNum}.json`).then((m) => m.default)
@@ -51,6 +52,8 @@ export async function initExercisePage(weekNum) {
 
     return
   }
+
+  initTheoryPanel(exercise.linked_theory)
 
   if (!exercise.type || exercise.type === 'text') {
     const panel = document.querySelector('[data-exercise-content]')

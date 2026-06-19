@@ -189,6 +189,7 @@ for (const weekDir of activeWeeks) {
     criteria: hwMd.data.criteria ?? [],
     maxPoints: hwMd.data.maxPoints ?? 0,
     tips: hwMd.data.tips ?? [],
+    ...(hwMd.data.linked_theory ? { linked_theory: hwMd.data.linked_theory } : {}),
   }
   writeJson(SRC_DATA, `inleveropdracht-week${weekNum}.json`, hwOut)
 
