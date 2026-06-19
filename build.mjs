@@ -133,14 +133,14 @@ for (const weekDir of activeWeeks) {
   }
   writeJson(SRC_DATA, `theory-week${weekNum}.json`, theoryOut)
 
-  // quiz.md → src/data/tussentoets-weekN.json
+  // quiz.md → src/data/meetmoment-quiz-weekN.json
   const quizMd = readMd(path.join(dir, 'quiz.md'))
   const quizOut = {
     title: quizMd.data.title,
     passScore: quizMd.data.passScore ?? 70,
     questions: quizMd.data.questions ?? [],
   }
-  writeJson(SRC_DATA, `tussentoets-week${weekNum}.json`, quizOut)
+  writeJson(SRC_DATA, `meetmoment-quiz-week${weekNum}.json`, quizOut)
 
   // exercises/ subfolder → src/data/exercises/weekN.json
   const exDir = path.join(dir, 'exercises')
@@ -188,14 +188,45 @@ for (const weekDir of activeWeeks) {
     pages: [
       { key: 'theorie', href: `/pages/week${weekNum}-theorie.html`, label: 'Theorie' },
       { key: 'oefeningen', href: `/pages/week${weekNum}-oefeningen.html`, label: 'Oefeningen' },
-      { key: 'toets', href: `/pages/week${weekNum}-toets.html`, label: 'Tussentoets' },
+      { key: 'meetmoment', href: `/pages/week${weekNum}-meetmoment.html`, label: 'Meetmoment' },
       { key: 'oefening', href: `/pages/week${weekNum}-oefening.html`, label: 'Oefening' },
       { key: 'inleveropdracht', href: `/pages/week${weekNum}-inleveropdracht.html`, label: 'Inleveropdracht' },
     ],
   })
 }
 
-// ─── 4. manifest.json ────────────────────────────────────────────────────────
+// ─── 4. assessment data (parsed early so navLabel is available for manifest) ───────
+
+const ASSESSMENTS_DIR = path.join(CONTENT, 'assessments')
+
+function buildAssessmentData(filePath, fallbackTitle, fallbackNavLabel, fallbackDescription) {
+  if (fs.existsSync(filePath)) {
+    const md = readMd(filePath)
+    return {
+      title: md.data.title ?? fallbackTitle,
+      navLabel: md.data.navLabel ?? fallbackNavLabel,
+      description: md.data.description ?? fallbackDescription,
+      passScore: md.data.passScore ?? 70,
+      questions: md.data.questions ?? [],
+    }
+  }
+  return { title: fallbackTitle, navLabel: fallbackNavLabel, description: fallbackDescription, passScore: 70, questions: [] }
+}
+
+const theoryAssessmentData = buildAssessmentData(
+  path.join(ASSESSMENTS_DIR, 'theory-assessment.md'),
+  `Meetmoment theorie — ${mod.name}`,
+  'Meetmoment Theorie',
+  'Meerkeuzevragen over de module. Minimaal 70% om te slagen.'
+)
+const practicalAssessmentData = buildAssessmentData(
+  path.join(ASSESSMENTS_DIR, 'practical-assessment.md'),
+  `Meetmoment praktijk — ${mod.name}`,
+  'Meetmoment Praktijk',
+  'Praktijkvragen over de module. Minimaal 70% om te slagen.'
+)
+
+// ─── 5. manifest.json ────────────────────────────────────────────────────────
 
 const manifest = {
   module: {
@@ -217,27 +248,27 @@ const manifest = {
       children: [
         { href: `/pages/week${wk.week}-theorie.html`, label: 'Theorie' },
         { href: `/pages/week${wk.week}-oefeningen.html`, label: 'Oefeningen' },
-        { href: `/pages/week${wk.week}-toets.html`, label: 'Tussentoets' },
+        { href: `/pages/week${wk.week}-meetmoment.html`, label: 'Quiz' },
         { href: `/pages/week${wk.week}-inleveropdracht.html`, label: 'Inleveropdracht' },
       ],
     })),
-    examPages: [
+    assessmentPages: [
       { href: '/pages/checklist.html', label: 'Checklist' },
-      { href: '/pages/toets-theorie.html', label: 'Eindtoets theorie' },
-      { href: '/pages/toets-praktijk.html', label: 'Eindtoets praktijk' },
+      { href: '/pages/meetmoment-theorie.html', label: theoryAssessmentData.navLabel },
+      { href: '/pages/meetmoment-praktijk.html', label: practicalAssessmentData.navLabel },
     ],
   },
   pages: {
     static: [
       'index.html',
       'pages/checklist.html',
-      'pages/toets-theorie.html',
-      'pages/toets-praktijk.html',
+      'pages/meetmoment-theorie.html',
+      'pages/meetmoment-praktijk.html',
     ],
     week: weeksData.flatMap(wk => [
       `pages/week${wk.week}-theorie.html`,
       `pages/week${wk.week}-oefeningen.html`,
-      `pages/week${wk.week}-toets.html`,
+      `pages/week${wk.week}-meetmoment.html`,
       `pages/week${wk.week}-oefening.html`,
       `pages/week${wk.week}-inleveropdracht.html`,
     ]),
@@ -273,31 +304,10 @@ if (mod.algemeen?.length) {
 
 writeJson(SRC_DATA, 'checklist.json', { groups: checklistGroups })
 
-// ─── 5b. exam data files (optional content/exams/*.md, else empty placeholder) ─
+// ─── 5b. write assessment data JSON files ──────────────────────────────────────────
 
-function buildExamData(filePath, fallbackTitle) {
-  if (fs.existsSync(filePath)) {
-    const md = readMd(filePath)
-    return {
-      title: md.data.title ?? fallbackTitle,
-      passScore: md.data.passScore ?? 70,
-      questions: md.data.questions ?? [],
-    }
-  }
-  return { title: fallbackTitle, passScore: 70, questions: [] }
-}
-
-const EXAMS_DIR = path.join(CONTENT, 'exams')
-writeJson(
-  SRC_DATA,
-  'toets-theorie.json',
-  buildExamData(path.join(EXAMS_DIR, 'theory-exam.md'), `Eindtoets theorie — ${mod.name}`)
-)
-writeJson(
-  SRC_DATA,
-  'toets-praktijk.json',
-  buildExamData(path.join(EXAMS_DIR, 'practical-exam.md'), `Eindtoets praktijk — ${mod.name}`)
-)
+writeJson(SRC_DATA, 'meetmoment-theorie.json', theoryAssessmentData)
+writeJson(SRC_DATA, 'meetmoment-praktijk.json', practicalAssessmentData)
 
 // ─── 6. generate per-week page stubs ─────────────────────────────────────────
 
@@ -308,9 +318,9 @@ const PAGE_TYPES = [
     pageTitle: wk => `Theorie Week ${wk.week} — ${wk.title}`,
   },
   {
-    tplFile: 'toets.html',
-    suffix: 'toets',
-    pageTitle: wk => `Tussentoets Week ${wk.week} — ${wk.title}`,
+    tplFile: 'meetmoment.html',
+    suffix: 'meetmoment',
+    pageTitle: wk => `Meetmoment Week ${wk.week} — ${wk.title}`,
   },
   {
     tplFile: 'oefeningen.html',
@@ -344,17 +354,27 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
   }
 }
 
-// ─── 7. copy static pages (checklist, exams) with title substitution ─────────
+// ─── 7. copy static pages (checklist, assessments) with title substitution ─────────
 
 const STATIC_PAGES = [
   { src: 'checklist.html', pageTitle: `Checklist — ${mod.name}` },
-  { src: 'toets-theorie.html', pageTitle: `Eindtoets theorie — ${mod.name}` },
-  { src: 'toets-praktijk.html', pageTitle: `Eindtoets praktijk — ${mod.name}` },
+  {
+    src: 'meetmoment-theorie.html',
+    pageTitle: `${theoryAssessmentData.navLabel} — ${mod.name}`,
+    assessmentTitle: theoryAssessmentData.navLabel,
+    assessmentDescription: theoryAssessmentData.description,
+  },
+  {
+    src: 'meetmoment-praktijk.html',
+    pageTitle: `${practicalAssessmentData.navLabel} — ${mod.name}`,
+    assessmentTitle: practicalAssessmentData.navLabel,
+    assessmentDescription: practicalAssessmentData.description,
+  },
 ]
 
-for (const { src, pageTitle } of STATIC_PAGES) {
+for (const { src, pageTitle, assessmentTitle, assessmentDescription } of STATIC_PAGES) {
   const tpl = fs.readFileSync(path.join(TEMPLATES, src), 'utf8')
-  const out = applyTemplate(tpl, { pageTitle })
+  const out = applyTemplate(tpl, { pageTitle, assessmentTitle, assessmentDescription })
   fs.writeFileSync(path.join(PAGES, src), out)
 }
 

@@ -1,44 +1,52 @@
 <!DOCTYPE html>
 <html lang="nl">
-  <head>
-    <!-- include:head -->
-    <title>{{pageTitle}}</title>
-  </head>
-  <body class="font-sans antialiased">
-    <div data-page-content>
-      <main class="px-4 py-10 md:px-10">
-        <div class="mx-auto max-w-3xl">
-          <span class="week-label">Week {{week}}</span>
-          <h1 class="text-3xl font-semibold tracking-tight text-zinc-900">Oefeningen</h1>
-          <p class="mt-2 text-zinc-600" data-hub-subtitle>{{weekTitle}} — 8 oefeningen.</p>
-          <div class="card mt-8">
-            <div class="mb-4 flex items-end justify-between">
-              <div>
-                <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">Voortgang</p>
-                <p class="mt-1 text-sm text-zinc-500"><span data-hub-progress-text>0 / 8</span> afgerond</p>
-              </div>
-            </div>
-            <div class="progress-track">
-              <div data-hub-progress-bar class="progress-fill" style="width:0%"></div>
+
+<head>
+  <!-- include:head -->
+  <title>{{pageTitle}}</title>
+</head>
+
+<body class="font-sans antialiased">
+  <div data-page-content>
+    <main class="px-4 py-10 md:px-10">
+      <div class="mx-auto max-w-3xl">
+        <span class="week-label">Week {{week}}</span>
+        <h1 class="text-3xl font-semibold tracking-tight text-zinc-900">Oefeningen</h1>
+        <p class="mt-2 text-zinc-600"
+           data-hub-subtitle>{{weekTitle}} — 8 oefeningen.</p>
+        <div class="card mt-8">
+          <div class="mb-4 flex items-end justify-between">
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">Voortgang</p>
+              <p class="mt-1 text-sm text-zinc-500"><span data-hub-progress-text>0 / 8</span> afgerond</p>
             </div>
           </div>
-          <div data-exercise-list class="mt-8 space-y-4"></div>
-          <div class="card mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p class="font-medium text-zinc-900">Klaar met de oefeningen?</p>
-              <p class="mt-1 text-sm text-zinc-500">Test je kennis met de tussentoets.</p>
-            </div>
-            <a href="week{{week}}-toets.html" class="btn-primary shrink-0">Naar de toets</a>
+          <div class="progress-track">
+            <div data-hub-progress-bar
+                 class="progress-fill"
+                 style="width:0%"></div>
           </div>
         </div>
-      </main>
-    </div>
-    <script type="module">
-      import { initPage } from '/src/js/nav.js'
-      import { initExerciseHub } from '/src/js/exercises/hub.js'
-      import weekData from '/src/data/exercises/week{{week}}.json'
-      initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: 'Week {{week}}' }, { label: 'Oefeningen' }] })
-      initExerciseHub(weekData, {{week}})
-    </script>
-  </body>
+        <div data-exercise-list
+             class="mt-8 space-y-4"></div>
+        <div class="card mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="font-medium text-zinc-900">Klaar met de oefeningen?</p>
+            <p class="mt-1 text-sm text-zinc-500">Test je kennis met de meetmoment.</p>
+          </div>
+          <a href="week{{week}}-meetmoment.html"
+             class="btn-primary shrink-0">Naar het meetmoment</a>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script type="module">
+    import { initPage } from '/src/js/nav.js'
+    import { initExerciseHub } from '/src/js/exercises/hub.js'
+    import weekData from '/src/data/exercises/week{{week}}.json'
+    initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: 'Week {{week}}' }, { label: 'Oefeningen' }] })
+    initExerciseHub(weekData, {{ week }})
+  </script>
+</body>
+
 </html>

@@ -74,6 +74,6 @@ Flexbox is geweldig voor kleine componenten, maar wordt onhandig voor hele pagin
 
 <x-nav label="Klaar met de theorie?">
 [Oefeningen](/pages/week1-oefeningen.html)
-[Toets](/pages/week1-toets.html)
+[Meetmoment](/pages/week1-meetmoment.html)
 [Week 2](/pages/week2-theorie.html)
 </x-nav>

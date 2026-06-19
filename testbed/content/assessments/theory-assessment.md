@@ -1,5 +1,7 @@
 ---
-title: Eindtoets theorie — CSS Grid Basis
+title: Meetmoment theorie — CSS Grid Basis
+navLabel: Meetmoment Theorie
+description: Meerkeuzevragen over de module. Minimaal 70% om te slagen.
 passScore: 70
 questions:
   - id: t1

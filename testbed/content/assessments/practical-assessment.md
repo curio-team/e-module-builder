@@ -1,5 +1,5 @@
 ---
-title: Eindtoets praktijk — CSS Grid Basis
+title: Meetmoment praktijk — CSS Grid Basis
 passScore: 70
 questions:
   - id: p1

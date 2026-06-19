@@ -13,7 +13,7 @@ function buildNavItems() {
     })
   }
 
-  for (const page of manifest.nav.examPages) {
+  for (const page of manifest.nav.assessmentPages) {
     items.push(page)
   }
 

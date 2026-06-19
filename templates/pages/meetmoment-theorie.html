@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+  <!-- include:head -->
+  <title>{{pageTitle}}</title>
+</head>
+
+<body class="font-sans antialiased">
+  <div data-page-content>
+    <main class="px-4 py-10 md:px-10">
+      <div class="mx-auto max-w-3xl">
+        <h1 class="text-3xl font-semibold tracking-tight text-zinc-900">{{assessmentTitle}}</h1>
+        <p class="mt-2 text-zinc-600">{{assessmentDescription}}</p>
+        <div data-quiz
+             class="mt-8"></div>
+      </div>
+    </main>
+  </div>
+  <script type="module">
+    import { initPage } from '/src/js/nav.js'
+    import { initQuiz } from '/src/js/quiz.js'
+    import quizData from '/src/data/meetmoment-theorie.json'
+    initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: '{{assessmentTitle}}' }] })
+    initQuiz(quizData)
+  </script>
+</body>
+
+</html>

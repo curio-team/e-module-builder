@@ -50,5 +50,5 @@ Gebruik `auto-fit` voor responsieve kaartenlayouts zonder media queries.
 
 <x-nav label="Klaar met de theorie?">
 [Oefeningen](/pages/week2-oefeningen.html)
-[Toets](/pages/week2-toets.html)
+[Meetmoment](/pages/week2-meetmoment.html)
 </x-nav>

@@ -1,6 +1,6 @@
 ---
 week: 1
-title: Tussentoets Week 1 — CSS Grid Basis
+title: Meetmoment Week 1 — CSS Grid Basis
 passScore: 70
 questions:
   - id: w1q1

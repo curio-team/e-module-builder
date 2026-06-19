@@ -59,8 +59,8 @@ describe('build pipeline — theory', () => {
 })
 
 describe('build pipeline — quiz', () => {
-  it('generates tussentoets-week1.json with questions and passScore', () => {
-    const quiz = readJson('src/data/tussentoets-week1.json')
+  it('generates meetmoment-quiz-week1.json with questions and passScore', () => {
+    const quiz = readJson('src/data/meetmoment-quiz-week1.json')
     expect(quiz.questions).toHaveLength(4)
     expect(quiz.passScore).toBe(70)
   })
@@ -137,15 +137,15 @@ describe('build pipeline — checklist', () => {
   })
 })
 
-describe('build pipeline — exams', () => {
-  it('generates toets-theorie.json with questions', () => {
-    const exam = readJson('src/data/toets-theorie.json')
-    expect(exam.questions.length).toBeGreaterThan(0)
+describe('build pipeline — assessments', () => {
+  it('generates meetmoment-theorie.json with questions', () => {
+    const assessment = readJson('src/data/meetmoment-theorie.json')
+    expect(assessment.questions.length).toBeGreaterThan(0)
   })
 
-  it('generates toets-praktijk.json with questions', () => {
-    const exam = readJson('src/data/toets-praktijk.json')
-    expect(exam.questions.length).toBeGreaterThan(0)
+  it('generates meetmoment-praktijk.json with questions', () => {
+    const assessment = readJson('src/data/meetmoment-praktijk.json')
+    expect(assessment.questions.length).toBeGreaterThan(0)
   })
 })
 
@@ -190,15 +190,15 @@ describe('build pipeline — HTML pages', () => {
   it('generates per-week page stubs for both weeks', () => {
     expect(existsSync(join(tmpDir, 'pages/week1-theorie.html'))).toBe(true)
     expect(existsSync(join(tmpDir, 'pages/week1-oefeningen.html'))).toBe(true)
-    expect(existsSync(join(tmpDir, 'pages/week1-toets.html'))).toBe(true)
+    expect(existsSync(join(tmpDir, 'pages/week1-meetmoment.html'))).toBe(true)
     expect(existsSync(join(tmpDir, 'pages/week1-inleveropdracht.html'))).toBe(true)
     expect(existsSync(join(tmpDir, 'pages/week2-theorie.html'))).toBe(true)
   })
 
-  it('generates static pages (checklist, exam pages)', () => {
+  it('generates static pages (checklist, assessment pages)', () => {
     expect(existsSync(join(tmpDir, 'pages/checklist.html'))).toBe(true)
-    expect(existsSync(join(tmpDir, 'pages/toets-theorie.html'))).toBe(true)
-    expect(existsSync(join(tmpDir, 'pages/toets-praktijk.html'))).toBe(true)
+    expect(existsSync(join(tmpDir, 'pages/meetmoment-theorie.html'))).toBe(true)
+    expect(existsSync(join(tmpDir, 'pages/meetmoment-praktijk.html'))).toBe(true)
   })
 
   it('generates index.html in the project root', () => {

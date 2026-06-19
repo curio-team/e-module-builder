@@ -45,9 +45,9 @@ content/
       2.md                ← exercise 2
       …
   week2/ … weekN/         ← same structure
-  exams/
-    theory-exam.md        ← final theory exam (optional)
-    practical-exam.md     ← final practical exam (optional)
+  assessments/
+    theory-assessment.md        ← final theory assessment (optional)
+    practical-assessment.md     ← final practical assessment (optional)
 ```
 
 ## Content file formats
@@ -199,9 +199,9 @@ url: https://cssgridgarden.com
 
 ---
 
-### `content/exams/theory-exam.md` and `practical-exam.md`
+### `content/assessments/theory-assessment.md` and `practical-assessment.md`
 
-Same structure as `quiz.md`. Practical exam questions may include a `preview` field with `css` and `html` for a live CSS preview alongside the question.
+Same structure as `quiz.md`. Practical assessment questions may include a `preview` field with `css` and `html` for a live CSS preview alongside the question.
 
 ---
 
@@ -247,20 +247,20 @@ The build pipeline runs before Vite and produces:
 | ------ | ------ |
 | `src/data/manifest.json` | `module.md` + all week frontmatter |
 | `src/data/theory-weekN.json` | `weekN/theory.md` |
-| `src/data/tussentoets-weekN.json` | `weekN/quiz.md` |
+| `src/data/meetmoment-quiz-weekN.json` | `weekN/quiz.md` |
 | `src/data/exercises/weekN.json` | `weekN/exercises/` |
 | `src/data/inleveropdracht-weekN.json` | `weekN/assignment.md` |
 | `src/data/checklist.json` | `leeruitkomsten` from all weeks |
-| `src/data/toets-theorie.json` | `exams/theory-exam.md` |
-| `src/data/toets-praktijk.json` | `exams/practical-exam.md` |
+| `src/data/meetmoment-theorie.json` | `assessments/theory-assessment.md` |
+| `src/data/meetmoment-praktijk.json` | `assessments/practical-assessment.md` |
 | `pages/weekN-theorie.html` | generated from template |
 | `pages/weekN-oefeningen.html` | generated from template |
-| `pages/weekN-toets.html` | generated from template |
+| `pages/weekN-meetmoment.html` | generated from template |
 | `pages/weekN-oefening.html` | generated from template |
 | `pages/weekN-inleveropdracht.html` | generated from template |
 | `pages/checklist.html` | generated from template |
-| `pages/toets-theorie.html` | generated from template |
-| `pages/toets-praktijk.html` | generated from template |
+| `pages/meetmoment-theorie.html` | generated from template |
+| `pages/meetmoment-praktijk.html` | generated from template |
 | `index.html` | generated from template |
 
 In `dev` mode, changes to `content/` trigger an automatic rebuild and browser reload.

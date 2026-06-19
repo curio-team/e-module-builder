@@ -1,6 +1,6 @@
 ---
 week: 2
-title: Tussentoets Week 2 — Template Areas
+title: Meetmoment Week 2 — Template Areas
 passScore: 70
 questions:
   - id: w2q1

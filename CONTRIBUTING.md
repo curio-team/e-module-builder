@@ -22,6 +22,7 @@ npm run dev
 This starts a Vite dev server at `http://localhost:5173` using the testbed module (`testbed/content/`). The server shows a working 2-week CSS Grid module immediately — no separate content project needed.
 
 **How it works:**
+
 - `scripts/dev-testbed.mjs` spawns `bin/cli.js dev` with its working directory set to `testbed/`, so `process.cwd()` resolves to the testbed.
 - The CLI copies `src/js/`, `src/css/`, and `src/partials/` into `testbed/src/`, then runs the content pipeline (`build.mjs`), then starts Vite.
 - Any change to a file under `testbed/content/` triggers a full content-pipeline rebuild and a browser reload automatically (80 ms debounce).
@@ -47,14 +48,15 @@ testbed/content/
       …
   week2/
     …
-  exams/
-    theory-exam.md     ← final theory exam (questions in YAML)
-    practical-exam.md  ← final practical exam
+  assessments/
+    theory-assessment.md     ← final theory assessment (questions in YAML)
+    practical-assessment.md  ← final practical assessment
 ```
 
 **To add a week:** create `testbed/content/weekN/` with the same structure, then increment `weeks:` in `module.md`.
 
 **Exercise types** are controlled by the `type:` field in each exercise file:
+
 | Type | What it renders |
 |------|----------------|
 | `css-playground` | Monaco CSS editor with live preview and automated checks |
@@ -71,6 +73,7 @@ npm run test:watch # watch mode for development
 ```
 
 Test output:
+
 - **Unit tests** (`tests/validators.test.js`, `tests/html-includes.test.js`) — fast, no filesystem side-effects.
 - **Integration test** (`tests/build-pipeline.test.js`) — copies testbed content to a temp directory, runs `build.mjs`, asserts the generated JSON and HTML files. Takes a few seconds; skipping it is not recommended before committing.
 
