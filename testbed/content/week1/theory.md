@@ -57,7 +57,7 @@ Items staan in **rijen én kolommen** tegelijk. Ideaal voor pagina-layouts.
 
 ![Grid diagram](grid-diagram.svg)
 
-![Extern voorbeeld](https://example.com/external.png)
+![Extern voorbeeld](https://placehold.co/600x400)
 
 <x-nav label="Klaar met de theorie?">
 [Oefeningen](/pages/week1-oefeningen.html)

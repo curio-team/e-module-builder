@@ -171,7 +171,7 @@ describe('build pipeline — static assets', () => {
 
   it('does not rewrite external image URLs in theory HTML', () => {
     const theory = readJson('src/data/theory-week1.json')
-    expect(theory.html).toContain('src="https://example.com/external.png"')
+    expect(theory.html).toContain('src="https://placehold.co/600x400"')
   })
 
   it('rewrites relative image src in assignment HTML to ../weekN/ prefix', () => {
