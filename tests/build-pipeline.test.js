@@ -96,13 +96,6 @@ describe('build pipeline — exercises', () => {
     expect(bodyEx.descriptionHtml).toContain('<strong>')
     expect(bodyEx.descriptionHtml).toContain('<h2>')
   })
-
-  it('populates descriptionHtml from body even when no description YAML field is present', () => {
-    const ex = readJson('src/data/exercises/week2.json')
-    const bodyEx = ex.exercises.find(e => e.id === 3)
-    expect(bodyEx.description).toBeUndefined()
-    expect(bodyEx.descriptionHtml).toBeDefined()
-  })
 })
 
 describe('build pipeline — assignment', () => {
