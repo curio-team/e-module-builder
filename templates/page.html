@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html lang="nl">
-  <head>
-    <!-- include:head -->
-    <title>Paginatitel — CSS Grid E-module</title>
-  </head>
-  <body class="font-sans antialiased">
-    <div data-page-content>
-      <main class="px-4 py-10 md:px-10">
-        <div class="mx-auto max-w-3xl">
-          <!-- Pagina-inhoud -->
-        </div>
-      </main>
-    </div>
 
-    <script type="module">
-      import { initPage } from '/src/js/nav.js'
+<head>
+  <!-- include:head -->
+  <title>Paginatitel — CSS Grid E-module</title>
+</head>
 
-      initPage({
-        breadcrumbs: [
-          { label: 'Home', href: '/index.html' },
-          { label: 'Titel' },
-        ],
-      })
+<body class="font-sans antialiased">
+  <div data-page-content>
+    <main class="px-4 py-10 md:px-10">
+      <div class="mx-auto max-w-3xl">
+        <!-- Pagina-inhoud -->
+      </div>
+    </main>
+  </div>
 
-      // Optioneel: pagina-specifieke JS importeren
-    </script>
-  </body>
+  <script type="module">
+    import { initPage } from '/src/js/nav.js'
+
+    initPage({
+      breadcrumbs: [
+        { label: 'Home', href: '/index.html' },
+        { label: 'Titel' },
+      ],
+    })
+
+    // Optioneel: pagina-specifieke JS importeren
+  </script>
+</body>
+
 </html>

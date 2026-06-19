@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html lang="nl">
-  <head>
-    <!-- include:head -->
-    <title>{{pageTitle}}</title>
-  </head>
-  <body class="font-sans antialiased">
-    <div data-page-content>
-      <main class="px-4 py-10 md:px-10">
-        <div class="mx-auto max-w-3xl">
-          <div data-theory data-week="{{week}}"></div>
-        </div>
-      </main>
-    </div>
-    <script type="module">
-      import { initPage } from '/src/js/nav.js'
-      import { initTheory } from '/src/js/theory.js'
-      const embedded = new URLSearchParams(location.search).has('embedded')
-      if (!embedded) {
-        initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: 'Week {{week}}', href: '/pages/week{{week}}-theorie.html' }, { label: 'Theorie' }] })
-      } else {
-        document.body.setAttribute('data-embedded', '')
-      }
-      initTheory({{week}})
-    </script>
-  </body>
+
+<head>
+  <!-- include:head -->
+  <title>{{pageTitle}}</title>
+</head>
+
+<body class="font-sans antialiased">
+  <div data-page-content>
+    <main class="px-4 py-10 md:px-10">
+      <div class="mx-auto max-w-3xl">
+        <div data-theory
+             data-week="{{week}}"></div>
+      </div>
+    </main>
+  </div>
+  <script type="module">
+    import { initPage } from '/src/js/nav.js'
+    import { initTheory } from '/src/js/theory.js'
+    const embedded = new URLSearchParams(location.search).has('embedded')
+    if (!embedded) {
+      initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: 'Week {{week}}', href: '/pages/week{{week}}-theorie.html' }, { label: 'Theorie' }] })
+    } else {
+      document.body.setAttribute('data-embedded', '')
+    }
+    initTheory({{ week }})
+  </script>
+</body>
+
 </html>
