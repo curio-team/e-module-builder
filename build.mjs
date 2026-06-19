@@ -242,7 +242,7 @@ function buildPracticalAssessmentData(filePath, fallbackTitle, fallbackNavLabel)
       title: md.data.title ?? fallbackTitle,
       navLabel: md.data.navLabel ?? fallbackNavLabel,
       description: marked.parseInline(md.data.description ?? ''),
-      html: marked.parse(md.content ?? ''),
+      html: rewriteAssetPaths(marked.parse(md.content ?? ''), 'assessments'),
     }
   }
   return { title: fallbackTitle, navLabel: fallbackNavLabel, description: '', html: '' }
