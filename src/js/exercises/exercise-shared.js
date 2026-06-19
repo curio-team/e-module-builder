@@ -12,7 +12,7 @@ export function renderExerciseMeta(exercise) {
     diffEl.textContent = `Oefening ${String(exercise.id).padStart(2, '0')} · ${label}`
   }
   if (titleEl) titleEl.textContent = exercise.title
-  if (descEl) descEl.textContent = exercise.description
+  if (descEl) descEl.innerHTML = exercise.descriptionInlineHtml ?? ''
 }
 
 export function markExerciseSolved(week, id) {

@@ -20,7 +20,7 @@ export function initChecklist() {
                 class="mt-0.5 h-4 w-4 border-zinc-300 text-zinc-900 focus:ring-zinc-900"
                 ${checked ? 'checked' : ''}
               />
-              <span class="text-sm leading-relaxed ${checked ? 'text-zinc-400 line-through' : 'text-zinc-700'}">${item.text}</span>
+              <span class="text-sm leading-relaxed ${checked ? 'text-zinc-400 line-through' : 'text-zinc-700'}">${item.textHtml ?? item.text}</span>
             </label>
           `
         })

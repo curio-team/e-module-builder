@@ -31,7 +31,7 @@ export function initHome() {
 
   if (titleEl) titleEl.textContent = mod.name
 
-  if (descEl) descEl.textContent = mod.description
+  if (descEl) descEl.innerHTML = mod.description
 
 
 

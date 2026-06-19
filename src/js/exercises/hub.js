@@ -40,7 +40,7 @@ export function initExerciseHub(weekData, weekNum) {
               <h3 class="font-medium text-zinc-900">${ex.title}</h3>
               ${done ? '<span class="badge-done">Voltooid</span>' : ''}
             </div>
-            <p class="mt-1.5 text-sm leading-relaxed text-zinc-500">${ex.description ?? stripHtml(ex.descriptionHtml ?? '')}</p>
+            <p class="mt-1.5 text-sm leading-relaxed text-zinc-500">${ex.descriptionInlineHtml ?? ex.description ?? ''}</p>
             ${modeBadge}
           </div>
         </a>

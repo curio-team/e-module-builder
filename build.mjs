@@ -161,6 +161,12 @@ for (const weekDir of activeWeeks) {
       const src = content?.trim() ? content : (ex.description ?? '')
       ex.descriptionHtml = rewriteAssetPaths(marked.parse(src), `week${weekNum}/exercises`)
     }
+    ex.descriptionInlineHtml = marked.parseInline(ex.description ?? '')
+    if (ex.type === 'external') {
+      if (ex.task)     ex.taskHtml     = marked.parseInline(ex.task)
+      if (ex.hint)     ex.hintHtml     = marked.parse(ex.hint)
+      if (ex.solution) ex.solutionHtml = marked.parse(ex.solution)
+    }
     return ex
   })
   const exOut = {
@@ -191,7 +197,7 @@ for (const weekDir of activeWeeks) {
     dirName: weekDir,
     prefix: sectionPrefix,
     title: theoryMd.data.title,
-    summary: theoryMd.data.summary ?? '',
+    summary: marked.parseInline(theoryMd.data.summary ?? ''),
     goal: theoryMd.data.goal,
     leeruitkomsten: theoryMd.data.leeruitkomsten ?? [],
     color: theoryMd.data.accent,
@@ -215,12 +221,12 @@ function buildAssessmentData(filePath, fallbackTitle, fallbackNavLabel, fallback
     return {
       title: md.data.title ?? fallbackTitle,
       navLabel: md.data.navLabel ?? fallbackNavLabel,
-      description: md.data.description ?? fallbackDescription,
+      description: marked.parseInline(md.data.description ?? fallbackDescription),
       passScore: md.data.passScore ?? 70,
       questions: md.data.questions ?? [],
     }
   }
-  return { title: fallbackTitle, navLabel: fallbackNavLabel, description: fallbackDescription, passScore: 70, questions: [] }
+  return { title: fallbackTitle, navLabel: fallbackNavLabel, description: marked.parseInline(fallbackDescription), passScore: 70, questions: [] }
 }
 
 function buildPracticalAssessmentData(filePath, fallbackTitle, fallbackNavLabel) {
@@ -229,7 +235,7 @@ function buildPracticalAssessmentData(filePath, fallbackTitle, fallbackNavLabel)
     return {
       title: md.data.title ?? fallbackTitle,
       navLabel: md.data.navLabel ?? fallbackNavLabel,
-      description: md.data.description ?? '',
+      description: marked.parseInline(md.data.description ?? ''),
       html: marked.parse(md.content ?? ''),
     }
   }
@@ -257,7 +263,7 @@ const manifest = {
     youtube: mod.youtube ?? null,
     weeks: weekCount,
     language: mod.language ?? 'nl',
-    description: mod.description ?? '',
+    description: marked.parseInline(mod.description ?? ''),
     logoAlt: mod.logoAlt ?? mod.name,
     exerciseMode: mod.exerciseMode ?? 'external',
   },
@@ -315,6 +321,7 @@ const checklistGroups = weeksData.map(wk => ({
   items: (wk.leeruitkomsten ?? []).map((text, i) => ({
     id: `${wk.dirName}-item-${i}`,
     text,
+    textHtml: marked.parseInline(text),
   })),
 }))
 
@@ -323,7 +330,7 @@ if (mod.algemeen?.length) {
     id: 'algemeen',
     title: 'Algemeen',
     color: 'slate',
-    items: mod.algemeen.map((text, i) => ({ id: `algemeen-item-${i}`, text })),
+    items: mod.algemeen.map((text, i) => ({ id: `algemeen-item-${i}`, text, textHtml: marked.parseInline(text) })),
   })
 }
 

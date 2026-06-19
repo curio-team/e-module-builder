@@ -26,7 +26,7 @@
     const titleEl = document.querySelector('[data-praktijk-title]')
     if (titleEl) titleEl.textContent = data.title
     const descEl = document.querySelector('[data-praktijk-description]')
-    if (descEl) descEl.textContent = data.description
+    if (descEl) descEl.innerHTML = data.description
     const contentEl = document.querySelector('[data-praktijk-content]')
     if (contentEl) contentEl.innerHTML = data.html
   </script>

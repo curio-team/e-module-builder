@@ -38,7 +38,7 @@ export function initExternalExercise(exercise, weekNum, { onSolved } = {}) {
   const deliverablesEl = document.querySelector('[data-external-deliverables]')
   const feedback = document.querySelector('[data-feedback]')
 
-  if (taskEl) taskEl.innerHTML = exercise.task || exercise.description || ''
+  if (taskEl) taskEl.innerHTML = exercise.taskHtml || exercise.descriptionInlineHtml || ''
   if (stepsEl) stepsEl.innerHTML = renderSteps(exercise.steps)
   if (envEl) envEl.textContent = exercise.environment || 'Je eigen omgeving (editor, server of tool)'
   if (deliverablesEl) {
@@ -48,15 +48,14 @@ export function initExternalExercise(exercise, weekNum, { onSolved } = {}) {
   document.querySelector('[data-hint]')?.addEventListener('click', () => {
     showFeedback(
       feedback,
-      `<p class="text-zinc-600">${(exercise.hint || 'Werk de stappen rustig door in je eigen omgeving.').replace(/\n/g, '<br>')}</p>`
+      exercise.hintHtml || '<p class="text-zinc-600">Werk de stappen rustig door in je eigen omgeving.</p>'
     )
   })
 
   document.querySelector('[data-solution]')?.addEventListener('click', () => {
-    const solution = exercise.solution || 'Vergelijk je werk met de theorie en vraag feedback aan je docent.'
     showFeedback(
       feedback,
-      `<p class="font-medium text-zinc-900">Voorbeelduitwerking</p><p class="mt-2 text-sm text-zinc-600">${solution.replace(/\n/g, '<br>')}</p>`
+      `<p class="font-medium text-zinc-900">Voorbeelduitwerking</p>${exercise.solutionHtml || '<p class="mt-2 text-sm text-zinc-600">Vergelijk je werk met de theorie en vraag feedback aan je docent.</p>'}`
     )
   })
 
