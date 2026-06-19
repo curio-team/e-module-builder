@@ -48,6 +48,24 @@ Zonder subgrid krijgt elk genest grid zijn eigen coördinatenstelsel, wat uitlij
 }
 ```
 
+## Test veel paragrafen 'Waarom een database?'
+
+Een database is een plek waar we gegevens zo kunnen opslaan dat we ze later gemakkelijk en snel terug kunnen vinden. Een applicatie moet gegevens namelijk ook nog kennen nadat de gebruiker de pagina heeft gesloten. Denk bijvoorbeeld aan accounts, bestellingen, berichten of de voorraad van een webshop. Als deze gegevens alleen tijdelijk in een PHP-variabele zouden staan, waren ze na iedere page refresh weer verdwenen.
+
+Je zou gegevens ook in een normaal tekstbestand kunnen bewaren. Dat lijkt in het begin eenvoudiger, maar wordt al snel onhandig. Een database heeft ten opzichte van zo'n bestand een aantal belangrijke voordelen: de gegevens zijn efficiënt te doorzoeken met complexe query's, applicaties kunnen de gegevens snel gebruiken en meerdere gebruikers of applicaties kunnen dezelfde gegevens benaderen.
+
+Daar staat tegenover dat een database wat meer voorbereiding vraagt. Je moet vooraf nadenken over de vorm van de gegevens. Je kunt niet zomaar alles door elkaar opslaan zoals in een los tekstbestand. Juist die vaste structuur maakt de database later betrouwbaar en goed doorzoekbaar. In deze module gebruiken we **MySQL**, een relationele databaseserver.
+
+In een hiërarchie staan sommige onderdelen boven andere onderdelen. Bij een database is die volgorde belangrijk, omdat woorden als _server_, _database_ en _tabel_ in het dagelijks taalgebruik soms door elkaar worden gehaald. De hiërarchie is:
+
+1. de MySQL-**server** draait op je computer;
+2. de server bevat één of meer **databases**;
+3. een database bevat **tabellen**;
+4. een tabel heeft **kolommen** en **rijen**;
+5. één **cel** is de waarde van één kolom in één rij.
+
+De MySQL-server is dus het programma dat verbindingen ontvangt en alle databases en gebruikers bijhoudt. Het is gebruikelijk om voor iedere applicatie een eigen database te gebruiken. Eén applicatie heeft vervolgens vaak meerdere tabellen nodig. Een webshop kan bijvoorbeeld tabellen hebben voor `producten`, `klanten` en `bestellingen`.
+
 <x-nav label="Klaar met de theorie?">
 [Oefeningen](/pages/week3-oefeningen.html)
 [Inleveropdracht](/pages/week3-inleveropdracht.html)

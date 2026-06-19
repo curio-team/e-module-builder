@@ -193,7 +193,7 @@
   }
 
   main p {
-    @apply leading-relaxed;
+    @apply leading-relaxed mt-4 first:mt-0;
   }
 
   main ul {
@@ -217,7 +217,7 @@
   }
 
   main pre {
-    @apply overflow-x-auto bg-zinc-950 p-5 font-mono text-[13px] leading-relaxed text-zinc-300;
+    @apply overflow-x-auto bg-zinc-950 mt-2 p-5 font-mono text-[13px] leading-relaxed text-zinc-300;
   }
 
   main pre code {
