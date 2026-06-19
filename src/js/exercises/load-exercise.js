@@ -1,4 +1,4 @@
-import { renderExerciseMeta, markExerciseSolved } from './exercise-shared.js'
+import { renderExerciseMeta, markExerciseSolved, markExerciseUnsolved, getSolvedExercises } from './exercise-shared.js'
 import { sitePath } from '../site-path.js'
 import { initExternalExercise } from './external-exercise.js'
 import { initTheoryPanel } from './theory-panel.js'
@@ -69,6 +69,7 @@ export async function initExercisePage(weekNum) {
 
     renderExerciseMeta(exercise)
     renderNavButtons(weekNum, id, weekData.exercises.length)
+    initCompletionToggle(weekNum, id)
     return
   }
 
@@ -85,6 +86,7 @@ export async function initExercisePage(weekNum) {
     })
 
     renderNavButtons(weekNum, id, weekData.exercises.length)
+    initCompletionToggle(weekNum, id)
     return
   }
 
@@ -146,6 +148,27 @@ export async function initExercisePage(weekNum) {
   }
 
   renderNavButtons(weekNum, id, weekData.exercises.length)
+  initCompletionToggle(weekNum, id)
+}
+
+function initCompletionToggle(weekNum, id) {
+  const btn = document.querySelector('[data-mark-complete]')
+  if (!btn) return
+
+  let done = getSolvedExercises(weekNum).includes(id)
+
+  function update() {
+    btn.textContent = done ? 'Voltooid ✓' : 'Markeer als voltooid'
+    btn.classList.toggle('btn-primary', done)
+    btn.classList.toggle('btn-secondary', !done)
+  }
+
+  update()
+  btn.addEventListener('click', () => {
+    done = !done
+    done ? markExerciseSolved(weekNum, id) : markExerciseUnsolved(weekNum, id)
+    update()
+  })
 }
 
 function renderNavButtons(week, currentId, total) {

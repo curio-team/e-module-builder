@@ -50,7 +50,7 @@ export function initExerciseHub(weekData, weekNum) {
 
   container.innerHTML = `<div class="card divide-y divide-zinc-100 p-0">${items}</div>`
 
-  const progressEl = document.querySelector('[data-hub-progress]')
+  const progressEl = document.querySelector('[data-hub-progress-text]')
   const progressBar = document.querySelector('[data-hub-progress-bar]')
   if (progressEl) {
     const total = weekData.exercises.length

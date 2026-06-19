@@ -1,6 +1,7 @@
 import { mountLayout } from './layout.js'
 import manifest from '../data/manifest.json'
 import { sitePath } from './site-path.js'
+import { prefixedKey } from './storage.js'
 
 function buildNavItems() {
   const items = [{ href: manifest.nav.home.href, label: manifest.nav.home.label }]
@@ -85,7 +86,7 @@ function renderNavGroup(group) {
 }
 
 function initCollapsible(navEl, defaultExpandedKeys) {
-  const STORAGE_KEY = 'nav-collapsed-groups'
+  const STORAGE_KEY = prefixedKey('nav-collapsed-groups')
 
   function getCollapsed() {
     try {

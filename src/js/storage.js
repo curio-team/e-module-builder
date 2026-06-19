@@ -1,4 +1,13 @@
-const PREFIX = 'grid-module:'
+function computePrefix() {
+  const first = window.location.pathname.split('/').filter(Boolean)[0] ?? ''
+  return first && first !== 'pages' ? `${first}:` : 'e-module:'
+}
+
+export const PREFIX = computePrefix()
+
+export function prefixedKey(key) {
+  return PREFIX + key
+}
 
 export function getItem(key, fallback = null) {
   try {

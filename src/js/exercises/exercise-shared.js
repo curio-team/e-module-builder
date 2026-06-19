@@ -1,3 +1,5 @@
+import { getItem, setItem } from '../storage.js'
+
 const DIFFICULTY = ['', 'Beginner', 'Beginner', 'Gemiddeld', 'Gemiddeld', 'Gevorderd', 'Gevorderd', 'Expert', 'Expert']
 
 export function renderExerciseMeta(exercise) {
@@ -15,23 +17,16 @@ export function renderExerciseMeta(exercise) {
   if (descEl) descEl.innerHTML = exercise.descriptionInlineHtml ?? ''
 }
 
-export function markExerciseSolved(week, id) {
-  const key = `grid-module:exercises:week${week}`
-  try {
-    const raw = localStorage.getItem(key)
-    const solved = raw ? JSON.parse(raw) : []
-    if (!solved.includes(id)) {
-      solved.push(id)
-      localStorage.setItem(key, JSON.stringify(solved))
-    }
-  } catch { /* ignore */ }
+export function getSolvedExercises(week) {
+  return getItem(`exercises:week${week}`, [])
 }
 
-export function getSolvedExercises(week) {
-  try {
-    const raw = localStorage.getItem(`grid-module:exercises:week${week}`)
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
+export function markExerciseSolved(week, id) {
+  const solved = getSolvedExercises(week)
+  if (!solved.includes(id)) setItem(`exercises:week${week}`, [...solved, id])
+}
+
+export function markExerciseUnsolved(week, id) {
+  const solved = getSolvedExercises(week)
+  setItem(`exercises:week${week}`, solved.filter((s) => s !== id))
 }
