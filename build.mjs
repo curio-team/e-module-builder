@@ -140,14 +140,18 @@ for (const weekDir of activeWeeks) {
   }
   writeJson(SRC_DATA, `theory-week${weekNum}.json`, theoryOut)
 
-  // quiz.md → src/data/meetmoment-quiz-weekN.json
-  const quizMd = readMd(path.join(dir, 'quiz.md'))
-  const quizOut = {
-    title: quizMd.data.title,
-    passScore: quizMd.data.passScore ?? 70,
-    questions: quizMd.data.questions ?? [],
+  // quiz.md → src/data/meetmoment-quiz-weekN.json (optional)
+  const quizPath = path.join(dir, 'quiz.md')
+  const hasQuiz = fs.existsSync(quizPath)
+  if (hasQuiz) {
+    const quizMd = readMd(quizPath)
+    const quizOut = {
+      title: quizMd.data.title,
+      passScore: quizMd.data.passScore ?? 70,
+      questions: quizMd.data.questions ?? [],
+    }
+    writeJson(SRC_DATA, `meetmoment-quiz-week${weekNum}.json`, quizOut)
   }
-  writeJson(SRC_DATA, `meetmoment-quiz-week${weekNum}.json`, quizOut)
 
   // exercises/ subfolder → src/data/exercises/weekN.json
   const exDir = path.join(dir, 'exercises')
@@ -197,6 +201,7 @@ for (const weekDir of activeWeeks) {
     week: weekNum,
     dirName: weekDir,
     prefix: sectionPrefix,
+    hasQuiz,
     title: theoryMd.data.title,
     summary: marked.parseInline(theoryMd.data.summary ?? ''),
     goal: theoryMd.data.goal,
@@ -205,7 +210,7 @@ for (const weekDir of activeWeeks) {
     pages: [
       { key: 'theorie', href: `/pages/${weekDir}-theorie.html`, label: 'Theorie' },
       { key: 'oefeningen', href: `/pages/${weekDir}-oefeningen.html`, label: 'Oefeningen' },
-      { key: 'meetmoment', href: `/pages/${weekDir}-meetmoment.html`, label: 'Meetmoment' },
+      ...(hasQuiz ? [{ key: 'meetmoment', href: `/pages/${weekDir}-meetmoment.html`, label: 'Meetmoment' }] : []),
       { key: 'oefening', href: `/pages/${weekDir}-oefening.html`, label: 'Oefening' },
       { key: 'inleveropdracht', href: `/pages/${weekDir}-inleveropdracht.html`, label: 'Inleveropdracht' },
     ],
@@ -277,7 +282,7 @@ const manifest = {
       children: [
         { href: `/pages/${wk.dirName}-theorie.html`, label: 'Theorie' },
         { href: `/pages/${wk.dirName}-oefeningen.html`, label: 'Oefeningen' },
-        { href: `/pages/${wk.dirName}-meetmoment.html`, label: 'Quiz' },
+        ...(wk.hasQuiz ? [{ href: `/pages/${wk.dirName}-meetmoment.html`, label: 'Quiz' }] : []),
         { href: `/pages/${wk.dirName}-inleveropdracht.html`, label: 'Inleveropdracht' },
       ],
     })),
@@ -300,7 +305,7 @@ const manifest = {
     week: weeksData.flatMap(wk => [
       `pages/${wk.dirName}-theorie.html`,
       `pages/${wk.dirName}-oefeningen.html`,
-      `pages/${wk.dirName}-meetmoment.html`,
+      ...(wk.hasQuiz ? [`pages/${wk.dirName}-meetmoment.html`] : []),
       `pages/${wk.dirName}-oefening.html`,
       `pages/${wk.dirName}-inleveropdracht.html`,
     ]),
@@ -377,6 +382,7 @@ fs.mkdirSync(PAGES, { recursive: true })
 for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
   const tpl = fs.readFileSync(path.join(TEMPLATES, tplFile), 'utf8')
   for (const wk of weeksData) {
+    if (suffix === 'meetmoment' && !wk.hasQuiz) continue
     const out = applyTemplate(tpl, {
       week: String(wk.week),
       weekPadded: String(wk.week).padStart(2, '0'),
