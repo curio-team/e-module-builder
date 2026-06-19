@@ -33,11 +33,11 @@ function isActive(href) {
 function renderNavLink(item, nested = false) {
   const active = isActive(item.href)
   const base = nested
-    ? 'block px-3 py-2 text-[13px] transition'
-    : 'block px-3 py-2.5 text-[13px] font-medium transition'
+    ? 'block pl-6 pr-3 py-2 text-[13px] transition rounded'
+    : 'block px-3 py-2.5 text-[13px] font-medium transition rounded'
   const classes = active
-    ? `${base} text-white`
-    : `${base} text-zinc-300 hover:text-white`
+    ? `${base} text-white bg-white/10`
+    : `${base} text-zinc-300 hover:text-white hover:bg-white/5`
 
   const external = item.external ? ' target="_blank" rel="noopener noreferrer"' : ''
   return `<a href="${sitePath(item.href)}" class="${classes}"${external}>${item.label}</a>`
