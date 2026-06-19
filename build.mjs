@@ -252,11 +252,14 @@ const manifest = {
         { href: `/pages/week${wk.week}-inleveropdracht.html`, label: 'Inleveropdracht' },
       ],
     })),
-    assessmentPages: [
-      { href: '/pages/checklist.html', label: 'Checklist' },
-      { href: '/pages/meetmoment-theorie.html', label: theoryAssessmentData.navLabel },
-      { href: '/pages/meetmoment-praktijk.html', label: practicalAssessmentData.navLabel },
-    ],
+    assessmentSection: {
+      label: mod.assessmentSectionLabel ?? 'Afronding',
+      children: [
+        { href: '/pages/checklist.html', label: 'Checklist' },
+        { href: '/pages/meetmoment-theorie.html', label: theoryAssessmentData.navLabel },
+        { href: '/pages/meetmoment-praktijk.html', label: practicalAssessmentData.navLabel },
+      ],
+    },
   },
   pages: {
     static: [

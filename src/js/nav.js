@@ -13,9 +13,7 @@ function buildNavItems() {
     })
   }
 
-  for (const page of manifest.nav.assessmentPages) {
-    items.push(page)
-  }
+  items.push(manifest.nav.assessmentSection)
 
   return items
 }
