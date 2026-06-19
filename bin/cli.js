@@ -57,6 +57,8 @@ async function main() {
   if (command === 'build') {
     const { build } = await import('vite')
     await build(cfg)
+    const { generatePdf } = await import(pathToFileURL(path.join(PKG_DIR, 'build-pdf.mjs')).href)
+    await generatePdf({ projectDir: PROJECT_DIR })
   } else {
     const { createServer } = await import('vite')
     const server = await createServer(cfg)
