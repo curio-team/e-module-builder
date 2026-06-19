@@ -162,18 +162,39 @@ mode: interactive   # optional, overrides module-level exerciseMode for this set
 
 ### `content/weekN/exercises/N.md`
 
-Each file is a single exercise defined entirely in YAML frontmatter.
+Each file is a single exercise. The YAML frontmatter holds metadata; for text exercises the markdown **body** (content below the frontmatter) is rendered as the exercise content.
 
-**Text/instructions exercise:**
+**Text exercise with markdown body (recommended for rich content):**
+
+```markdown
+---
+id: 1
+difficulty: 1
+title: Columns
+type: text
+---
+
+Create a grid with **two equal columns** using `grid-template-columns`.
+
+## Tips
+
+- Use `repeat(2, 1fr)` for equal columns.
+- `fr` stands for _fractional unit_.
+```
+
+The body can contain any markdown: headings, bold/italic, lists, images, code blocks, and [custom elements](#custom-elements-in-markdown). No CSS playground or external link is needed — teachers can write the full exercise content as plain markdown.
+
+**Shorthand (inline description in YAML, for very short exercises):**
 
 ```yaml
 ---
 type: text
 title: Columns
-description: |
-  Create a grid with two equal columns.
+description: Create a grid with two equal columns.
 ---
 ```
+
+When both a body and a `description` field are present the body takes precedence.
 
 **Interactive (Monaco editor) exercise:**
 

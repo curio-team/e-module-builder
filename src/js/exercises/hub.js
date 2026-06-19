@@ -3,6 +3,10 @@ import { sitePath } from '../site-path.js'
 
 const DIFFICULTY = ['', 'Beginner', 'Beginner', 'Gemiddeld', 'Gemiddeld', 'Gevorderd', 'Gevorderd', 'Expert', 'Expert']
 
+function stripHtml(html) {
+  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+}
+
 export function initExerciseHub(weekData, weekNum) {
   const container = document.querySelector('[data-exercise-list]')
   if (!container) return
@@ -36,7 +40,7 @@ export function initExerciseHub(weekData, weekNum) {
               <h3 class="font-medium text-zinc-900">${ex.title}</h3>
               ${done ? '<span class="badge-done">Voltooid</span>' : ''}
             </div>
-            <p class="mt-1.5 text-sm leading-relaxed text-zinc-500">${ex.description}</p>
+            <p class="mt-1.5 text-sm leading-relaxed text-zinc-500">${ex.description ?? stripHtml(ex.descriptionHtml ?? '')}</p>
             ${modeBadge}
           </div>
         </a>

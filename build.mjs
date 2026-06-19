@@ -156,9 +156,10 @@ for (const weekDir of activeWeeks) {
     .filter(f => f.endsWith('.md') && f !== '_meta.md')
     .sort((a, b) => parseInt(a) - parseInt(b))
   const exercises = exerciseFiles.map(f => {
-    const ex = readMd(path.join(exDir, f)).data
+    const { data: ex, content } = readMd(path.join(exDir, f))
     if (!ex.type || ex.type === 'text') {
-      ex.descriptionHtml = rewriteAssetPaths(marked.parse(ex.description ?? ''), `week${weekNum}/exercises`)
+      const src = content?.trim() ? content : (ex.description ?? '')
+      ex.descriptionHtml = rewriteAssetPaths(marked.parse(src), `week${weekNum}/exercises`)
     }
     return ex
   })
