@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { execFileSync } from 'child_process'
-import { cpSync, existsSync, mkdtempSync, rmSync, readFileSync } from 'fs'
+import { cpSync, existsSync, mkdtempSync, rmSync, readFileSync, unlinkSync } from 'fs'
 import { join } from 'path'
 import { fileURLToPath } from 'url'
 import os from 'os'
@@ -211,5 +211,71 @@ describe('build pipeline — HTML pages', () => {
 
   it('generates index.html in the project root', () => {
     expect(existsSync(join(tmpDir, 'index.html'))).toBe(true)
+  })
+})
+
+describe('build pipeline — optional quiz.md', () => {
+  let noQuizDir
+
+  beforeAll(() => {
+    noQuizDir = mkdtempSync(join(os.tmpdir(), 'e-module-build-no-quiz-test-'))
+    cpSync(TESTBED_CONTENT, join(noQuizDir, 'content'), { recursive: true })
+    // Remove quiz.md for week2 to simulate a week without a quiz
+    unlinkSync(join(noQuizDir, 'content', 'week2', 'quiz.md'))
+    try {
+      execFileSync(process.execPath, [join(PKG_DIR, 'build.mjs')], {
+        env: { ...process.env, E_MODULE_PROJECT_DIR: noQuizDir },
+        stdio: 'pipe',
+      })
+    } catch (err) {
+      console.error('Build pipeline failed:\n', err.stderr?.toString() ?? err.message)
+      throw err
+    }
+  })
+
+  afterAll(() => {
+    if (noQuizDir) rmSync(noQuizDir, { recursive: true, force: true })
+  })
+
+  function readNoQuizJson(rel) {
+    return JSON.parse(readFileSync(join(noQuizDir, rel), 'utf8'))
+  }
+
+  it('does not generate meetmoment-quiz-week2.json when quiz.md is absent', () => {
+    expect(existsSync(join(noQuizDir, 'src/data/meetmoment-quiz-week2.json'))).toBe(false)
+  })
+
+  it('still generates meetmoment-quiz-week1.json when quiz.md exists', () => {
+    expect(existsSync(join(noQuizDir, 'src/data/meetmoment-quiz-week1.json'))).toBe(true)
+  })
+
+  it('does not generate week2-meetmoment.html when quiz.md is absent', () => {
+    expect(existsSync(join(noQuizDir, 'pages/week2-meetmoment.html'))).toBe(false)
+  })
+
+  it('still generates week1-meetmoment.html when quiz.md exists', () => {
+    expect(existsSync(join(noQuizDir, 'pages/week1-meetmoment.html'))).toBe(true)
+  })
+
+  it('excludes Quiz link from week2 nav when quiz.md is absent', () => {
+    const manifest = readNoQuizJson('src/data/manifest.json')
+    const week2Nav = manifest.nav.weeks.find(w => w.children.some(c => c.href.includes('week2')))
+    expect(week2Nav.children.some(c => c.label === 'Quiz')).toBe(false)
+  })
+
+  it('includes Quiz link in week1 nav when quiz.md exists', () => {
+    const manifest = readNoQuizJson('src/data/manifest.json')
+    const week1Nav = manifest.nav.weeks.find(w => w.children.some(c => c.href.includes('week1')))
+    expect(week1Nav.children.some(c => c.label === 'Quiz')).toBe(true)
+  })
+
+  it('excludes meetmoment page from manifest pages.week for week2', () => {
+    const manifest = readNoQuizJson('src/data/manifest.json')
+    expect(manifest.pages.week).not.toContain('pages/week2-meetmoment.html')
+  })
+
+  it('includes meetmoment page in manifest pages.week for week1', () => {
+    const manifest = readNoQuizJson('src/data/manifest.json')
+    expect(manifest.pages.week).toContain('pages/week1-meetmoment.html')
   })
 })
