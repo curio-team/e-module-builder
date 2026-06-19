@@ -414,7 +414,6 @@ function renderWeek(doc, weekDir, sectionLabel) {
 
 export async function generatePdf({ projectDir }) {
   const CONTENT = path.join(projectDir, 'content')
-  const DIST = path.join(projectDir, 'dist')
 
   if (!fs.existsSync(path.join(CONTENT, 'module.md'))) {
     console.log('  PDF skipped: no content/module.md')
@@ -428,8 +427,11 @@ export async function generatePdf({ projectDir }) {
     .sort((a, b) => Number(SECTION_RE.exec(a)[2]) - Number(SECTION_RE.exec(b)[2]))
     .slice(0, mod.weeks ?? 99)
 
+  const PUBLIC = path.join(projectDir, 'public')
+  if (!fs.existsSync(PUBLIC)) fs.mkdirSync(PUBLIC, { recursive: true })
+
   const doc = new PDFDocument({ margin: 72, size: 'A4', autoFirstPage: true })
-  const outPath = path.join(DIST, 'e-module.pdf')
+  const outPath = path.join(PUBLIC, 'e-module.pdf')
   const writeStream = fs.createWriteStream(outPath)
   doc.pipe(writeStream)
 
@@ -448,5 +450,5 @@ export async function generatePdf({ projectDir }) {
     writeStream.on('error', reject)
   })
 
-  console.log('  PDF → dist/e-module.pdf')
+  console.log('  PDF → public/e-module.pdf')
 }

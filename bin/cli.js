@@ -51,14 +51,15 @@ async function main() {
   copyAssets()
   runContentPipeline()
 
+  const { generatePdf } = await import(pathToFileURL(path.join(PKG_DIR, 'build-pdf.mjs')).href)
+  await generatePdf({ projectDir: PROJECT_DIR })
+
   const { createConfig } = await import(pathToFileURL(path.join(PKG_DIR, 'vite.config.js')).href)
   const cfg = createConfig({ projectDir: PROJECT_DIR, pkgDir: PKG_DIR })
 
   if (command === 'build') {
     const { build } = await import('vite')
     await build(cfg)
-    const { generatePdf } = await import(pathToFileURL(path.join(PKG_DIR, 'build-pdf.mjs')).href)
-    await generatePdf({ projectDir: PROJECT_DIR })
   } else {
     const { createServer } = await import('vite')
     const server = await createServer(cfg)
