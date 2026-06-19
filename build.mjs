@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import matter from 'gray-matter'
+import matter from '@11ty/gray-matter'
 import { Marked } from 'marked'
 import { markedHighlight } from "marked-highlight";
 import hljs from 'highlight.js';
@@ -167,8 +167,8 @@ for (const weekDir of activeWeeks) {
     }
     ex.descriptionInlineHtml = marked.parseInline(ex.description ?? '')
     if (ex.type === 'external') {
-      if (ex.task)     ex.taskHtml     = marked.parseInline(ex.task)
-      if (ex.hint)     ex.hintHtml     = marked.parse(ex.hint)
+      if (ex.task) ex.taskHtml = marked.parseInline(ex.task)
+      if (ex.hint) ex.hintHtml = marked.parse(ex.hint)
       if (ex.solution) ex.solutionHtml = marked.parse(ex.solution)
     }
     return ex
