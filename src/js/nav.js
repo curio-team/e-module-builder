@@ -67,14 +67,66 @@ function renderNavGroup(group) {
     ? `<p class="mt-0.5 text-[10px] font-normal leading-snug text-zinc-500">${group.title}</p>`
     : ''
   return `
-    <div class="space-y-0.5">
-      <div class="px-3 pb-1 pt-4">
-        <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">${group.label}</p>
-        ${title}
+    <div class="space-y-0.5" data-nav-group="${group.label}">
+      <button class="nav-group-toggle" data-group-toggle="${group.label}">
+        <div>
+          <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">${group.label}</p>
+          ${title}
+        </div>
+        <svg class="nav-group-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      <div class="nav-group-children" data-group-children="${group.label}">
+        <div class="nav-group-inner">${childLinks}</div>
       </div>
-      ${childLinks}
     </div>
   `
+}
+
+function initCollapsible(navEl, defaultExpandedKeys) {
+  const STORAGE_KEY = 'nav-collapsed-groups'
+
+  function getCollapsed() {
+    try {
+      return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'))
+    } catch {
+      return new Set()
+    }
+  }
+
+  function saveCollapsed(collapsed) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...collapsed]))
+  }
+
+  if (localStorage.getItem(STORAGE_KEY) === null) {
+    const allKeys = [...navEl.querySelectorAll('[data-group-toggle]')].map((b) => b.dataset.groupToggle)
+    saveCollapsed(new Set(allKeys.filter((k) => !defaultExpandedKeys.has(k))))
+  }
+
+  const collapsed = getCollapsed()
+
+  navEl.querySelectorAll('[data-group-toggle]').forEach((btn) => {
+    const key = btn.dataset.groupToggle
+    const children = navEl.querySelector(`[data-group-children="${key}"]`)
+    const chevron = btn.querySelector('.nav-group-chevron')
+    const hasActive = !!children?.querySelector('.text-white')
+
+    if (!hasActive && collapsed.has(key)) {
+      children?.classList.add('collapsed')
+      chevron?.classList.add('-rotate-90')
+    }
+
+    btn.addEventListener('click', () => {
+      const nowCollapsed = children?.classList.toggle('collapsed')
+      chevron?.classList.toggle('-rotate-90', nowCollapsed)
+
+      const saved = getCollapsed()
+      if (nowCollapsed) saved.add(key)
+      else saved.delete(key)
+      saveCollapsed(saved)
+    })
+  })
 }
 
 export function getManifest() {
@@ -106,6 +158,11 @@ export function initNav() {
       <div class="sidebar-scroll space-y-1">${links}</div>
     </div>
   `
+  const groups = NAV_ITEMS.filter((i) => i.children)
+  const defaultExpandedKeys = new Set()
+  if (groups[0]) defaultExpandedKeys.add(groups[0].label)
+  if (manifest.nav.assessmentSection?.label) defaultExpandedKeys.add(manifest.nav.assessmentSection.label)
+  initCollapsible(navEl, defaultExpandedKeys)
 }
 
 export function initMobileNav() {

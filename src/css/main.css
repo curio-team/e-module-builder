@@ -156,6 +156,28 @@
     @apply mx-3 mb-2 mt-1 flex items-center gap-2 border border-zinc-600 bg-zinc-900 px-3 py-2.5 text-[13px] font-medium text-zinc-100 transition hover:border-zinc-500 hover:bg-zinc-800 hover:text-white;
   }
 
+  .nav-group-toggle {
+    @apply flex w-full items-start justify-between px-3 pb-1 pt-4 text-left;
+  }
+
+  .nav-group-chevron {
+    @apply mt-0.5 h-3 w-3 shrink-0 text-zinc-500 transition-transform duration-200;
+  }
+
+  .nav-group-children {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.2s ease;
+  }
+
+  .nav-group-children.collapsed {
+    grid-template-rows: 0fr;
+  }
+
+  .nav-group-inner {
+    overflow: hidden;
+  }
+
   /* ── Theory prose typography ─────────────────────────────────────────────── */
 
   main {
