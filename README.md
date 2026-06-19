@@ -2,6 +2,11 @@
 
 A CLI build tool for creating interactive e-learning modules. It processes a structured `content/` directory of Markdown files and produces a Vite-powered, single-page-style site with theory pages, quizzes, exercises, and assignments — one per week.
 
+
+> [!IMPORTANT]
+> If you want to use the template for your own e-module, please go to https://github.com/curio-team/e-module-template and press 'Use this template' on the right.
+
+
 ## Installation
 
 ```bash
