@@ -33,3 +33,5 @@ Bouw een HTML-pagina met een complete layout: header met logo, hoofdinhoud en fo
 Zorg dat de pagina er op alle schermen goed uitziet.
 
 ![Wireframe](wireframe.svg)
+
+Gebruik [deze handleiding](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout) als je vastloopt.

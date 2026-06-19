@@ -53,11 +53,24 @@ Items staan in **rijen én kolommen** tegelijk. Ideaal voor pagina-layouts.
 </x-compare-item>
 </x-compare>
 
+<details>
+
+<summary>Waarom twee systemen?</summary>
+
+Flexbox is geweldig voor kleine componenten, maar wordt onhandig voor hele pagina's. Grid is ontworpen voor complexe layouts, maar is overkill voor simpele rij- of kolomstructuren.
+
+</details>
+
 ## Visueel overzicht
 
 ![Grid diagram](grid-diagram.svg)
 
 ![Extern voorbeeld](https://placehold.co/600x400)
+
+## Linkjes
+
+- [CSS Grid op MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout)
+- [CSS Grid Generator](https://cssgrid-generator.netlify.app/)
 
 <x-nav label="Klaar met de theorie?">
 [Oefeningen](/pages/week1-oefeningen.html)

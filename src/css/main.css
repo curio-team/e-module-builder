@@ -23,39 +23,6 @@
   body {
     @apply text-zinc-800;
   }
-
-  /* Given that markdown is placed inside main, we want some basic styling for headings */
-  main h2 {
-    @apply mt-8 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400;
-  }
-
-  main h3 {
-    @apply mt-4 text-base font-bold text-zinc-900
-  }
-
-  main h4 {
-    @apply mt-3 text-sm font-semibold text-zinc-900
-  }
-
-  main h5 {
-    @apply mt-2 text-sm font-normal uppercase text-zinc-900
-  }
-
-  main h6 {
-    @apply mt-2 text-sm font-light uppercase text-zinc-900
-  }
-
-  main p {
-    @apply mt-2 text-sm leading-relaxed text-zinc-700;
-  }
-
-  main ul {
-    @apply mt-2 text-sm list-inside list-disc space-y-1.5 pl-1;
-  }
-
-  main ol {
-    @apply mt-2 text-sm list-inside list-decimal space-y-1.5 pl-1;
-  }
 }
 
 @layer components {
@@ -191,69 +158,77 @@
 
   /* ── Theory prose typography ─────────────────────────────────────────────── */
 
-  .prose-theory {
+  main {
     @apply space-y-6 text-zinc-700;
   }
 
-  .prose-theory h2 {
+  main h2 {
     @apply mt-8 text-xl font-semibold text-zinc-900 first:mt-0;
   }
 
-  .prose-theory h3 {
+  main h3 {
     @apply mt-4 text-base font-semibold text-zinc-900;
   }
 
-  .prose-theory p {
+  main p {
     @apply leading-relaxed;
   }
 
-  .prose-theory ul {
+  main ul {
     @apply list-inside list-disc space-y-1.5 pl-1;
   }
 
-  .prose-theory ol {
+  main ol {
     @apply list-inside list-decimal space-y-1.5 pl-1;
   }
 
-  .prose-theory li {
+  main li {
     @apply leading-relaxed;
   }
 
-  .prose-theory a {
+  main a {
     @apply font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 transition hover:decoration-zinc-900;
   }
 
-  .prose-theory code {
+  main code {
     @apply rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-sm text-zinc-800;
   }
 
-  .prose-theory pre {
+  main pre {
     @apply overflow-x-auto bg-zinc-950 p-5 font-mono text-[13px] leading-relaxed text-zinc-300;
   }
 
-  .prose-theory pre code {
+  main pre code {
     @apply bg-transparent p-0 text-inherit;
   }
 
-  .prose-theory blockquote {
+  main blockquote {
     @apply border-l-4 border-zinc-300 pl-4 italic text-zinc-500;
   }
 
-  .prose-theory table {
+  main table {
     @apply w-full text-left text-sm;
   }
 
-  .prose-theory thead tr {
+  main thead tr {
     @apply border-b border-zinc-200 text-zinc-500;
   }
 
-  .prose-theory tbody tr {
+  main tbody tr {
     @apply border-b border-zinc-100 last:border-0;
   }
 
-  .prose-theory th,
-  .prose-theory td {
+  main th,
+  main td {
     @apply py-2 pr-4;
+  }
+
+  main details {
+    @apply rounded bg-zinc-100 p-4;
+  }
+
+  main details summary {
+    @apply cursor-pointer font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 transition hover:decoration-zinc-900;
   }
 
   /* ── Custom components ───────────────────────────────────────────────────── */
