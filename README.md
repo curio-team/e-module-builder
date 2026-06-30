@@ -262,6 +262,7 @@ Theory pages support these custom block elements in Markdown:
 | `<x-card title="…">` | Content card with a title. |
 | `<x-compare>` / `<x-compare-item title="…">` | Side-by-side comparison columns. |
 | `<x-nav label="…">` | Bottom navigation links (one Markdown link per line). |
+| `<x-browser>` | Browser window mockup with a dark titlebar and non-functional min/max/close controls. Add `title="…"` to set a custom titlebar label (default: `Browser`). |
 
 Example:
 
@@ -282,6 +283,18 @@ Use for full page layouts.
 
 </x-compare-item>
 </x-compare>
+
+<x-browser>
+
+![Screenshot of the result](../assets/result.png)
+
+</x-browser>
+
+<x-browser title="https://example.com">
+
+This is how the page looks after applying the CSS.
+
+</x-browser>
 ```
 
 ---

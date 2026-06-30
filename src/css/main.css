@@ -327,6 +327,29 @@
     @apply border-transparent bg-zinc-900 text-white hover:border-transparent hover:bg-zinc-800 focus-visible:ring-zinc-900;
   }
 
+  x-browser {
+    @apply relative mt-6 block overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-lg;
+    padding-top: calc(2.25rem);
+  }
+
+  x-browser :first-child {
+    @apply !mt-0;
+  }
+
+  x-browser::before {
+    content: "Browser";
+    @apply absolute inset-x-0 top-0 flex h-9 items-center justify-center bg-zinc-800 text-xs font-medium text-zinc-400;
+  }
+
+  x-browser[title]::before {
+    content: attr(title);
+  }
+
+  x-browser::after {
+    content: "−   □   ✕";
+    @apply pointer-events-none absolute right-0 top-0 flex h-9 items-center pr-3 text-[0.65rem] tracking-widest text-zinc-500;
+  }
+
   /* ── Theory side panel ───────────────────────────────────────────────────── */
 
   .theory-panel {

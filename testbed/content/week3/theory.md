@@ -150,6 +150,23 @@ Dit is een opmerking.
 
 </x-callout>
 
+## Showing browser output
+
+This browser component can be used to show the output of a browser, for example, `var_dump` output:
+
+<x-browser>
+  ```txt
+  array(3) {
+    [0]=>
+    string(5) "apple"
+    [1]=>
+    string(6) "banana"
+    [2]=>
+    string(6) "cherry"
+  }
+  ```
+</x-browser>
+
 ## Testing readability of code symbols
 
 Here's inline `==`, `!=`, `<=`, `>=`, `+`, `-`, `*`, `/`, `%`, `&`, `|`, `^`, `~`, `<<`, and `>>` symbols.
