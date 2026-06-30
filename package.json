@@ -1,6 +1,6 @@
 {
   "name": "@curio-sd/e-module-builder",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "type": "module",
   "description": "A tool for building e-modules for Curio SD",
   "license": "MIT",
