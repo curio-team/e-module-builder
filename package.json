@@ -1,5 +1,5 @@
 {
-  "name": "@curio-sd/e-module-builder",
+  "name": "e-module-builder",
   "version": "0.7.0",
   "type": "module",
   "description": "A tool for building e-modules for Curio SD",

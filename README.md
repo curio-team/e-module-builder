@@ -1,4 +1,4 @@
-# `@curio-sd/e-module-builder`
+# `e-module-builder`
 
 A CLI build tool for creating interactive e-learning modules. It processes a structured `content/` directory of Markdown files and produces a Vite-powered, single-page-style site with theory pages, quizzes, exercises, and assignments — one per week.
 
@@ -8,7 +8,7 @@ A CLI build tool for creating interactive e-learning modules. It processes a str
 ## Installation
 
 ```bash
-npm install --save-dev @curio-sd/e-module-builder
+npm install --save-dev github:curio-team/e-module-builder
 ```
 
 Add these scripts to your project's `package.json`:
