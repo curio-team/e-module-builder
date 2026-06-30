@@ -66,6 +66,54 @@ In een hiërarchie staan sommige onderdelen boven andere onderdelen. Bij een dat
 
 De MySQL-server is dus het programma dat verbindingen ontvangt en alle databases en gebruikers bijhoudt. Het is gebruikelijk om voor iedere applicatie een eigen database te gebruiken. Eén applicatie heeft vervolgens vaak meerdere tabellen nodig. Een webshop kan bijvoorbeeld tabellen hebben voor `producten`, `klanten` en `bestellingen`.
 
+## Test sub-lists
+
+Hier een lijst met een sublijst:
+
+1. Item 1
+2. Item 2
+   1. Subitem 2.1
+   2. Subitem 2.2
+3. Item 3
+
+Hier een lijst met een sublijst, die een sublijst heeft:
+
+1. Item 1
+2. Item 2
+   1. Subitem 2.1
+      1. Subsubitem 2.1.1
+      2. Subsubitem 2.1.2
+   2. Subitem 2.2
+3. Item 3
+
+Hier lijsten met witregels ertussen en code-block:
+
+1. Item 1
+
+2. De CSS:
+
+    ```css
+    .parent {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: 16px;
+    }
+    ```
+
+3. En hier een sublijst:
+
+   1. Subitem 3.1
+
+      ```css
+      .child {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: subgrid; /* erft de drie kolommen van .parent */
+      }
+      ```
+  
+   2. Subitem 3.2
+
 <x-nav label="Klaar met de theorie?">
 [Oefeningen](/pages/week3-oefeningen.html)
 [Inleveropdracht](/pages/week3-inleveropdracht.html)
