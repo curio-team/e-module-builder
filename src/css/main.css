@@ -206,6 +206,10 @@
 
   main li {
     @apply leading-relaxed;
+
+    p {
+      @apply inline-block;
+    }
   }
 
   main a {
