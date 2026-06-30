@@ -10,9 +10,9 @@
   --font-sans: "Lexend", system-ui, sans-serif;
   --font-mono: "Google Sans Code", ui-monospace, monospace;
 
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-card-hover: 0 8px 30px rgba(0, 0, 0, 0.06);
-  --shadow-editor: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 3px 10px rgba(15, 23, 42, 0.08);
+  --shadow-card-hover: 0 10px 32px rgba(15, 23, 42, 0.12);
+  --shadow-editor: 0 4px 14px rgba(15, 23, 42, 0.14);
 }
 
 @layer base {
@@ -77,15 +77,15 @@
   }
 
   .card {
-    @apply bg-white p-6 shadow-card;
+    @apply mt-2 rounded-md bg-white p-6 shadow-card;
   }
 
   .card-interactive {
-    @apply bg-white p-6 shadow-card transition duration-200 hover:shadow-card-hover;
+    @apply mt-2 rounded-md bg-white p-6 shadow-card transition duration-200 hover:shadow-card-hover;
   }
 
   .card-muted {
-    @apply bg-zinc-50 p-6;
+    @apply rounded-md bg-zinc-50 p-6 shadow-card;
   }
 
   .week-label {
@@ -105,23 +105,23 @@
   }
 
   .code-block {
-    @apply overflow-x-auto bg-zinc-950 p-5 font-mono text-[13px] leading-relaxed text-zinc-300;
+    @apply overflow-x-auto rounded-md bg-zinc-950 p-5 font-mono text-[13px] leading-relaxed text-zinc-300 shadow-editor;
   }
 
   .callout {
-    @apply mt-4 bg-zinc-50 p-4 text-sm leading-relaxed text-zinc-600;
+    @apply mt-4 rounded-md bg-zinc-50 p-4 text-sm leading-relaxed text-zinc-600 shadow-card;
   }
 
   .compare-cell {
-    @apply bg-zinc-50 p-5;
+    @apply rounded-md bg-zinc-50 p-5 shadow-card;
   }
 
   .editor-panel {
-    @apply overflow-hidden bg-zinc-950 shadow-editor;
+    @apply overflow-hidden rounded-md bg-zinc-950 shadow-editor;
   }
 
   .preview-panel {
-    @apply overflow-hidden bg-white shadow-card;
+    @apply mt-2 overflow-hidden rounded-md bg-white shadow-card;
   }
 
   .panel-header {
@@ -133,7 +133,7 @@
   }
 
   .feedback-box {
-    @apply border border-zinc-200 bg-white p-4 text-sm;
+    @apply mt-2 rounded-md border border-zinc-200 bg-white p-4 text-sm shadow-card;
   }
 
   .badge {
@@ -221,7 +221,7 @@
   }
 
   main pre {
-    @apply overflow-x-auto bg-zinc-950 mt-2 p-5 font-mono text-[13px] leading-relaxed text-zinc-300;
+    @apply mt-2 overflow-x-auto rounded-md bg-zinc-950 p-5 font-mono text-[13px] leading-relaxed text-zinc-300 shadow-editor;
   }
 
   main pre code {
@@ -250,7 +250,7 @@
   }
 
   main details {
-    @apply rounded bg-zinc-100 p-4;
+    @apply rounded-md bg-zinc-100 p-4 shadow-card;
   }
 
   main details summary {
@@ -260,7 +260,7 @@
   /* ── Custom components ───────────────────────────────────────────────────── */
 
   x-card {
-    @apply block bg-white p-6 shadow-card;
+    @apply mt-2 block rounded-md bg-white p-6 shadow-card;
   }
 
   x-card>h2 {
@@ -268,7 +268,7 @@
   }
 
   x-callout {
-    @apply block bg-zinc-50 p-4 text-sm leading-relaxed text-zinc-600 mt-4;
+    @apply mt-4 block rounded-md bg-zinc-50 p-4 text-sm leading-relaxed text-zinc-600 shadow-card;
   }
 
   x-callout[type="tip"] {
@@ -296,7 +296,7 @@
   }
 
   x-compare-item {
-    @apply block bg-zinc-50 p-5;
+    @apply block rounded-md bg-zinc-50 p-5 shadow-card;
   }
 
   x-compare-item>h3 {
@@ -304,7 +304,7 @@
   }
 
   x-nav {
-    @apply mt-10 flex flex-col gap-4 bg-white p-6 shadow-card sm:flex-row sm:items-center sm:justify-end;
+    @apply mt-10 flex flex-col gap-4 rounded-md bg-white p-6 shadow-card sm:flex-row sm:items-center sm:justify-end;
   }
 
   x-nav[label] {
@@ -333,12 +333,12 @@
   }
 
   x-browser :first-child {
-    @apply !mt-0;
+    @apply !mt-0 !rounded-t-none;
   }
 
   x-browser::before {
     content: "Browser";
-    @apply absolute inset-x-0 top-0 flex h-9 items-center justify-center bg-zinc-800 text-xs font-medium text-zinc-400;
+    @apply absolute inset-x-0 top-0 flex h-9 pl-4 items-center bg-zinc-800 text-xs font-medium text-zinc-400;
   }
 
   x-browser[title]::before {
