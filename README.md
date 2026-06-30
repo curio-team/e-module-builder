@@ -67,17 +67,25 @@ Each numbered section can contain any combination of `theory.md`, `quiz.md`, `as
 
 ### Arbitrary sections (`extra/`, `appendix/`, …)
 
-Any folder that does **not** match the `<prefix><number>` pattern and contains a `theory.md` is treated as an **arbitrary section** (theory only). These folders:
+Any folder that does **not** match the `<prefix><number>` pattern and contains a `theory.md` is treated as an **arbitrary section**. These folders:
 
-- Appear in the navigation as a collapsible group with a single **Theorie** link.
+- Appear in the navigation as a collapsible group.
 - Are sorted relative to numbered sections using the `sort:` field in their `theory.md` frontmatter (e.g. `sort: 4` places the section after week 3).
-- Do **not** support quiz, assignment, or exercises pages.
+- Support the same optional pages as numbered sections — each page is only generated when its source file is present:
+  - **`quiz.md`** → quiz page and nav link (optional)
+  - **`assignment.md`** → assignment page and nav link (optional)
+  - **`exercises/`** with `_meta.md` → exercises pages and nav link (optional)
 - Have their `leeruitkomsten` included in the Checklist.
 
 ```txt
 content/
   extra/
-    theory.md    ← must contain sort: <number> to position it in the nav
+    theory.md       ← required; must contain sort: <number> to position it in the nav
+    quiz.md         ← optional
+    assignment.md   ← optional
+    exercises/      ← optional
+      _meta.md
+      1.md
 ```
 
 ## Content file formats

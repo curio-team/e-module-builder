@@ -10,7 +10,7 @@
   <div data-page-content>
     <main class="px-4 py-10 md:px-10">
       <div class="mx-auto max-w-3xl">
-        <span class="week-label">Week {{weekPadded}} — Inleveropdracht</span>
+        <span class="week-label">{{sectionHeaderLabel}} — Inleveropdracht</span>
         <h1 class="text-3xl font-semibold tracking-tight text-zinc-900"
             data-inleveropdracht-title></h1>
         <p class="mt-2 text-zinc-600">Werk de casus uit en lever in via het kanaal van je docent.</p>
@@ -74,8 +74,8 @@
     import { initPage } from '/src/js/nav.js'
     import { initInleveropdracht } from '/src/js/inleveropdracht.js'
     import { initTheoryPanel } from '/src/js/exercises/theory-panel.js'
-    import inleveropdrachtData from '/src/data/inleveropdracht-week{{week}}.json'
-    initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: 'Week {{week}}', href: '/pages/week{{week}}-theorie.html' }, { label: 'Inleveropdracht' }] })
+    import inleveropdrachtData from '/src/data/inleveropdracht-{{sectionDataKey}}.json'
+    initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: '{{sectionLabel}}', href: '/pages/{{dirName}}-theorie.html' }, { label: 'Inleveropdracht' }] })
     const titleEl = document.querySelector('[data-inleveropdracht-title]')
     if (titleEl) titleEl.textContent = inleveropdrachtData.title
     initInleveropdracht(inleveropdrachtData)

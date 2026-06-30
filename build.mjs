@@ -273,6 +273,35 @@ for (const d of fs.readdirSync(CONTENT)) {
     writeJson(path.join(SRC_DATA, 'exercises'), `${d}.json`, exOut)
   }
 
+  // quiz.md → src/data/meetmoment-quiz-{dirName}.json (optional)
+  const quizPath = path.join(dir, 'quiz.md')
+  const hasQuiz = fs.existsSync(quizPath)
+  if (hasQuiz) {
+    const quizMd = readMd(quizPath)
+    writeJson(SRC_DATA, `meetmoment-quiz-${d}.json`, {
+      title: quizMd.data.title,
+      passScore: quizMd.data.passScore ?? 70,
+      questions: quizMd.data.questions ?? [],
+    })
+  }
+
+  // assignment.md → src/data/inleveropdracht-{dirName}.json (optional)
+  const assignmentPath = path.join(dir, 'assignment.md')
+  const hasAssignment = fs.existsSync(assignmentPath)
+  if (hasAssignment) {
+    const hwMd = readMd(assignmentPath)
+    writeJson(SRC_DATA, `inleveropdracht-${d}.json`, {
+      title: hwMd.data.title,
+      subtitle: hwMd.data.subtitle ?? '',
+      html: rewriteAssetPaths(marked.parse(hwMd.content ?? ''), d),
+      deliverables: hwMd.data.deliverables ?? [],
+      criteria: hwMd.data.criteria ?? [],
+      maxPoints: hwMd.data.maxPoints ?? 0,
+      tips: hwMd.data.tips ?? [],
+      ...(hwMd.data.linked_theory ? { linked_theory: hwMd.data.linked_theory } : {}),
+    })
+  }
+
   extraSectionsData.push({
     dirName: d,
     sortKey,
@@ -281,6 +310,8 @@ for (const d of fs.readdirSync(CONTENT)) {
     leeruitkomsten: theoryMd.data.leeruitkomsten ?? [],
     color: theoryMd.data.accent,
     hasExercises,
+    hasQuiz,
+    hasAssignment,
     isExtra: true,
   })
 }
@@ -360,15 +391,17 @@ const manifest = {
       title: sec.title,
       children: sec.isExtra
         ? [
-            { href: `/pages/${sec.dirName}-theorie.html`, label: 'Theorie' },
-            ...(sec.hasExercises ? [{ href: `/pages/${sec.dirName}-oefeningen.html`, label: 'Oefeningen' }] : []),
-          ]
+          { href: `/pages/${sec.dirName}-theorie.html`, label: 'Theorie' },
+          ...(sec.hasExercises ? [{ href: `/pages/${sec.dirName}-oefeningen.html`, label: 'Oefeningen' }] : []),
+          ...(sec.hasQuiz ? [{ href: `/pages/${sec.dirName}-meetmoment.html`, label: 'Quiz' }] : []),
+          ...(sec.hasAssignment ? [{ href: `/pages/${sec.dirName}-inleveropdracht.html`, label: 'Inleveropdracht' }] : []),
+        ]
         : [
-            { href: `/pages/${sec.dirName}-theorie.html`, label: 'Theorie' },
-            { href: `/pages/${sec.dirName}-oefeningen.html`, label: 'Oefeningen' },
-            ...(sec.hasQuiz ? [{ href: `/pages/${sec.dirName}-meetmoment.html`, label: 'Quiz' }] : []),
-            { href: `/pages/${sec.dirName}-inleveropdracht.html`, label: 'Inleveropdracht' },
-          ],
+          { href: `/pages/${sec.dirName}-theorie.html`, label: 'Theorie' },
+          { href: `/pages/${sec.dirName}-oefeningen.html`, label: 'Oefeningen' },
+          ...(sec.hasQuiz ? [{ href: `/pages/${sec.dirName}-meetmoment.html`, label: 'Quiz' }] : []),
+          { href: `/pages/${sec.dirName}-inleveropdracht.html`, label: 'Inleveropdracht' },
+        ],
     })),
     assessmentSection: {
       label: mod.assessmentSectionLabel ?? 'Afronding',
@@ -396,6 +429,8 @@ const manifest = {
     extra: extraSectionsData.flatMap(s => [
       `pages/${s.dirName}-theorie.html`,
       ...(s.hasExercises ? [`pages/${s.dirName}-oefeningen.html`, `pages/${s.dirName}-oefening.html`] : []),
+      ...(s.hasQuiz ? [`pages/${s.dirName}-meetmoment.html`] : []),
+      ...(s.hasAssignment ? [`pages/${s.dirName}-inleveropdracht.html`] : []),
     ]),
   },
   content: {
@@ -486,6 +521,8 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
     const out = applyTemplate(tpl, {
       dirName: wk.dirName,
       sectionLabel: sectionLabel(wk.prefix, wk.week),
+      sectionDataKey: `week${wk.week}`,
+      sectionHeaderLabel: `Week ${String(wk.week).padStart(2, '0')}`,
       hasMeetmoment: wk.hasQuiz ? 'true' : '',
       week: String(wk.week),
       weekPadded: String(wk.week).padStart(2, '0'),
@@ -500,6 +537,8 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
 const theorieTplStr = fs.readFileSync(path.join(TEMPLATES, 'theorie.html'), 'utf8')
 const oefenTplStr = fs.readFileSync(path.join(TEMPLATES, 'oefeningen.html'), 'utf8')
 const oefeningTplStr = fs.readFileSync(path.join(TEMPLATES, 'oefening.html'), 'utf8')
+const meetmomentTplStr = fs.readFileSync(path.join(TEMPLATES, 'meetmoment.html'), 'utf8')
+const inleverTplStr = fs.readFileSync(path.join(TEMPLATES, 'inleveropdracht.html'), 'utf8')
 for (const sec of extraSectionsData) {
   const label = sec.dirName.charAt(0).toUpperCase() + sec.dirName.slice(1)
   fs.writeFileSync(path.join(PAGES, `${sec.dirName}-theorie.html`), applyTemplate(theorieTplStr, {
@@ -511,7 +550,7 @@ for (const sec of extraSectionsData) {
     fs.writeFileSync(path.join(PAGES, `${sec.dirName}-oefeningen.html`), applyTemplate(oefenTplStr, {
       dirName: sec.dirName,
       sectionLabel: label,
-      hasMeetmoment: '',
+      hasMeetmoment: sec.hasQuiz ? 'true' : '',
       week: sec.dirName,
       weekTitle: sec.title,
       pageTitle: `Oefeningen ${label} — ${sec.title}`,
@@ -521,6 +560,25 @@ for (const sec of extraSectionsData) {
       sectionLabel: label,
       week: sec.dirName,
       pageTitle: `Oefening — ${label}`,
+    }))
+  }
+  if (sec.hasQuiz) {
+    fs.writeFileSync(path.join(PAGES, `${sec.dirName}-meetmoment.html`), applyTemplate(meetmomentTplStr, {
+      dirName: sec.dirName,
+      sectionLabel: label,
+      sectionDataKey: sec.dirName,
+      sectionHeaderLabel: label,
+      weekTitle: sec.title,
+      pageTitle: `Quiz ${label} — ${sec.title}`,
+    }))
+  }
+  if (sec.hasAssignment) {
+    fs.writeFileSync(path.join(PAGES, `${sec.dirName}-inleveropdracht.html`), applyTemplate(inleverTplStr, {
+      dirName: sec.dirName,
+      sectionLabel: label,
+      sectionDataKey: sec.dirName,
+      sectionHeaderLabel: label,
+      pageTitle: `Inleveropdracht ${label} — ${sec.title}`,
     }))
   }
 }
