@@ -3,6 +3,10 @@
   "version": "0.7.0",
   "type": "module",
   "description": "A tool for building e-modules for Curio SD",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/curio-team/e-module-builder.git"
+  },
   "license": "MIT",
   "main": "./bin/cli.js",
   "files": [

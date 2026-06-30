@@ -114,6 +114,24 @@ Produces a static site in `testbed/dist/` — the same output a real content pro
 
 ## Publishing
 
-1. Bump the version in `package.json` following semver.
-2. Ensure `npm test` passes.
-3. `npm publish --access public`
+This package is distributed directly from GitHub — no npm publish step needed.
+
+1. Ensure `npm test` passes.
+2. Bump the version and create a git tag:
+
+   ```bash
+   npm version patch   # or minor / major, or `npm version 0.x.0` for a specific version
+   git push origin --tags
+   ```
+
+Consumers install the package by referencing the tag:
+
+```bash
+npm install github:curio-team/e-module-builder#v0.x.0
+```
+
+Or to track the latest commit on `main` (not recommended for production):
+
+```bash
+npm install github:curio-team/e-module-builder
+```
