@@ -287,9 +287,15 @@ url: https://cssgridgarden.com
 
 ---
 
-### `content/assessments/theory-assessment.md` and `practical-assessment.md`
+### `content/assessments/theory-assessment.md`
 
-Same structure as `quiz.md`. Practical assessment questions may include a `preview` field with `css` and `html` for a live CSS preview alongside the question.
+Same structure as `quiz.md`.
+
+---
+
+### `content/assessments/practical-assessment.md`
+
+Contains arbitrary Markdown content. This file is designed to be submitted/turned in via the learning platform Itslearning and is not rendered as a quiz or interactive assessment.
 
 ---
 
