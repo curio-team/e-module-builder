@@ -267,6 +267,7 @@ const manifest = {
     name: mod.name,
     subtitle: mod.subtitle ?? 'E-module',
     youtube: mod.youtube ?? null,
+    youtubeTitle: mod.youtubeTitle ?? null,
     weeks: weekCount,
     language: mod.language ?? 'nl',
     description: marked.parseInline(mod.description ?? ''),

@@ -66,6 +66,7 @@ language: nl
 exerciseMode: interactive   # or: external
 description: Learn CSS Grid from the ground up.
 youtube: https://www.youtube.com/watch?v=...
+youtubeTitle: Crash Course   # optional, defaults to "Crash Course"
 logoAlt: My module logo
 algemeen:
   - I can explain the difference between Flexbox and Grid
@@ -81,6 +82,7 @@ algemeen:
 | `subtitle` | no | Shown below the title |
 | `description` | no | Short module description |
 | `youtube` | no | Intro video URL |
+| `youtubeTitle` | no | Label for the YouTube button; defaults to `Crash Course` |
 | `algemeen` | no | General learning outcomes added to the checklist |
 
 ---
