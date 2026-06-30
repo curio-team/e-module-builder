@@ -1,6 +1,6 @@
 # `e-module-builder`
 
-A CLI build tool for creating interactive e-learning modules. It processes a structured `content/` directory of Markdown files and produces a Vite-powered, single-page-style site with theory pages, quizzes, exercises, and assignments — one per week.
+A CLI build tool for creating interactive e-learning modules. It processes a structured `content/` directory of Markdown files and produces a Vite-powered, single-page-style site with theory pages, quizzes, exercises, and assignments.
 
 > [!IMPORTANT]
 > If you want to use the template for your own e-module, please go to <https://github.com/curio-team/e-module-template> and press 'Use this template' on the right.
@@ -40,17 +40,44 @@ content/
   module.md               ← module metadata (name, weeks, language, exercise mode)
   week1/
     theory.md             ← theory content (Markdown + YAML frontmatter)
-    quiz.md               ← mid-week quiz questions
-    assignment.md         ← hand-in assignment
-    exercises/
+    quiz.md               ← mid-week quiz (optional)
+    assignment.md         ← hand-in assignment (optional)
+    exercises/            ← exercises (optional)
       _meta.md            ← exercise set metadata (week, title, color)
       1.md                ← exercise 1
       2.md                ← exercise 2
       …
-  week2/ … weekN/         ← same structure
+  week2/ … weekN/         ← same structure; folder name determines nav label
+  extra/                  ← arbitrary folder — only theory.md required (see below)
+    theory.md
   assessments/
     theory-assessment.md        ← final theory assessment (optional)
     practical-assessment.md     ← final practical assessment (optional)
+```
+
+### Numbered sections (`week1`, `week2`, …)
+
+Folders whose name matches the pattern `<prefix><number>` (e.g. `week1`, `mod2`) are treated as **numbered sections**. The number determines their sort order in the navigation. The `weeks` field in `module.md` limits how many are processed.
+
+Each numbered section can contain any combination of `theory.md`, `quiz.md`, `assignment.md`, and `exercises/`. Only `theory.md` is required — the others are all optional:
+
+- **`quiz.md`** — if absent, no quiz page or nav link is generated for that section.
+- **`assignment.md`** — if absent, no assignment page or nav link is generated.
+- **`exercises/`** — if absent, no exercises page or nav link is generated.
+
+### Arbitrary sections (`extra/`, `appendix/`, …)
+
+Any folder that does **not** match the `<prefix><number>` pattern and contains a `theory.md` is treated as an **arbitrary section** (theory only). These folders:
+
+- Appear in the navigation as a collapsible group with a single **Theorie** link.
+- Are sorted relative to numbered sections using the `sort:` field in their `theory.md` frontmatter (e.g. `sort: 4` places the section after week 3).
+- Do **not** support quiz, assignment, or exercises pages.
+- Have their `leeruitkomsten` included in the Checklist.
+
+```txt
+content/
+  extra/
+    theory.md    ← must contain sort: <number> to position it in the nav
 ```
 
 ## Content file formats
@@ -76,7 +103,7 @@ algemeen:
 | Field | Required | Description |
 | ----- | -------- | ----------- |
 | `name` | yes | Module title |
-| `weeks` | yes | Number of weeks to include (limits which `weekN/` dirs are processed) |
+| `weeks` | no | How many numbered `weekN/` dirs to include. Defaults to all discovered. Set to `0` or omit to include all. |
 | `exerciseMode` | yes | `interactive` (Monaco editor) or `external` (link-out) |
 | `language` | no | UI language, default `nl` |
 | `subtitle` | no | Shown below the title |
@@ -106,9 +133,23 @@ leeruitkomsten:
 Markdown content here…
 ```
 
+For **arbitrary sections** (non-numbered folders), replace `week:` with `sort:` to control the position of the section in the navigation relative to numbered sections:
+
+```yaml
+---
+sort: 4                 # appears after week 3 in the nav
+title: Extra material
+goal: You explore additional topics.
+accent: slate
+summary: Supplementary content outside the weekly structure.
+leeruitkomsten:
+  - I am familiar with the extra material
+---
+```
+
 ---
 
-### `content/weekN/quiz.md`
+### `content/weekN/quiz.md` _(optional)_
 
 ```yaml
 ---
@@ -127,7 +168,7 @@ questions:
 
 ---
 
-### `content/weekN/assignment.md`
+### `content/weekN/assignment.md` _(optional)_
 
 The Markdown **body** is split on blank lines: the first paragraph becomes the `case`, the rest becomes the `assignment` description.
 
@@ -152,7 +193,7 @@ Assignment instructions paragraph.
 
 ---
 
-### `content/weekN/exercises/_meta.md`
+### `content/weekN/exercises/_meta.md` _(optional)_
 
 ```yaml
 ---
@@ -305,22 +346,24 @@ The build pipeline runs before Vite and produces:
 
 | Output | Source |
 | ------ | ------ |
-| `src/data/manifest.json` | `module.md` + all week frontmatter |
+| `src/data/manifest.json` | `module.md` + all section frontmatter |
 | `src/data/theory-weekN.json` | `weekN/theory.md` |
-| `src/data/meetmoment-quiz-weekN.json` | `weekN/quiz.md` |
-| `src/data/exercises/weekN.json` | `weekN/exercises/` |
-| `src/data/inleveropdracht-weekN.json` | `weekN/assignment.md` |
-| `src/data/checklist.json` | `leeruitkomsten` from all weeks |
-| `src/data/meetmoment-theorie.json` | `assessments/theory-assessment.md` |
-| `src/data/meetmoment-praktijk.json` | `assessments/practical-assessment.md` |
+| `src/data/theory-<folder>.json` | `<folder>/theory.md` (arbitrary sections) |
+| `src/data/meetmoment-quiz-weekN.json` | `weekN/quiz.md` _(if present)_ |
+| `src/data/exercises/weekN.json` | `weekN/exercises/` _(if present)_ |
+| `src/data/inleveropdracht-weekN.json` | `weekN/assignment.md` _(if present)_ |
+| `src/data/checklist.json` | `leeruitkomsten` from all sections |
+| `src/data/meetmoment-theorie.json` | `assessments/theory-assessment.md` _(if present)_ |
+| `src/data/meetmoment-praktijk.json` | `assessments/practical-assessment.md` _(if present)_ |
 | `pages/weekN-theorie.html` | generated from template |
 | `pages/weekN-oefeningen.html` | generated from template |
-| `pages/weekN-meetmoment.html` | generated from template |
+| `pages/weekN-meetmoment.html` | generated from template _(only if `quiz.md` exists)_ |
 | `pages/weekN-oefening.html` | generated from template |
-| `pages/weekN-inleveropdracht.html` | generated from template |
+| `pages/weekN-inleveropdracht.html` | generated from template _(only if `assignment.md` exists)_ |
+| `pages/<folder>-theorie.html` | generated from template (arbitrary sections) |
 | `pages/checklist.html` | generated from template |
-| `pages/meetmoment-theorie.html` | generated from template |
-| `pages/meetmoment-praktijk.html` | generated from template |
+| `pages/meetmoment-theorie.html` | generated from template _(only if assessment file exists)_ |
+| `pages/meetmoment-praktijk.html` | generated from template _(only if assessment file exists)_ |
 | `index.html` | generated from template |
 
 In `dev` mode, changes to `content/` trigger an automatic rebuild and browser reload.

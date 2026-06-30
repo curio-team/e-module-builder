@@ -11,7 +11,7 @@
     <main class="px-4 py-10 md:px-10">
       <div class="mx-auto max-w-3xl">
         <div data-theory
-             data-week="{{week}}"></div>
+             data-week="{{dirName}}"></div>
       </div>
     </main>
   </div>
@@ -20,11 +20,11 @@
     import { initTheory } from '/src/js/theory.js'
     const embedded = new URLSearchParams(location.search).has('embedded')
     if (!embedded) {
-      initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: 'Week {{week}}', href: '/pages/week{{week}}-theorie.html' }, { label: 'Theorie' }] })
+      initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: '{{sectionLabel}}', href: '/pages/{{dirName}}-theorie.html' }, { label: 'Theorie' }] })
     } else {
       document.body.setAttribute('data-embedded', '')
     }
-    initTheory({{ week }})
+    initTheory('{{ dirName }}')
   </script>
 </body>
 

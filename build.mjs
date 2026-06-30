@@ -217,6 +217,41 @@ for (const weekDir of activeWeeks) {
   })
 }
 
+// ─── 3b. discover & process extra (theory-only) folders ─────────────────────
+
+const IGNORED_DIRS = new Set(['assessments'])
+
+const extraSectionsData = []
+for (const d of fs.readdirSync(CONTENT)) {
+  if (SECTION_RE.test(d)) continue
+  if (IGNORED_DIRS.has(d)) continue
+  const dir = path.join(CONTENT, d)
+  if (!fs.statSync(dir).isDirectory()) continue
+  const theoryPath = path.join(dir, 'theory.md')
+  if (!fs.existsSync(theoryPath)) continue
+
+  const theoryMd = readMd(theoryPath)
+  const sortKey = theoryMd.data.sort ?? 999
+
+  const theoryOut = {
+    title: theoryMd.data.title,
+    goal: theoryMd.data.goal,
+    accent: theoryMd.data.accent,
+    html: rewriteAssetPaths(marked.parse(theoryMd.content ?? ''), d),
+  }
+  writeJson(SRC_DATA, `theory-${d}.json`, theoryOut)
+
+  extraSectionsData.push({
+    dirName: d,
+    sortKey,
+    title: theoryMd.data.title,
+    summary: marked.parseInline(theoryMd.data.summary ?? ''),
+    leeruitkomsten: theoryMd.data.leeruitkomsten ?? [],
+    color: theoryMd.data.accent,
+    isExtra: true,
+  })
+}
+
 // ─── 4. assessment data (parsed early so navLabel is available for manifest) ───────
 
 const ASSESSMENTS_DIR = path.join(CONTENT, 'assessments')
@@ -262,6 +297,14 @@ const practicalAssessmentData = buildPracticalAssessmentData(
 
 // ─── 5. manifest.json ────────────────────────────────────────────────────────
 
+const hasTheoryAssessment = fs.existsSync(path.join(ASSESSMENTS_DIR, 'theory-assessment.md'))
+const hasPracticalAssessment = fs.existsSync(path.join(ASSESSMENTS_DIR, 'practical-assessment.md'))
+
+const allNavSections = [
+  ...weeksData.map(wk => ({ ...wk, sortKey: wk.week })),
+  ...extraSectionsData,
+].sort((a, b) => a.sortKey - b.sortKey)
+
 const manifest = {
   module: {
     name: mod.name,
@@ -277,22 +320,26 @@ const manifest = {
   weeks: weeksData,
   nav: {
     home: { href: '/index.html', label: 'Home' },
-    weeks: weeksData.map(wk => ({
-      label: sectionLabel(wk.prefix, wk.week),
-      title: wk.title,
-      children: [
-        { href: `/pages/${wk.dirName}-theorie.html`, label: 'Theorie' },
-        { href: `/pages/${wk.dirName}-oefeningen.html`, label: 'Oefeningen' },
-        ...(wk.hasQuiz ? [{ href: `/pages/${wk.dirName}-meetmoment.html`, label: 'Quiz' }] : []),
-        { href: `/pages/${wk.dirName}-inleveropdracht.html`, label: 'Inleveropdracht' },
-      ],
+    weeks: allNavSections.map(sec => ({
+      label: sec.isExtra
+        ? sec.dirName.charAt(0).toUpperCase() + sec.dirName.slice(1)
+        : sectionLabel(sec.prefix, sec.week),
+      title: sec.title,
+      children: sec.isExtra
+        ? [{ href: `/pages/${sec.dirName}-theorie.html`, label: 'Theorie' }]
+        : [
+            { href: `/pages/${sec.dirName}-theorie.html`, label: 'Theorie' },
+            { href: `/pages/${sec.dirName}-oefeningen.html`, label: 'Oefeningen' },
+            ...(sec.hasQuiz ? [{ href: `/pages/${sec.dirName}-meetmoment.html`, label: 'Quiz' }] : []),
+            { href: `/pages/${sec.dirName}-inleveropdracht.html`, label: 'Inleveropdracht' },
+          ],
     })),
     assessmentSection: {
       label: mod.assessmentSectionLabel ?? 'Afronding',
       children: [
         { href: '/pages/checklist.html', label: 'Checklist' },
-        { href: '/pages/meetmoment-theorie.html', label: theoryAssessmentData.navLabel },
-        { href: '/pages/meetmoment-praktijk.html', label: practicalAssessmentData.navLabel },
+        ...(hasTheoryAssessment ? [{ href: '/pages/meetmoment-theorie.html', label: theoryAssessmentData.navLabel }] : []),
+        ...(hasPracticalAssessment ? [{ href: '/pages/meetmoment-praktijk.html', label: practicalAssessmentData.navLabel }] : []),
       ],
     },
   },
@@ -300,8 +347,8 @@ const manifest = {
     static: [
       'index.html',
       'pages/checklist.html',
-      'pages/meetmoment-theorie.html',
-      'pages/meetmoment-praktijk.html',
+      ...(hasTheoryAssessment ? ['pages/meetmoment-theorie.html'] : []),
+      ...(hasPracticalAssessment ? ['pages/meetmoment-praktijk.html'] : []),
     ],
     week: weeksData.flatMap(wk => [
       `pages/${wk.dirName}-theorie.html`,
@@ -310,6 +357,7 @@ const manifest = {
       `pages/${wk.dirName}-oefening.html`,
       `pages/${wk.dirName}-inleveropdracht.html`,
     ]),
+    extra: extraSectionsData.map(s => `pages/${s.dirName}-theorie.html`),
   },
   content: {
     status: 'generated',
@@ -321,16 +369,28 @@ writeJson(SRC_DATA, 'manifest.json', manifest)
 
 // ─── 5. checklist.json ───────────────────────────────────────────────────────
 
-const checklistGroups = weeksData.map(wk => ({
-  id: wk.dirName,
-  title: `${sectionLabel(wk.prefix, wk.week)} — ${wk.title}`,
-  color: wk.color,
-  items: (wk.leeruitkomsten ?? []).map((text, i) => ({
-    id: `${wk.dirName}-item-${i}`,
-    text,
-    textHtml: marked.parseInline(text),
+const checklistGroups = [
+  ...weeksData.map(wk => ({
+    id: wk.dirName,
+    title: `${sectionLabel(wk.prefix, wk.week)} — ${wk.title}`,
+    color: wk.color,
+    items: (wk.leeruitkomsten ?? []).map((text, i) => ({
+      id: `${wk.dirName}-item-${i}`,
+      text,
+      textHtml: marked.parseInline(text),
+    })),
   })),
-}))
+  ...extraSectionsData.map(sec => ({
+    id: sec.dirName,
+    title: sec.title,
+    color: sec.color,
+    items: (sec.leeruitkomsten ?? []).map((text, i) => ({
+      id: `${sec.dirName}-item-${i}`,
+      text,
+      textHtml: marked.parseInline(text),
+    })),
+  })),
+]
 
 if (mod.algemeen?.length) {
   checklistGroups.push({
@@ -385,6 +445,8 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
   for (const wk of weeksData) {
     if (suffix === 'meetmoment' && !wk.hasQuiz) continue
     const out = applyTemplate(tpl, {
+      dirName: wk.dirName,
+      sectionLabel: sectionLabel(wk.prefix, wk.week),
       week: String(wk.week),
       weekPadded: String(wk.week).padStart(2, '0'),
       weekTitle: wk.title,
@@ -394,22 +456,34 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
   }
 }
 
+// generate theory pages for extra (theory-only) sections
+const theorieTpl = fs.readFileSync(path.join(TEMPLATES, 'theorie.html'), 'utf8')
+for (const sec of extraSectionsData) {
+  const label = sec.dirName.charAt(0).toUpperCase() + sec.dirName.slice(1)
+  const out = applyTemplate(theorieTpl, {
+    dirName: sec.dirName,
+    sectionLabel: label,
+    pageTitle: `${label} — ${sec.title}`,
+  })
+  fs.writeFileSync(path.join(PAGES, `${sec.dirName}-theorie.html`), out)
+}
+
 // ─── 7. copy static pages (checklist, assessments) with title substitution ─────────
 
 const STATIC_PAGES = [
   { src: 'checklist.html', pageTitle: `Checklist — ${mod.name}` },
-  {
+  ...(hasTheoryAssessment ? [{
     src: 'meetmoment-theorie.html',
     pageTitle: `${theoryAssessmentData.navLabel} — ${mod.name}`,
     assessmentTitle: theoryAssessmentData.navLabel,
     assessmentDescription: theoryAssessmentData.description,
-  },
-  {
+  }] : []),
+  ...(hasPracticalAssessment ? [{
     src: 'meetmoment-praktijk.html',
     pageTitle: `${practicalAssessmentData.navLabel} — ${mod.name}`,
     assessmentTitle: practicalAssessmentData.navLabel,
     assessmentDescription: practicalAssessmentData.description,
-  },
+  }] : []),
 ]
 
 for (const { src, pageTitle, assessmentTitle, assessmentDescription } of STATIC_PAGES) {
@@ -432,4 +506,4 @@ fs.writeFileSync(path.join(PROJECT_DIR, 'index.html'), applyTemplate(indexTpl, {
 
 copyStaticAssets()
 
-console.log(`Build complete: ${weekCount} weeks → src/data/ and pages/`)
+console.log(`Build complete: ${weekCount} weeks + ${extraSectionsData.length} extra section(s) → src/data/ and pages/`)
