@@ -2,10 +2,8 @@
 
 A CLI build tool for creating interactive e-learning modules. It processes a structured `content/` directory of Markdown files and produces a Vite-powered, single-page-style site with theory pages, quizzes, exercises, and assignments — one per week.
 
-
 > [!IMPORTANT]
-> If you want to use the template for your own e-module, please go to https://github.com/curio-team/e-module-template and press 'Use this template' on the right.
-
+> If you want to use the template for your own e-module, please go to <https://github.com/curio-team/e-module-template> and press 'Use this template' on the right.
 
 ## Installation
 
@@ -258,7 +256,7 @@ Theory pages support these custom block elements in Markdown:
 
 | Element | Purpose |
 | ------- | ------- |
-| `<x-callout>` | Highlighted note block. Add `type="warning"` for warnings. |
+| `<x-callout>` | Highlighted note block. Add `type="warning"` for warnings, `type="tip"` for tips, `type="danger"` for dangers, `type="info"` for information, or `type="note"` for general notes. |
 | `<x-card title="…">` | Content card with a title. |
 | `<x-compare>` / `<x-compare-item title="…">` | Side-by-side comparison columns. |
 | `<x-nav label="…">` | Bottom navigation links (one Markdown link per line). |

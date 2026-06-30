@@ -118,6 +118,38 @@ Hier lijsten met witregels ertussen en code-block:
   
    2. Subitem 3.2
 
+## Alle callout types
+
+<x-callout type="tip">
+
+Dit is een tip.
+
+</x-callout>
+
+<x-callout type="warning">
+
+Dit is een waarschuwing.
+
+</x-callout>
+
+<x-callout type="danger">
+
+Dit is een gevaar.
+
+</x-callout>
+
+<x-callout type="info">
+
+Dit is informatie.
+
+</x-callout>
+
+<x-callout type="note">
+
+Dit is een opmerking.
+
+</x-callout>
+
 <x-nav label="Klaar met de theorie?">
 [Oefeningen](/pages/week3-oefeningen.html)
 [Inleveropdracht](/pages/week3-inleveropdracht.html)
