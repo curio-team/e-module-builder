@@ -7,18 +7,23 @@ function stripHtml(html) {
   return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
 }
 
-export function initExerciseHub(weekData, weekNum) {
+export function initExerciseHub(weekData, sectionId) {
   const container = document.querySelector('[data-exercise-list]')
   if (!container) return
 
-  const solved = getSolvedExercises(weekNum)
+  const solved = getSolvedExercises(sectionId)
   const external = weekData.mode === 'external'
 
   const subtitle = document.querySelector('[data-hub-subtitle]')
   if (subtitle) {
     subtitle.textContent = external
-      ? `${weekData.title || `Week ${weekNum}`} — 8 opdrachten voor je eigen omgeving`
-      : `${weekData.title || `Week ${weekNum}`} — 8 oefeningen met oplopende moeilijkheid`
+      ? `${weekData.title} — 8 opdrachten voor je eigen omgeving`
+      : `${weekData.title} — 8 oefeningen met oplopende moeilijkheid`
+  }
+
+  const meetmomentCta = document.querySelector('[data-meetmoment-cta]')
+  if (meetmomentCta && meetmomentCta.dataset.meetmomentCta !== 'true') {
+    meetmomentCta.remove()
   }
 
   const items = weekData.exercises
@@ -31,7 +36,7 @@ export function initExerciseHub(weekData, weekNum) {
 
       return `
         <a
-          href="${sitePath(`/pages/week${weekNum}-oefening.html`)}?id=${ex.id}"
+          href="${sitePath(`/pages/${sectionId}-oefening.html`)}?id=${ex.id}"
           class="group flex items-start gap-5 px-6 py-5 transition hover:bg-zinc-50"
         >
           <span class="mt-0.5 font-mono text-sm text-zinc-300 transition group-hover:text-zinc-900">${String(ex.id).padStart(2, '0')}</span>

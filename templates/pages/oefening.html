@@ -28,7 +28,7 @@
             <a data-prev-exercise
                href="#"
                class="btn-secondary hidden">← Vorige</a>
-            <a href="week{{week}}-oefeningen.html"
+            <a href="{{dirName}}-oefeningen.html"
                class="btn-secondary">Overzicht</a>
             <a data-next-exercise
                href="#"
@@ -181,9 +181,9 @@
 
     const id = new URLSearchParams(location.search).get('id') || '1'
 
-    initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: 'Week {{week}}', href: '/pages/week{{week}}-oefeningen.html' }, { label: `Oefening ${id}` }] })
+    initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: '{{sectionLabel}}', href: '/pages/{{dirName}}-oefeningen.html' }, { label: `Oefening ${id}` }] })
 
-    initExercisePage({{ week }})
+    initExercisePage('{{ dirName }}')
   </script>
 </body>
 

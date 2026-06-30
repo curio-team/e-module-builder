@@ -241,6 +241,38 @@ for (const d of fs.readdirSync(CONTENT)) {
   }
   writeJson(SRC_DATA, `theory-${d}.json`, theoryOut)
 
+  // exercises/ subfolder → src/data/exercises/{dirName}.json (optional)
+  let hasExercises = false
+  const exDir = path.join(dir, 'exercises')
+  if (fs.existsSync(exDir) && fs.existsSync(path.join(exDir, '_meta.md'))) {
+    hasExercises = true
+    const metaMd = readMd(path.join(exDir, '_meta.md'))
+    const exerciseFiles = fs.readdirSync(exDir)
+      .filter(f => f.endsWith('.md') && f !== '_meta.md')
+      .sort((a, b) => parseInt(a) - parseInt(b))
+    const exercises = exerciseFiles.map(f => {
+      const { data: ex, content } = readMd(path.join(exDir, f))
+      if (!ex.type || ex.type === 'text') {
+        const src = content?.trim() ? content : (ex.description ?? '')
+        ex.descriptionHtml = rewriteAssetPaths(marked.parse(src), `${d}/exercises`)
+      }
+      ex.descriptionInlineHtml = marked.parseInline(ex.description ?? '')
+      if (ex.type === 'external') {
+        if (ex.task) ex.taskHtml = marked.parseInline(ex.task)
+        if (ex.hint) ex.hintHtml = marked.parse(ex.hint)
+        if (ex.solution) ex.solutionHtml = marked.parse(ex.solution)
+      }
+      return ex
+    })
+    const exOut = {
+      title: metaMd.data.title,
+      color: metaMd.data.color,
+      ...(metaMd.data.mode ? { mode: metaMd.data.mode } : {}),
+      exercises,
+    }
+    writeJson(path.join(SRC_DATA, 'exercises'), `${d}.json`, exOut)
+  }
+
   extraSectionsData.push({
     dirName: d,
     sortKey,
@@ -248,6 +280,7 @@ for (const d of fs.readdirSync(CONTENT)) {
     summary: marked.parseInline(theoryMd.data.summary ?? ''),
     leeruitkomsten: theoryMd.data.leeruitkomsten ?? [],
     color: theoryMd.data.accent,
+    hasExercises,
     isExtra: true,
   })
 }
@@ -326,7 +359,10 @@ const manifest = {
         : sectionLabel(sec.prefix, sec.week),
       title: sec.title,
       children: sec.isExtra
-        ? [{ href: `/pages/${sec.dirName}-theorie.html`, label: 'Theorie' }]
+        ? [
+            { href: `/pages/${sec.dirName}-theorie.html`, label: 'Theorie' },
+            ...(sec.hasExercises ? [{ href: `/pages/${sec.dirName}-oefeningen.html`, label: 'Oefeningen' }] : []),
+          ]
         : [
             { href: `/pages/${sec.dirName}-theorie.html`, label: 'Theorie' },
             { href: `/pages/${sec.dirName}-oefeningen.html`, label: 'Oefeningen' },
@@ -357,7 +393,10 @@ const manifest = {
       `pages/${wk.dirName}-oefening.html`,
       `pages/${wk.dirName}-inleveropdracht.html`,
     ]),
-    extra: extraSectionsData.map(s => `pages/${s.dirName}-theorie.html`),
+    extra: extraSectionsData.flatMap(s => [
+      `pages/${s.dirName}-theorie.html`,
+      ...(s.hasExercises ? [`pages/${s.dirName}-oefeningen.html`, `pages/${s.dirName}-oefening.html`] : []),
+    ]),
   },
   content: {
     status: 'generated',
@@ -447,6 +486,7 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
     const out = applyTemplate(tpl, {
       dirName: wk.dirName,
       sectionLabel: sectionLabel(wk.prefix, wk.week),
+      hasMeetmoment: wk.hasQuiz ? 'true' : '',
       week: String(wk.week),
       weekPadded: String(wk.week).padStart(2, '0'),
       weekTitle: wk.title,
@@ -456,16 +496,33 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
   }
 }
 
-// generate theory pages for extra (theory-only) sections
-const theorieTpl = fs.readFileSync(path.join(TEMPLATES, 'theorie.html'), 'utf8')
+// generate pages for extra sections
+const theorieTplStr = fs.readFileSync(path.join(TEMPLATES, 'theorie.html'), 'utf8')
+const oefenTplStr = fs.readFileSync(path.join(TEMPLATES, 'oefeningen.html'), 'utf8')
+const oefeningTplStr = fs.readFileSync(path.join(TEMPLATES, 'oefening.html'), 'utf8')
 for (const sec of extraSectionsData) {
   const label = sec.dirName.charAt(0).toUpperCase() + sec.dirName.slice(1)
-  const out = applyTemplate(theorieTpl, {
+  fs.writeFileSync(path.join(PAGES, `${sec.dirName}-theorie.html`), applyTemplate(theorieTplStr, {
     dirName: sec.dirName,
     sectionLabel: label,
     pageTitle: `${label} — ${sec.title}`,
-  })
-  fs.writeFileSync(path.join(PAGES, `${sec.dirName}-theorie.html`), out)
+  }))
+  if (sec.hasExercises) {
+    fs.writeFileSync(path.join(PAGES, `${sec.dirName}-oefeningen.html`), applyTemplate(oefenTplStr, {
+      dirName: sec.dirName,
+      sectionLabel: label,
+      hasMeetmoment: '',
+      week: sec.dirName,
+      weekTitle: sec.title,
+      pageTitle: `Oefeningen ${label} — ${sec.title}`,
+    }))
+    fs.writeFileSync(path.join(PAGES, `${sec.dirName}-oefening.html`), applyTemplate(oefeningTplStr, {
+      dirName: sec.dirName,
+      sectionLabel: label,
+      week: sec.dirName,
+      pageTitle: `Oefening — ${label}`,
+    }))
+  }
 }
 
 // ─── 7. copy static pages (checklist, assessments) with title substitution ─────────

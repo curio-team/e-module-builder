@@ -17,16 +17,16 @@ export function renderExerciseMeta(exercise) {
   if (descEl) descEl.innerHTML = exercise.descriptionInlineHtml ?? ''
 }
 
-export function getSolvedExercises(week) {
-  return getItem(`exercises:week${week}`, [])
+export function getSolvedExercises(sectionId) {
+  return getItem(`exercises:${sectionId}`, [])
 }
 
-export function markExerciseSolved(week, id) {
-  const solved = getSolvedExercises(week)
-  if (!solved.includes(id)) setItem(`exercises:week${week}`, [...solved, id])
+export function markExerciseSolved(sectionId, id) {
+  const solved = getSolvedExercises(sectionId)
+  if (!solved.includes(id)) setItem(`exercises:${sectionId}`, [...solved, id])
 }
 
-export function markExerciseUnsolved(week, id) {
-  const solved = getSolvedExercises(week)
-  setItem(`exercises:week${week}`, solved.filter((s) => s !== id))
+export function markExerciseUnsolved(sectionId, id) {
+  const solved = getSolvedExercises(sectionId)
+  setItem(`exercises:${sectionId}`, solved.filter((s) => s !== id))
 }

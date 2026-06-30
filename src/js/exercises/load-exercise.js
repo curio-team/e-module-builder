@@ -3,8 +3,8 @@ import { sitePath } from '../site-path.js'
 import { initExternalExercise } from './external-exercise.js'
 import { initTheoryPanel } from './theory-panel.js'
 
-async function loadWeekData(weekNum) {
-  return import(`../../data/exercises/week${weekNum}.json`).then((m) => m.default)
+async function loadWeekData(sectionId) {
+  return import(`../../data/exercises/${sectionId}.json`).then((m) => m.default)
 }
 
 function isExternalMode(weekData, exercise) {
@@ -26,17 +26,17 @@ function showMissingContent(weekNum) {
   )
 }
 
-export async function initExercisePage(weekNum) {
+export async function initExercisePage(sectionId) {
   const params = new URLSearchParams(window.location.search)
   const id = parseInt(params.get('id') || '1', 10)
   let weekData
 
   try {
-    weekData = await loadWeekData(weekNum)
+    weekData = await loadWeekData(sectionId)
   } catch {
     document.querySelector('[data-exercise-content]')?.insertAdjacentHTML(
       'beforeend',
-      `<p class="text-red-600">Oefeningdata voor week ${weekNum} niet gevonden.</p>`
+      `<p class="text-red-600">Oefeningdata voor ${sectionId} niet gevonden.</p>`
     )
 
     return
@@ -68,8 +68,8 @@ export async function initExercisePage(weekNum) {
     }
 
     renderExerciseMeta(exercise)
-    renderNavButtons(weekNum, id, weekData.exercises.length)
-    initCompletionToggle(weekNum, id)
+    renderNavButtons(sectionId, id, weekData.exercises.length)
+    initCompletionToggle(sectionId, id)
     return
   }
 
@@ -77,16 +77,16 @@ export async function initExercisePage(weekNum) {
     const missing = !exercise.task?.trim() && !exercise.description?.trim()
 
     if (missing) {
-      showMissingContent(weekNum)
+      showMissingContent(sectionId)
       return
     }
 
-    initExternalExercise(exercise, weekNum, {
-      onSolved: () => markExerciseSolved(weekNum, exercise.id),
+    initExternalExercise(exercise, sectionId, {
+      onSolved: () => markExerciseSolved(sectionId, exercise.id),
     })
 
-    renderNavButtons(weekNum, id, weekData.exercises.length)
-    initCompletionToggle(weekNum, id)
+    renderNavButtons(sectionId, id, weekData.exercises.length)
+    initCompletionToggle(sectionId, id)
     return
   }
 
@@ -98,7 +98,7 @@ export async function initExercisePage(weekNum) {
     (exercise.type !== 'areas' && !exercise.checks?.length)
 
   if (missingContent) {
-    showMissingContent(weekNum)
+    showMissingContent(sectionId)
     return
   }
 
@@ -115,7 +115,7 @@ export async function initExercisePage(weekNum) {
   const cssPanel = document.querySelector('[data-exercise-css-panel]')
   const areasPanel = document.querySelector('[data-exercise-areas-panel]')
   const responsiveBar = document.querySelector('[data-responsive-bar]')
-  const onSolved = () => markExerciseSolved(weekNum, exercise.id)
+  const onSolved = () => markExerciseSolved(sectionId, exercise.id)
 
   if (exercise.type === 'areas') {
     cssPanel?.classList.add('hidden')
@@ -147,15 +147,15 @@ export async function initExercisePage(weekNum) {
     }
   }
 
-  renderNavButtons(weekNum, id, weekData.exercises.length)
-  initCompletionToggle(weekNum, id)
+  renderNavButtons(sectionId, id, weekData.exercises.length)
+  initCompletionToggle(sectionId, id)
 }
 
-function initCompletionToggle(weekNum, id) {
+function initCompletionToggle(sectionId, id) {
   const btn = document.querySelector('[data-mark-complete]')
   if (!btn) return
 
-  let done = getSolvedExercises(weekNum).includes(id)
+  let done = getSolvedExercises(sectionId).includes(id)
 
   function update() {
     btn.textContent = done ? 'Voltooid ✓' : 'Markeer als voltooid'
@@ -166,18 +166,18 @@ function initCompletionToggle(weekNum, id) {
   update()
   btn.addEventListener('click', () => {
     done = !done
-    done ? markExerciseSolved(weekNum, id) : markExerciseUnsolved(weekNum, id)
+    done ? markExerciseSolved(sectionId, id) : markExerciseUnsolved(sectionId, id)
     update()
   })
 }
 
-function renderNavButtons(week, currentId, total) {
+function renderNavButtons(sectionId, currentId, total) {
   const prev = document.querySelector('[data-prev-exercise]')
   const next = document.querySelector('[data-next-exercise]')
 
   if (prev) {
     if (currentId > 1) {
-      prev.href = `${sitePath(`/pages/week${week}-oefening.html`)}?id=${currentId - 1}`
+      prev.href = `${sitePath(`/pages/${sectionId}-oefening.html`)}?id=${currentId - 1}`
       prev.classList.remove('hidden')
     } else {
       prev.classList.add('hidden')
@@ -186,7 +186,7 @@ function renderNavButtons(week, currentId, total) {
 
   if (next) {
     if (currentId < total) {
-      next.href = `${sitePath(`/pages/week${week}-oefening.html`)}?id=${currentId + 1}`
+      next.href = `${sitePath(`/pages/${sectionId}-oefening.html`)}?id=${currentId + 1}`
       next.classList.remove('hidden')
     } else {
       next.classList.add('hidden')
