@@ -177,20 +177,20 @@ export function initMobileNav() {
 
   const close = () => {
     if (!isMobile()) return
-    sidebar.classList.add('-translate-x-full')
+    sidebar.classList.remove('translate-x-0')
     overlay?.classList.add('hidden')
     document.body.classList.remove('overflow-hidden')
   }
 
   const open = () => {
-    sidebar.classList.remove('-translate-x-full')
+    sidebar.classList.add('translate-x-0')
     overlay?.classList.remove('hidden')
     document.body.classList.add('overflow-hidden')
   }
 
   toggle.addEventListener('click', () => {
-    if (sidebar.classList.contains('-translate-x-full')) open()
-    else close()
+    if (sidebar.classList.contains('translate-x-0')) close()
+    else open()
   })
 
   overlay?.addEventListener('click', close)
