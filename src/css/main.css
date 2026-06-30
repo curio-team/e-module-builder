@@ -217,7 +217,7 @@
   }
 
   main code {
-    @apply rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-sm text-zinc-800;
+    @apply rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-sm text-zinc-800 mt-4;
   }
 
   main pre {
@@ -268,7 +268,7 @@
   }
 
   x-callout {
-    @apply block bg-zinc-50 p-4 text-sm leading-relaxed text-zinc-600;
+    @apply block bg-zinc-50 p-4 text-sm leading-relaxed text-zinc-600 mt-4;
   }
 
   x-callout[type="tip"] {

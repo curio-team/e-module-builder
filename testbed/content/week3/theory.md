@@ -70,11 +70,15 @@ De MySQL-server is dus het programma dat verbindingen ontvangt en alle databases
 
 Hier een lijst met een sublijst:
 
+<x-callout type="tip">
+
 1. Item 1
 2. Item 2
    1. Subitem 2.1
    2. Subitem 2.2
 3. Item 3
+
+</x-callout>
 
 Hier een lijst met een sublijst, die een sublijst heeft:
 
