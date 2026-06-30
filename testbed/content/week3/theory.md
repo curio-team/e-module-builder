@@ -150,6 +150,36 @@ Dit is een opmerking.
 
 </x-callout>
 
+## Testing readability of code symbols
+
+Here's inline `==`, `!=`, `<=`, `>=`, `+`, `-`, `*`, `/`, `%`, `&`, `|`, `^`, `~`, `<<`, and `>>` symbols.
+
+Here's them in a code block:
+
+```js
+if (a == b) {
+  console.log("Equal");
+} else if (a != b) {
+  console.log("Not equal");
+}
+if (a <= b) {
+  console.log("Less than or equal");
+} else if (a >= b) {
+  console.log("Greater than or equal");
+}
+let sum = a + b;
+let difference = a - b;
+let product = a * b;
+let quotient = a / b;
+let remainder = a % b;
+let and = a & b;
+let or = a | b;
+let xor = a ^ b;
+let not = ~a;
+let leftShift = a << 2;
+let rightShift = a >> 2;
+```
+
 <x-nav label="Klaar met de theorie?">
 [Oefeningen](/pages/week3-oefeningen.html)
 [Inleveropdracht](/pages/week3-inleveropdracht.html)

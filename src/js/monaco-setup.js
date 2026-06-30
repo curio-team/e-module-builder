@@ -22,7 +22,7 @@ export function createCssEditor(container, initialValue = '', onChange) {
     language: 'css',
     theme: 'vs-dark',
     fontSize: 14,
-    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+    fontFamily: "'Google Sans Code', ui-monospace, monospace",
     minimap: { enabled: false },
     lineNumbers: 'on',
     scrollBeyondLastLine: false,
