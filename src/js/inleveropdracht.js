@@ -1,4 +1,5 @@
 import { getItem, setItem } from './storage.js'
+import { initHeadings } from './headings.js'
 
 function storageKey(week) {
   return `inleveropdracht:week${week}`
@@ -69,6 +70,8 @@ export function initInleveropdracht(data) {
     </div>
     <p data-submitted-hint class="mt-3 text-sm text-zinc-500 ${state.submitted ? '' : 'hidden'}">Je hebt deze opdracht gemarkeerd als ingeleverd. Lever ook in via het kanaal van je docent.</p>
   `
+
+  initHeadings(container.querySelector('.prose-inleveropdracht'))
 
   const saveState = (updates) => {
     const current = getItem(storageKey(data.week), { criteria: {}, submitted: false })

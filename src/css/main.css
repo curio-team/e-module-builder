@@ -186,10 +186,26 @@
 
   main h2 {
     @apply mt-8 text-xl font-semibold text-zinc-900 first:mt-0;
+    scroll-margin-top: 3.5rem;
   }
 
   main h3 {
     @apply mt-4 text-base font-semibold text-zinc-900;
+    scroll-margin-top: 3.5rem;
+  }
+
+  .heading-copy-link {
+    @apply ml-2 inline-flex cursor-pointer items-center rounded text-zinc-300 opacity-0 transition-opacity hover:text-zinc-500;
+    vertical-align: middle;
+  }
+
+  main h2:hover .heading-copy-link,
+  main h3:hover .heading-copy-link {
+    @apply opacity-100;
+  }
+
+  .heading-copy-link.copied {
+    @apply text-emerald-500 opacity-100;
   }
 
   main p {

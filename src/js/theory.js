@@ -1,3 +1,5 @@
+import { initHeadings } from './headings.js'
+
 function esc(s) {
   return String(s)
     .replace(/&/g, '&amp;')
@@ -34,4 +36,5 @@ export async function initTheory(week) {
       ${data.html}
     </div>
   `
+  initHeadings(container.querySelector('.prose-theory'))
 }
