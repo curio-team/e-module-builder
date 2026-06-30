@@ -216,8 +216,8 @@
     @apply font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 transition hover:decoration-zinc-900;
   }
 
-  main code {
-    @apply rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-sm text-zinc-800 mt-4;
+  main :not(pre) > code {
+    @apply rounded-md bg-sky-50 px-1.5 py-0.5 font-mono text-[0.8em] text-sky-700 ring-1 ring-sky-200;
   }
 
   main pre {
