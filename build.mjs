@@ -59,16 +59,37 @@ function sectionLabel(prefix, num) {
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
+// Content pages are always rendered into pages/*.html, so a root-absolute
+// link written in Markdown (e.g. "/pages/week1-oefeningen.html") must be
+// resolved relative to that directory — mirrors sitePath.js's runtime logic,
+// but baked in at build time so links work without JS and under any
+// GitHub Pages subpath.
+function resolveSiteAbsolutePath(sitePath) {
+  const trimmed = sitePath.slice(1)
+  if (trimmed.startsWith('pages/')) return trimmed.slice('pages/'.length)
+  return `../${trimmed}`
+}
+
 function rewriteAssetPaths(html, basePath) {
-  if (!basePath || !html) return html
-  const prefix = `../${basePath}/`
+  if (!html) return html
+  if (basePath) {
+    const prefix = `../${basePath}/`
+    html = html.replace(
+      /(<img\s[^>]*\bsrc=")(?!https?:\/\/|\/|data:|\.\.)([^"]+)(")/g,
+      `$1${prefix}$2$3`
+    )
+    html = html.replace(
+      /(<a\s[^>]*\bhref=")(?!https?:\/\/|\/|#|mailto:|\.\.)([^"]+)(")/g,
+      `$1${prefix}$2$3`
+    )
+  }
   html = html.replace(
-    /(<img\s[^>]*\bsrc=")(?!https?:\/\/|\/|data:|\.\.)([^"]+)(")/g,
-    `$1${prefix}$2$3`
+    /(<img\s[^>]*\bsrc=")\/(?!\/)([^"]+)(")/g,
+    (_, pre, sitePath, post) => `${pre}${resolveSiteAbsolutePath('/' + sitePath)}${post}`
   )
   html = html.replace(
-    /(<a\s[^>]*\bhref=")(?!https?:\/\/|\/|#|mailto:|\.\.)([^"]+)(")/g,
-    `$1${prefix}$2$3`
+    /(<a\s[^>]*\bhref=")\/(?!\/)([^"]+)(")/g,
+    (_, pre, sitePath, post) => `${pre}${resolveSiteAbsolutePath('/' + sitePath)}${post}`
   )
   return html
 }
