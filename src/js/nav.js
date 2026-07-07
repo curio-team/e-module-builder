@@ -152,8 +152,9 @@ export function initNav() {
     <div class="flex min-h-0 flex-1 flex-col">
       <div class="shrink-0 border-b border-zinc-800 px-5 py-5">
         <a href="${sitePath('/index.html')}" class="flex flex-col items-center text-center">
-          <img src="${sitePath('/logo.svg')}" alt="${mod.logoAlt}" class="sidebar-logo" width="155" height="91" />
-          <p class="mt-2.5 text-[11px] uppercase tracking-[0.15em] text-zinc-400">${mod.name} — ${mod.subtitle}</p>
+          <img src="${sitePath('/logo.png')}" alt="${mod.logoAlt}" class="sidebar-logo" width="96" height="96" />
+          <p class="mt-2.5 text-[11px] uppercase tracking-[0.15em] text-zinc-400">E-MODULE</p>
+          <p class="mt-1 text-sm font-bold text-[#F3F1EE]">${mod.name}</p>
         </a>
       </div>
       <div class="sidebar-scroll space-y-1">${links}</div>

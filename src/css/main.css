@@ -39,7 +39,7 @@
   }
 
   .sidebar-logo {
-    @apply h-auto w-38.75 max-w-full;
+    @apply h-auto w-24 max-w-full;
   }
 
   .sidebar-scroll {
@@ -69,11 +69,11 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center bg-[#FF6D6D] px-5 py-2.5 text-sm font-medium text-white no-underline transition hover:bg-[#FF5151] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6D6D] focus-visible:ring-offset-2;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center border border-zinc-300 bg-white px-5 py-2.5 text-sm font-medium text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center border border-zinc-300 bg-white px-5 py-2.5 text-sm font-medium text-zinc-700 no-underline transition hover:border-zinc-400 hover:bg-zinc-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2;
   }
 
   .card {
@@ -233,7 +233,7 @@
   }
 
   main :not(pre) > code {
-    @apply rounded-md bg-sky-50 px-1.5 py-0.5 font-mono text-[0.8em] text-sky-700 ring-1 ring-sky-200;
+    @apply rounded-md bg-[#FF8989]/35 px-1.5 py-0.5 font-mono text-[0.8em] text-zinc-900 ring-1 ring-[#FF6D6D];
   }
 
   main pre {

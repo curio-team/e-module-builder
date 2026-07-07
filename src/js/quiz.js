@@ -26,8 +26,8 @@ export function initQuiz(quizData, containerSelector = '[data-quiz]') {
       .map(
         (q, qi) => `
         <fieldset class="card" data-question="${q.id}">
-          <legend class="inline-block rounded-lg bg-sky-100 px-3 py-1.5 text-base font-medium text-sky-900">
-            <span class="mr-3 font-mono text-sm text-sky-900/50">${String(qi + 1).padStart(2, '0')}</span>
+          <legend class="inline-block rounded-lg bg-[#FF8989] px-3 py-1.5 text-base font-medium text-zinc-900">
+            <span class="mr-3 font-mono text-sm text-zinc-900/60">${String(qi + 1).padStart(2, '0')}</span>
             ${q.question}
           </legend>
           ${renderPreview(q.preview)}
