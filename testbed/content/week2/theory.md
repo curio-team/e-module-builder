@@ -2,7 +2,7 @@
 week: 2
 title: Template Areas
 goal: je kunt grid-template-areas gebruiken om gebieden te benoemen en een responsieve layout te maken
-accent: violet
+accent: primary
 summary: Met grid-template-areas geef je gebieden een naam en tekent je de layout visueel in CSS.
 leeruitkomsten:
   - Ik kan grid-template-areas gebruiken om een layout te tekenen

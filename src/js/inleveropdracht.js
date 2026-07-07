@@ -14,18 +14,18 @@ export function initInleveropdracht(data) {
   const criteriaHtml = data.criteria
     .map((c) => {
       const checked = !!state.criteria[c.id]
-      const optional = c.optional ? ' <span class="text-zinc-400">(bonus)</span>' : ''
+      const optional = c.optional ? ' <span class="text-muted">(bonus)</span>' : ''
       return `
-        <label class="flex cursor-pointer items-start gap-3 border-b border-zinc-100 py-3 last:border-0">
+        <label class="flex cursor-pointer items-start gap-3 border-b border-ink/10 py-3 last:border-0">
           <input
             type="checkbox"
             data-criterion-id="${c.id}"
-            class="mt-0.5 h-4 w-4 border-zinc-300 text-zinc-900 focus:ring-zinc-900"
+            class="mt-0.5 h-4 w-4 border-ink/20 text-primary focus:ring-primary"
             ${checked ? 'checked' : ''}
           />
-          <span class="flex-1 text-sm text-zinc-700">
+          <span class="flex-1 text-sm text-ink/80">
             ${c.text}${optional}
-            <span class="ml-2 font-mono text-xs text-zinc-400">${c.points}p</span>
+            <span class="ml-2 font-mono text-xs text-muted">${c.points}p</span>
           </span>
         </label>
       `
@@ -33,10 +33,10 @@ export function initInleveropdracht(data) {
     .join('')
 
   const deliverablesHtml = data.deliverables
-    .map((d) => `<li class="text-sm text-zinc-600">${d}</li>`)
+    .map((d) => `<li class="text-sm text-muted">${d}</li>`)
     .join('')
 
-  const tipsHtml = data.tips.map((t) => `<li class="text-sm text-zinc-600">${t}</li>`).join('')
+  const tipsHtml = data.tips.map((t) => `<li class="text-sm text-muted">${t}</li>`).join('')
 
   container.innerHTML = `
     <section class="card prose-inleveropdracht mb-6">
@@ -44,23 +44,23 @@ export function initInleveropdracht(data) {
     </section>
 
     <section class="card mb-6">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">Inleveren</p>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">Inleveren</p>
       <ul class="mt-2 list-inside list-disc space-y-1">${deliverablesHtml}</ul>
     </section>
 
     <section class="card mb-6">
       <div class="mb-4 flex items-end justify-between">
         <div>
-          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">Beoordelingscriteria</p>
-          <p class="mt-1 text-sm text-zinc-500">Maximaal ${data.maxPoints} punten — gebruik als checklist vóór je inlevert</p>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">Beoordelingscriteria</p>
+          <p class="mt-1 text-sm text-muted">Maximaal ${data.maxPoints} punten — gebruik als checklist vóór je inlevert</p>
         </div>
-        <span data-criteria-score class="font-mono text-sm text-zinc-900">0 / ${data.maxPoints}</span>
+        <span data-criteria-score class="font-mono text-sm text-ink">0 / ${data.maxPoints}</span>
       </div>
       <div data-criteria-list>${criteriaHtml}</div>
     </section>
 
     <section class="card-muted mb-6">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">Tips</p>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">Tips</p>
       <ul class="mt-3 list-inside list-disc space-y-1">${tipsHtml}</ul>
     </section>
 
@@ -68,7 +68,7 @@ export function initInleveropdracht(data) {
       <button type="button" data-export-inleveropdracht class="btn-secondary">Exporteer checklist</button>
       <button type="button" data-mark-submitted class="btn-primary">${state.submitted ? 'Ingeleverd ✓' : 'Markeer als ingeleverd'}</button>
     </div>
-    <p data-submitted-hint class="mt-3 text-sm text-zinc-500 ${state.submitted ? '' : 'hidden'}">Je hebt deze opdracht gemarkeerd als ingeleverd. Lever ook in via het kanaal van je docent.</p>
+    <p data-submitted-hint class="mt-3 text-sm text-muted ${state.submitted ? '' : 'hidden'}">Je hebt deze opdracht gemarkeerd als ingeleverd. Lever ook in via het kanaal van je docent.</p>
   `
 
   initHeadings(container.querySelector('.prose-inleveropdracht'))

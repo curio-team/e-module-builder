@@ -3,7 +3,7 @@ import { getQuizScore, setQuizScore, removeQuizScore } from './storage.js'
 function renderPreview(preview) {
   if (!preview) return ''
   return `
-    <div class="my-4 overflow-hidden border border-zinc-100 bg-zinc-50 p-4">
+    <div class="my-4 overflow-hidden border border-ink/10 bg-surface-subtle p-4">
       <style>${preview.css}</style>
       ${preview.html}
     </div>
@@ -26,8 +26,8 @@ export function initQuiz(quizData, containerSelector = '[data-quiz]') {
       .map(
         (q, qi) => `
         <fieldset class="card" data-question="${q.id}">
-          <legend class="inline-block rounded-lg bg-[#FF8989] px-3 py-1.5 text-base font-medium text-zinc-900">
-            <span class="mr-3 font-mono text-sm text-zinc-900/60">${String(qi + 1).padStart(2, '0')}</span>
+          <legend class="inline-block rounded-lg bg-primary-light px-3 py-1.5 text-base font-medium text-ink">
+            <span class="mr-3 font-mono text-sm text-ink/60">${String(qi + 1).padStart(2, '0')}</span>
             ${q.question}
           </legend>
           ${renderPreview(q.preview)}
@@ -35,9 +35,9 @@ export function initQuiz(quizData, containerSelector = '[data-quiz]') {
             ${q.options
             .map(
               (opt, oi) => `
-              <label class="flex cursor-pointer items-center gap-3 border border-zinc-200 p-3 transition hover:bg-zinc-50 has-checked:border-zinc-900 has-checked:bg-zinc-50">
-                <input type="radio" name="${q.id}" value="${oi}" class="h-4 w-4 border-zinc-300 text-zinc-900 focus:ring-zinc-900" required />
-                <span class="text-sm text-zinc-700">${opt}</span>
+              <label class="flex cursor-pointer items-center gap-3 border border-ink/15 p-3 transition hover:bg-surface-subtle has-checked:border-primary has-checked:bg-surface-subtle">
+                <input type="radio" name="${q.id}" value="${oi}" class="h-4 w-4 border-ink/20 text-primary focus:ring-primary" required />
+                <span class="text-sm text-ink/80">${opt}</span>
               </label>
             `
             )
@@ -74,7 +74,7 @@ export function initQuiz(quizData, containerSelector = '[data-quiz]') {
       const isCorrect = answers[q.id] === q.correct
       const el = container.querySelector(`[data-explanation="${q.id}"]`)
       el.classList.remove('hidden')
-      el.classList.add(isCorrect ? 'text-zinc-700' : 'text-zinc-500')
+      el.classList.add(isCorrect ? 'text-ink/80' : 'text-muted')
       el.textContent = isCorrect ? `✓ Correct. ${q.explanation}` : `✗ Fout. ${q.explanation}`
     })
 
@@ -85,15 +85,15 @@ export function initQuiz(quizData, containerSelector = '[data-quiz]') {
 function showResults(container, quizData, result, fromStorage, form = null) {
   const passed = result.passed
   const resultHtml = `
-    <div class="card mb-6 ${passed ? 'bg-zinc-50' : ''}">
-      <h2 class="text-xl font-medium text-zinc-900">
+    <div class="card mb-6 ${passed ? 'bg-surface-subtle' : ''}">
+      <h2 class="text-xl font-medium text-ink">
         ${passed ? 'Geslaagd' : 'Nog niet geslaagd'}
       </h2>
-      <p class="mt-2 text-zinc-600">
+      <p class="mt-2 text-muted">
         Score: ${result.correct} / ${result.total} (${result.percent}%)
         — minimaal ${quizData.passScore}% nodig
       </p>
-      ${fromStorage ? '<p class="mt-2 text-sm text-zinc-500">Eerder resultaat (opgeslagen in browser). <button type="button" data-reset-quiz class="text-link">Opnieuw maken</button></p>' : ''}
+      ${fromStorage ? '<p class="mt-2 text-sm text-muted">Eerder resultaat (opgeslagen in browser). <button type="button" data-reset-quiz class="text-link">Opnieuw maken</button></p>' : ''}
     </div>
   `
 

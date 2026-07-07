@@ -2,7 +2,7 @@
 week: 3
 title: Subgrid en Nesting
 goal: je kunt subgrid gebruiken om geneste elementen uit te lijnen met de parent grid
-accent: emerald
+accent: primary
 summary: Met subgrid laat je geneste grid containers de sporen van hun ouder overnemen.
 leeruitkomsten:
   - Ik weet wat subgrid doet en wanneer ik het gebruik

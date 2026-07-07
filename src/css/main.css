@@ -10,9 +10,17 @@
   --font-sans: "Lexend", system-ui, sans-serif;
   --font-mono: "Google Sans Code", ui-monospace, monospace;
 
-  --shadow-card: 0 3px 10px rgba(15, 23, 42, 0.08);
-  --shadow-card-hover: 0 10px 32px rgba(15, 23, 42, 0.12);
-  --shadow-editor: 0 4px 14px rgba(15, 23, 42, 0.14);
+  --color-primary: #FF6D6D;
+  --color-primary-dark: #FF5151;
+  --color-primary-light: #FF8989;
+  --color-ink: #0A0A11;
+  --color-muted: #757575;
+  --color-surface: #F3F1EE;
+  --color-surface-subtle: #f7f7f7;
+
+  --shadow-card: 0 3px 10px rgba(10, 10, 17, 0.08);
+  --shadow-card-hover: 0 10px 32px rgba(10, 10, 17, 0.12);
+  --shadow-editor: 0 4px 14px rgba(10, 10, 17, 0.14);
 }
 
 @layer base {
@@ -21,17 +29,17 @@
   }
 
   body {
-    @apply text-zinc-800;
+    @apply text-ink/80;
   }
 }
 
 @layer components {
   .app-shell {
-    @apply min-h-screen bg-[#f4f4f5];
+    @apply min-h-screen bg-surface;
   }
 
   .sidebar-panel {
-    @apply fixed inset-y-0 left-0 z-50 flex w-60 -translate-x-full flex-col overflow-hidden bg-zinc-950 transition-transform duration-300 ease-out md:translate-x-0;
+    @apply fixed inset-y-0 left-0 z-50 flex w-60 -translate-x-full flex-col overflow-hidden bg-ink transition-transform duration-300 ease-out md:translate-x-0;
   }
 
   .sidebar-panel [data-module-nav] {
@@ -45,7 +53,7 @@
   .sidebar-scroll {
     @apply min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4;
     scrollbar-width: thin;
-    scrollbar-color: theme('colors.zinc.700') transparent;
+    scrollbar-color: theme('colors.muted') transparent;
   }
 
   .sidebar-scroll::-webkit-scrollbar {
@@ -57,23 +65,23 @@
   }
 
   .sidebar-scroll::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-zinc-700;
+    @apply rounded-full bg-white/25;
   }
 
   .sidebar-scroll::-webkit-scrollbar-thumb:hover {
-    @apply bg-zinc-600;
+    @apply bg-white/40;
   }
 
   .topbar {
-    @apply sticky top-0 z-30 border-b border-zinc-200/80 bg-[#f4f4f5]/90 backdrop-blur-md;
+    @apply sticky top-0 z-30 border-b border-ink/15 bg-surface/90 backdrop-blur-md;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center bg-[#FF6D6D] px-5 py-2.5 text-sm font-medium text-white no-underline transition hover:bg-[#FF5151] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6D6D] focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center bg-primary px-5 py-2.5 text-sm font-medium text-white no-underline transition hover:bg-primary-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center border border-zinc-300 bg-white px-5 py-2.5 text-sm font-medium text-zinc-700 no-underline transition hover:border-zinc-400 hover:bg-zinc-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center border border-ink/20 bg-white px-5 py-2.5 text-sm font-medium text-ink/80 no-underline transition hover:border-ink/30 hover:bg-surface-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-muted focus-visible:ring-offset-2;
   }
 
   .card {
@@ -85,39 +93,39 @@
   }
 
   .card-muted {
-    @apply rounded-md bg-zinc-50 p-6 shadow-card;
+    @apply rounded-md bg-surface-subtle p-6 shadow-card;
   }
 
   .week-label {
-    @apply mb-3 block text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400;
+    @apply mb-3 block text-[11px] font-semibold uppercase tracking-[0.2em] text-muted;
   }
 
   .text-link {
-    @apply text-sm font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 transition hover:decoration-zinc-900;
+    @apply text-sm font-medium text-ink underline decoration-ink/25 underline-offset-4 transition hover:decoration-ink;
   }
 
   .progress-track {
-    @apply h-px overflow-hidden bg-zinc-200;
+    @apply h-px overflow-hidden bg-ink/15;
   }
 
   .progress-fill {
-    @apply h-full bg-zinc-900 transition-all duration-500;
+    @apply h-full bg-primary transition-all duration-500;
   }
 
   .code-block {
-    @apply overflow-x-auto rounded-md bg-zinc-950 p-5 font-mono text-[13px] leading-relaxed text-zinc-300 shadow-editor;
+    @apply overflow-x-auto rounded-md bg-ink p-5 font-mono text-[13px] leading-relaxed text-white/70 shadow-editor;
   }
 
   .callout {
-    @apply mt-4 rounded-md bg-zinc-50 p-4 text-sm leading-relaxed text-zinc-600 shadow-card;
+    @apply mt-4 rounded-md bg-surface-subtle p-4 text-sm leading-relaxed text-muted shadow-card;
   }
 
   .compare-cell {
-    @apply rounded-md bg-zinc-50 p-5 shadow-card;
+    @apply rounded-md bg-surface-subtle p-5 shadow-card;
   }
 
   .editor-panel {
-    @apply overflow-hidden rounded-md bg-zinc-950 shadow-editor;
+    @apply overflow-hidden rounded-md bg-ink shadow-editor;
   }
 
   .preview-panel {
@@ -125,23 +133,23 @@
   }
 
   .panel-header {
-    @apply border-b border-zinc-800 px-4 py-2.5 text-[11px] font-medium uppercase tracking-wider text-zinc-500;
+    @apply border-b border-white/10 px-4 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted;
   }
 
   .panel-header-light {
-    @apply border-b border-zinc-100 px-4 py-2.5 text-[11px] font-medium uppercase tracking-wider text-zinc-400;
+    @apply border-b border-ink/10 px-4 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted;
   }
 
   .feedback-box {
-    @apply mt-2 rounded-md border border-zinc-200 bg-white p-4 text-sm shadow-card;
+    @apply mt-2 rounded-md border border-ink/15 bg-white p-4 text-sm shadow-card;
   }
 
   .badge {
-    @apply inline-block text-[11px] font-medium uppercase tracking-wider text-zinc-500;
+    @apply inline-block text-[11px] font-medium uppercase tracking-wider text-muted;
   }
 
   .badge-done {
-    @apply text-[11px] font-medium uppercase tracking-wider text-zinc-600;
+    @apply text-[11px] font-medium uppercase tracking-wider text-muted;
   }
 
   .monaco-container {
@@ -153,7 +161,7 @@
   }
 
   .nav-cta {
-    @apply mx-3 mb-2 mt-1 flex items-center gap-2 border border-zinc-600 bg-zinc-900 px-3 py-2.5 text-[13px] font-medium text-zinc-100 transition hover:border-zinc-500 hover:bg-zinc-800 hover:text-white;
+    @apply mx-3 mb-2 mt-1 flex items-center gap-2 border border-white/15 bg-primary px-3 py-2.5 text-[13px] font-medium text-white transition hover:border-white/25 hover:bg-primary-dark;
   }
 
   .nav-group-toggle {
@@ -161,7 +169,7 @@
   }
 
   .nav-group-chevron {
-    @apply mt-0.5 h-3 w-3 shrink-0 text-zinc-500 transition-transform duration-200;
+    @apply mt-0.5 h-3 w-3 shrink-0 text-muted transition-transform duration-200;
   }
 
   .nav-group-children {
@@ -181,21 +189,21 @@
   /* ── Theory prose typography ─────────────────────────────────────────────── */
 
   main {
-    @apply space-y-6 text-zinc-700;
+    @apply space-y-6 text-ink/80;
   }
 
   main h2 {
-    @apply mt-8 text-xl font-semibold text-zinc-900 first:mt-0;
+    @apply mt-8 text-xl font-semibold text-ink first:mt-0;
     scroll-margin-top: 3.5rem;
   }
 
   main h3 {
-    @apply mt-4 text-base font-semibold text-zinc-900;
+    @apply mt-4 text-base font-semibold text-ink;
     scroll-margin-top: 3.5rem;
   }
 
   .heading-copy-link {
-    @apply ml-2 inline-flex cursor-pointer items-center rounded text-zinc-300 opacity-0 transition-opacity hover:text-zinc-500;
+    @apply ml-2 inline-flex cursor-pointer items-center rounded text-ink/25 opacity-0 transition-opacity hover:text-muted;
     vertical-align: middle;
   }
 
@@ -229,7 +237,7 @@
   }
 
   main a {
-    @apply font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 transition hover:decoration-zinc-900;
+    @apply font-medium text-ink underline decoration-ink/25 underline-offset-4 transition hover:decoration-ink;
   }
 
   main :not(pre) > code {
@@ -237,7 +245,7 @@
   }
 
   main pre {
-    @apply mt-2 overflow-x-auto rounded-md bg-zinc-950 p-5 font-mono text-[13px] leading-relaxed text-zinc-300 shadow-editor;
+    @apply mt-2 overflow-x-auto rounded-md bg-ink p-5 font-mono text-[13px] leading-relaxed text-white/70 shadow-editor;
   }
 
   main pre code {
@@ -245,7 +253,7 @@
   }
 
   main blockquote {
-    @apply border-l-4 border-zinc-300 pl-4 italic text-zinc-500;
+    @apply border-l-4 border-ink/25 pl-4 italic text-muted;
   }
 
   main table {
@@ -253,11 +261,11 @@
   }
 
   main thead tr {
-    @apply border-b border-zinc-200 text-zinc-500;
+    @apply border-b border-ink/15 text-muted;
   }
 
   main tbody tr {
-    @apply border-b border-zinc-100 last:border-0;
+    @apply border-b border-ink/10 last:border-0;
   }
 
   main th,
@@ -266,11 +274,11 @@
   }
 
   main details {
-    @apply rounded-md bg-zinc-100 p-4 shadow-card;
+    @apply rounded-md bg-surface-subtle p-4 shadow-card;
   }
 
   main details summary {
-    @apply cursor-pointer font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 transition hover:decoration-zinc-900;
+    @apply cursor-pointer font-medium text-ink underline decoration-ink/25 underline-offset-4 transition hover:decoration-ink;
   }
 
   /* ── Custom components ───────────────────────────────────────────────────── */
@@ -280,11 +288,11 @@
   }
 
   x-card>h2 {
-    @apply text-lg font-medium text-zinc-900;
+    @apply text-lg font-medium text-ink;
   }
 
   x-callout {
-    @apply mt-4 block rounded-md bg-zinc-50 p-4 text-sm leading-relaxed text-zinc-600 shadow-card;
+    @apply mt-4 block rounded-md bg-surface-subtle p-4 text-sm leading-relaxed text-muted shadow-card;
   }
 
   x-callout[type="tip"] {
@@ -304,7 +312,7 @@
   }
 
   x-callout[type="note"] {
-    @apply border-l-4 border-l-zinc-500 bg-zinc-50 text-zinc-800;
+    @apply border-l-4 border-l-muted bg-surface-subtle text-ink;
   }
 
   x-compare {
@@ -312,11 +320,11 @@
   }
 
   x-compare-item {
-    @apply block rounded-md bg-zinc-50 p-5 shadow-card;
+    @apply block rounded-md bg-surface-subtle p-5 shadow-card;
   }
 
   x-compare-item>h3 {
-    @apply font-medium text-zinc-900;
+    @apply font-medium text-ink;
   }
 
   x-nav {
@@ -328,7 +336,7 @@
   }
 
   x-nav>.x-nav-label {
-    @apply font-medium text-zinc-900;
+    @apply font-medium text-ink;
   }
 
   x-nav>p {
@@ -336,15 +344,15 @@
   }
 
   x-nav a {
-    @apply inline-flex shrink-0 items-center justify-center border border-zinc-300 bg-white px-5 py-2.5 text-sm font-medium text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 !no-underline;
+    @apply inline-flex shrink-0 items-center justify-center border border-ink/20 bg-white px-5 py-2.5 text-sm font-medium text-ink/80 transition hover:border-ink/30 hover:bg-surface-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-muted focus-visible:ring-offset-2 !no-underline;
   }
 
   x-nav>p>a:last-child {
-    @apply border-transparent bg-zinc-900 text-white hover:border-transparent hover:bg-zinc-800 focus-visible:ring-zinc-900;
+    @apply border-transparent bg-primary text-white hover:border-transparent hover:bg-primary-dark focus-visible:ring-primary;
   }
 
   x-browser {
-    @apply relative mt-6 block overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-lg;
+    @apply relative mt-6 block overflow-hidden rounded-lg border border-ink/15 bg-white shadow-lg;
     padding-top: calc(2.25rem);
   }
 
@@ -354,7 +362,7 @@
 
   x-browser::before {
     content: "Browser";
-    @apply absolute inset-x-0 top-0 flex h-9 pl-4 items-center bg-zinc-800 text-xs font-medium text-zinc-400;
+    @apply absolute inset-x-0 top-0 flex h-9 pl-4 items-center bg-ink text-xs font-medium text-muted;
   }
 
   x-browser[title]::before {
@@ -363,13 +371,13 @@
 
   x-browser::after {
     content: "−   □   ✕";
-    @apply pointer-events-none absolute right-0 top-0 flex h-9 items-center pr-3 text-[0.65rem] tracking-widest text-zinc-500;
+    @apply pointer-events-none absolute right-0 top-0 flex h-9 items-center pr-3 text-[0.65rem] tracking-widest text-muted;
   }
 
   /* ── Theory side panel ───────────────────────────────────────────────────── */
 
   .theory-panel {
-    @apply fixed inset-y-0 right-0 z-40 flex w-[480px] max-w-[90vw] flex-col border-l border-zinc-200 bg-white shadow-xl;
+    @apply fixed inset-y-0 right-0 z-40 flex w-[480px] max-w-[90vw] flex-col border-l border-ink/15 bg-white shadow-xl;
   }
 
   .theory-panel.panel-ready {
@@ -381,7 +389,7 @@
   }
 
   .theory-panel-header {
-    @apply flex shrink-0 items-center border-b border-zinc-200 bg-zinc-50;
+    @apply flex shrink-0 items-center border-b border-ink/15 bg-surface-subtle;
   }
 
   .theory-panel-tabs {
@@ -394,15 +402,15 @@
   }
 
   .theory-tab {
-    @apply whitespace-nowrap border-b-2 border-transparent px-4 py-3 text-sm font-medium text-zinc-500 transition hover:text-zinc-900;
+    @apply whitespace-nowrap border-b-2 border-transparent px-4 py-3 text-sm font-medium text-muted transition hover:text-ink;
   }
 
   .theory-tab-active {
-    @apply border-zinc-900 text-zinc-900;
+    @apply border-primary text-ink;
   }
 
   .theory-panel-close {
-    @apply shrink-0 p-3 text-zinc-400 transition hover:text-zinc-700;
+    @apply shrink-0 p-3 text-muted transition hover:text-ink/80;
   }
 
   .theory-panel-body {
@@ -418,7 +426,7 @@
   }
 
   .theory-panel-spinner {
-    @apply h-8 w-8 animate-spin rounded-full border-2 border-zinc-200 border-t-zinc-700;
+    @apply h-8 w-8 animate-spin rounded-full border-2 border-ink/15 border-t-primary;
   }
 
   .theory-panel-iframe {
@@ -426,7 +434,7 @@
   }
 
   .theory-panel-toggle {
-    @apply fixed bottom-6 right-6 shadow z-50 flex items-center gap-2 bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white shadow-lg transition hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2;
+    @apply fixed bottom-6 right-6 shadow z-50 flex items-center gap-2 bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-lg transition hover:bg-primary-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
   }
 
   /* ── Embedded theory mode (inside iframe) ────────────────────────────────── */

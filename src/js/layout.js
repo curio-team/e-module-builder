@@ -28,7 +28,7 @@ export function mountLayout() {
     <div class="md:pl-60">
       <header class="topbar">
         <div class="flex items-center gap-4 px-4 py-3 md:px-8">
-          <button data-nav-toggle type="button" class="p-2 text-zinc-600 transition hover:text-zinc-900 md:hidden" aria-label="Menu openen">
+          <button data-nav-toggle type="button" class="p-2 text-muted transition hover:text-ink md:hidden" aria-label="Menu openen">
             ${MENU_SVG}
           </button>
           <div data-breadcrumbs></div>

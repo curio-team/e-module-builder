@@ -8,7 +8,7 @@ function showFeedback(el, html) {
 
 function renderSteps(steps) {
   if (!steps?.length) return ''
-  return `<ol class="mt-4 list-decimal space-y-2 pl-5 text-sm text-zinc-600">${steps
+  return `<ol class="mt-4 list-decimal space-y-2 pl-5 text-sm text-muted">${steps
     .map((step) => `<li>${step}</li>`)
     .join('')}</ol>`
 }
@@ -17,8 +17,8 @@ function renderList(items, label) {
   if (!items?.length) return ''
   return `
     <div class="mt-6">
-      <p class="text-sm font-medium text-zinc-900">${label}</p>
-      <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-zinc-600">${items
+      <p class="text-sm font-medium text-ink">${label}</p>
+      <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-muted">${items
         .map((item) => `<li>${item}</li>`)
         .join('')}</ul>
     </div>`
@@ -48,21 +48,21 @@ export function initExternalExercise(exercise, weekNum, { onSolved } = {}) {
   document.querySelector('[data-hint]')?.addEventListener('click', () => {
     showFeedback(
       feedback,
-      exercise.hintHtml || '<p class="text-zinc-600">Werk de stappen rustig door in je eigen omgeving.</p>'
+      exercise.hintHtml || '<p class="text-muted">Werk de stappen rustig door in je eigen omgeving.</p>'
     )
   })
 
   document.querySelector('[data-solution]')?.addEventListener('click', () => {
     showFeedback(
       feedback,
-      `<p class="font-medium text-zinc-900">Voorbeelduitwerking</p>${exercise.solutionHtml || '<p class="mt-2 text-sm text-zinc-600">Vergelijk je werk met de theorie en vraag feedback aan je docent.</p>'}`
+      `<p class="font-medium text-ink">Voorbeelduitwerking</p>${exercise.solutionHtml || '<p class="mt-2 text-sm text-muted">Vergelijk je werk met de theorie en vraag feedback aan je docent.</p>'}`
     )
   })
 
   document.querySelector('[data-check]')?.addEventListener('click', () => {
     showFeedback(
       feedback,
-      '<p class="font-medium text-zinc-900">Opdracht afgerond in je eigen omgeving?</p><p class="mt-2 text-sm text-zinc-500">Markeer als voltooid als je klaar bent. De docent beoordeelt buiten deze site.</p>'
+      '<p class="font-medium text-ink">Opdracht afgerond in je eigen omgeving?</p><p class="mt-2 text-sm text-muted">Markeer als voltooid als je klaar bent. De docent beoordeelt buiten deze site.</p>'
     )
     onSolved?.(exercise.id)
     markExerciseSolved(weekNum, exercise.id)
