@@ -77,11 +77,11 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center bg-primary px-5 py-2.5 text-sm font-medium text-white transition hover:bg-primary-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center bg-primary px-5 py-2.5 text-sm font-medium text-white no-underline transition hover:bg-primary-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center border border-ink/20 bg-white px-5 py-2.5 text-sm font-medium text-ink/80 transition hover:border-ink/30 hover:bg-surface-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-muted focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center border border-ink/20 bg-white px-5 py-2.5 text-sm font-medium text-ink/80 no-underline transition hover:border-ink/30 hover:bg-surface-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-muted focus-visible:ring-offset-2;
   }
 
   .card {
@@ -241,7 +241,7 @@
   }
 
   main :not(pre) > code {
-    @apply rounded-md bg-sky-50 px-1.5 py-0.5 font-mono text-[0.8em] text-sky-700 ring-1 ring-sky-200;
+    @apply rounded-md bg-primary-light/35 px-1.5 py-0.5 font-mono text-[0.8em] text-ink ring-1 ring-primary;
   }
 
   main pre {
