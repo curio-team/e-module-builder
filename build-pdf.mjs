@@ -7,6 +7,7 @@ import PDFDocument from 'pdfkit'
 const marked = new Marked()
 
 const SECTION_RE = /^([a-zA-Z]+)(\d+)$/
+const IGNORED_DIRS = new Set(['assessments'])
 const CUSTOM_EL_RE = /^<(x-[a-z-]+|details)([^>]*)>([\s\S]*?)<\/\1>/i
 const SUMMARY_RE = /<summary>([\s\S]*?)<\/summary>/i
 
@@ -427,6 +428,29 @@ export async function generatePdf({ projectDir }) {
     .sort((a, b) => Number(SECTION_RE.exec(a)[2]) - Number(SECTION_RE.exec(b)[2]))
     .slice(0, mod.weeks ?? 99)
 
+  const extraDirs = fs.readdirSync(CONTENT)
+    .filter(d => !SECTION_RE.test(d) && !IGNORED_DIRS.has(d) && fs.statSync(path.join(CONTENT, d)).isDirectory())
+    .filter(d => fs.existsSync(path.join(CONTENT, d, 'theory.md')))
+
+  const sections = [
+    ...weekDirs.map(d => {
+      const [, prefix, num] = SECTION_RE.exec(d)
+      return {
+        dirName: d,
+        sortKey: Number(num),
+        label: `${prefix.charAt(0).toUpperCase()}${prefix.slice(1)} ${num}`,
+      }
+    }),
+    ...extraDirs.map(d => {
+      const { data: fm } = matter(fs.readFileSync(path.join(CONTENT, d, 'theory.md'), 'utf8'))
+      return {
+        dirName: d,
+        sortKey: fm.sort ?? 999,
+        label: d.charAt(0).toUpperCase() + d.slice(1),
+      }
+    }),
+  ].sort((a, b) => a.sortKey - b.sortKey)
+
   const PUBLIC = path.join(projectDir, 'public')
   if (!fs.existsSync(PUBLIC)) fs.mkdirSync(PUBLIC, { recursive: true })
 
@@ -437,11 +461,9 @@ export async function generatePdf({ projectDir }) {
 
   renderCover(doc, mod)
 
-  for (const dirName of weekDirs) {
-    const [, prefix, num] = SECTION_RE.exec(dirName)
-    const label = `${prefix.charAt(0).toUpperCase()}${prefix.slice(1)} ${num}`
+  for (const sec of sections) {
     doc.addPage()
-    renderWeek(doc, path.join(CONTENT, dirName), label)
+    renderWeek(doc, path.join(CONTENT, sec.dirName), sec.label)
   }
 
   doc.end()
