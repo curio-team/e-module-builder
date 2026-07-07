@@ -49,6 +49,5 @@ Zonder subgrid krijgt elk genest grid zijn eigen coördinatenstelsel, wat uitlij
 ```
 
 <x-nav label="Klaar met de theorie?">
-[Oefeningen](/pages/week3-oefeningen.html)
 [Inleveropdracht](/pages/week3-inleveropdracht.html)
 </x-nav>

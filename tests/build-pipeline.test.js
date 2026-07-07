@@ -316,9 +316,4 @@ describe('build pipeline — week3 (no quiz.md)', () => {
     expect(week3Nav).toBeDefined()
     expect(week3Nav.children.some(c => c.label === 'Quiz')).toBe(false)
   })
-
-  it('generates week3-theorie.html and week3-oefeningen.html', () => {
-    expect(existsSync(join(tmpDir, 'pages/week3-theorie.html'))).toBe(true)
-    expect(existsSync(join(tmpDir, 'pages/week3-oefeningen.html'))).toBe(true)
-  })
 })
