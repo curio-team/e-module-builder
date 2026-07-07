@@ -241,7 +241,7 @@
   }
 
   main :not(pre) > code {
-    @apply rounded-md bg-[#FF8989]/35 px-1.5 py-0.5 font-mono text-[0.8em] text-zinc-900 ring-1 ring-[#FF6D6D];
+    @apply rounded-md bg-[#FF8989]/12 px-1.5 py-0.5 font-mono text-[0.8em] text-zinc-900 ring-1 ring-[#FF8989]/45;
   }
 
   main pre {
