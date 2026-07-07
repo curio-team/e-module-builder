@@ -2,7 +2,7 @@
 sort: 4
 title: Extra tests (meta)
 goal: je ziet extra mogelijkheden van de testbed omgeving
-accent: indigo
+accent: primary
 summary: Dit is hier om extra mogelijkheden van de testbed omgeving te testen. Het is geen onderdeel van de cursus.
 leeruitkomsten:
   - "Ik kan extra mogelijkheden van de testbed omgeving gebruiken"

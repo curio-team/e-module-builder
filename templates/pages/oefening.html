@@ -16,9 +16,9 @@
             <span data-difficulty
                   class="badge mb-2 block"></span>
             <h1 data-exercise-title
-                class="text-2xl font-bold text-zinc-900 md:text-3xl"></h1>
+                class="text-2xl font-bold text-ink md:text-3xl"></h1>
             <p data-exercise-desc
-               class="mt-2 text-zinc-600"></p>
+               class="mt-2 text-muted"></p>
           </div>
 
           <div class="flex flex-wrap gap-2">
@@ -41,32 +41,32 @@
 
         <div data-exercise-external
              class="hidden space-y-4">
-          <div class="card border-l-4 border-l-indigo-500">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">Opdracht</p>
+          <div class="card border-l-4 border-l-primary">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">Opdracht</p>
 
             <div data-external-task
-                 class="mt-3 text-sm leading-relaxed text-zinc-700"></div>
+                 class="mt-3 text-sm leading-relaxed text-ink/80"></div>
 
             <div data-external-steps></div>
           </div>
 
-          <div class="card bg-zinc-50">
-            <p class="text-sm font-medium text-zinc-900">Waar werk je?</p>
+          <div class="card bg-surface-subtle">
+            <p class="text-sm font-medium text-ink">Waar werk je?</p>
 
             <p data-external-environment
-               class="mt-2 text-sm text-zinc-600"></p>
+               class="mt-2 text-sm text-muted"></p>
 
             <div data-external-deliverables></div>
           </div>
 
-          <p class="text-sm text-zinc-500">Deze opdracht voer je uit buiten deze website — in je editor, op je machine of in de aangegeven tool.</p>
+          <p class="text-sm text-muted">Deze opdracht voer je uit buiten deze website — in je editor, op je machine of in de aangegeven tool.</p>
         </div>
 
         <div data-exercise-interactive>
           <div data-responsive-bar
                class="mb-4 hidden flex flex-wrap items-center gap-2">
 
-            <span class="text-sm text-zinc-500">Viewport:</span>
+            <span class="text-sm text-muted">Viewport:</span>
 
             <button data-viewport="desktop"
                     type="button"
@@ -81,7 +81,7 @@
                     class="btn-secondary">Mobiel</button>
 
             <span data-viewport-label
-                  class="text-sm text-zinc-500"></span>
+                  class="text-sm text-muted"></span>
           </div>
 
           <div data-exercise-css-panel
@@ -105,10 +105,10 @@
           <div data-exercise-areas-panel
                class="hidden space-y-4">
             <div class="card">
-              <label class="block text-sm font-medium text-zinc-700">grid-template-areas</label>
+              <label class="block text-sm font-medium text-ink/80">grid-template-areas</label>
 
               <textarea data-areas-container
-                        class="mt-2 w-full border border-zinc-200 p-3 font-mono text-sm"
+                        class="mt-2 w-full border border-ink/15 p-3 font-mono text-sm"
                         rows="5"></textarea>
 
               <div data-area-selects
@@ -116,7 +116,7 @@
             </div>
 
             <div class="card">
-              <h3 class="mb-4 text-sm font-medium text-zinc-500">Live preview</h3>
+              <h3 class="mb-4 text-sm font-medium text-muted">Live preview</h3>
 
               <div data-areas-preview></div>
             </div>

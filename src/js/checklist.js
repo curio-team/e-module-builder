@@ -13,14 +13,14 @@ export function initChecklist() {
         .map((item) => {
           const checked = !!state[item.id]
           return `
-            <label class="flex cursor-pointer items-start gap-3 border-b border-zinc-100 py-3 transition last:border-0 hover:bg-zinc-50/50">
+            <label class="flex cursor-pointer items-start gap-3 border-b border-ink/10 py-3 transition last:border-0 hover:bg-surface-subtle/50">
               <input
                 type="checkbox"
                 data-check-id="${item.id}"
-                class="mt-0.5 h-4 w-4 border-zinc-300 text-zinc-900 focus:ring-zinc-900"
+                class="mt-0.5 h-4 w-4 border-ink/20 text-primary focus:ring-primary"
                 ${checked ? 'checked' : ''}
               />
-              <span class="text-sm leading-relaxed ${checked ? 'text-zinc-400 line-through' : 'text-zinc-700'}">${item.textHtml ?? item.text}</span>
+              <span class="text-sm leading-relaxed ${checked ? 'text-muted line-through' : 'text-ink/80'}">${item.textHtml ?? item.text}</span>
             </label>
           `
         })
@@ -28,7 +28,7 @@ export function initChecklist() {
 
       return `
         <section class="card">
-          <h2 class="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">${group.title}</h2>
+          <h2 class="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">${group.title}</h2>
           <div class="mt-4">${items}</div>
         </section>
       `
@@ -40,11 +40,11 @@ export function initChecklist() {
       setChecklistItem(input.dataset.checkId, input.checked)
       const label = input.closest('label').querySelector('span')
       if (input.checked) {
-        label.classList.add('text-zinc-400', 'line-through')
-        label.classList.remove('text-zinc-700')
+        label.classList.add('text-muted', 'line-through')
+        label.classList.remove('text-ink/80')
       } else {
-        label.classList.remove('text-zinc-400', 'line-through')
-        label.classList.add('text-zinc-700')
+        label.classList.remove('text-muted', 'line-through')
+        label.classList.add('text-ink/80')
       }
       updateProgress()
     })

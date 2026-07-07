@@ -236,7 +236,7 @@ function renderCustomElement(doc, tagName, attrs, inner, contentDir, base) {
       renderTokens(doc, marked.lexer(inner.trim()), contentDir, { ...base, font: 'Helvetica' })
       const endY = doc.y
       doc.page.margins.left = origLeft
-      const accentColor = attrs.type === 'warning' ? '#F59E0B' : '#6366F1'
+      const accentColor = attrs.type === 'warning' ? '#F59E0B' : '#FF6D6D'
       doc.save().rect(origLeft, startY, 3, Math.max(endY - startY, 8)).fill(accentColor).restore()
       doc.font(base.font).fontSize(base.fontSize).fillColor('#000').moveDown(0.3)
       break

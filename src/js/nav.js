@@ -37,7 +37,7 @@ function renderNavLink(item, nested = false) {
     : 'block px-3 py-2.5 text-[13px] font-medium transition rounded'
   const classes = active
     ? `${base} text-white bg-white/10`
-    : `${base} text-zinc-300 hover:text-white hover:bg-white/5`
+    : `${base} text-white/70 hover:text-white hover:bg-white/5`
 
   const external = item.external ? ' target="_blank" rel="noopener noreferrer"' : ''
   return `<a href="${sitePath(item.href)}" class="${classes}"${external}>${item.label}</a>`
@@ -54,7 +54,7 @@ function renderCrashCourseLink() {
       target="_blank"
       rel="noopener noreferrer"
     >
-      <svg class="h-4 w-4 shrink-0 text-zinc-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <svg class="h-4 w-4 shrink-0 text-white/70" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/>
       </svg>
       ${manifest.module.youtubeTitle ?? 'Crash Course'}
@@ -65,13 +65,13 @@ function renderCrashCourseLink() {
 function renderNavGroup(group) {
   const childLinks = group.children.map((c) => renderNavLink(c, true)).join('')
   const title = group.title
-    ? `<p class="mt-0.5 text-[10px] font-normal leading-snug text-zinc-500">${group.title}</p>`
+    ? `<p class="mt-0.5 text-[10px] font-normal leading-snug text-muted">${group.title}</p>`
     : ''
   return `
     <div class="space-y-0.5" data-nav-group="${group.label}">
       <button class="nav-group-toggle" data-group-toggle="${group.label}">
         <div>
-          <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">${group.label}</p>
+          <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">${group.label}</p>
           ${title}
         </div>
         <svg class="nav-group-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -150,10 +150,10 @@ export function initNav() {
 
   navEl.innerHTML = `
     <div class="flex min-h-0 flex-1 flex-col">
-      <div class="shrink-0 border-b border-zinc-800 px-5 py-5">
+      <div class="shrink-0 border-b border-white/10 px-5 py-5">
         <a href="${sitePath('/index.html')}" class="flex flex-col items-center text-center">
-          <img src="${sitePath('/logo.svg')}" alt="${mod.logoAlt}" class="sidebar-logo" width="155" height="91" />
-          <p class="mt-2.5 text-[11px] uppercase tracking-[0.15em] text-zinc-400">${mod.name} — ${mod.subtitle}</p>
+          <img src="${sitePath('/logo.png')}" alt="${mod.logoAlt}" class="sidebar-logo" width="96" height="96" />
+          <p class="mt-2.5 text-[11px] uppercase tracking-[0.15em] text-muted">${mod.name} — ${mod.subtitle}</p>
         </a>
       </div>
       <div class="sidebar-scroll space-y-1">${links}</div>
@@ -205,9 +205,9 @@ export function renderBreadcrumbs(crumbs) {
     .map((c, i) => {
       const isLast = i === crumbs.length - 1
       const content = c.href && !isLast
-        ? `<a href="${sitePath(c.href)}" class="text-zinc-500 transition hover:text-zinc-900">${c.label}</a>`
-        : `<span class="text-zinc-900">${c.label}</span>`
-      const sep = i < crumbs.length - 1 ? '<span class="text-zinc-300">/</span>' : ''
+        ? `<a href="${sitePath(c.href)}" class="text-muted transition hover:text-ink">${c.label}</a>`
+        : `<span class="text-ink">${c.label}</span>`
+      const sep = i < crumbs.length - 1 ? '<span class="text-ink/25">/</span>' : ''
       return `${content}${sep}`
     })
     .join(' ')

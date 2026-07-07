@@ -65,9 +65,9 @@ export function initHome() {
 
                 <span class="week-label">Week ${String(w.week).padStart(2, '0')}</span>
 
-                <h3 class="text-lg font-medium text-zinc-900">${w.title}</h3>
+                <h3 class="text-lg font-medium text-ink">${w.title}</h3>
 
-                <p class="mt-2 text-sm leading-relaxed text-zinc-500">${w.summary}</p>
+                <p class="mt-2 text-sm leading-relaxed text-muted">${w.summary}</p>
 
                 <div class="mt-6 flex flex-wrap gap-5">
 
