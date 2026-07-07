@@ -240,12 +240,24 @@
     @apply font-medium text-ink underline decoration-ink/25 underline-offset-4 transition hover:decoration-ink;
   }
 
-  main :not(pre) > code {
+  main :not(pre)>code {
     @apply rounded-md bg-[#FF8989]/12 px-1.5 py-0.5 font-mono text-[0.8em] text-zinc-900 ring-1 ring-[#FF8989]/45;
   }
 
+  main .code-block-wrapper {
+    @apply mt-2 overflow-hidden rounded-md bg-ink shadow-editor;
+
+    .hljs {
+      background: transparent !important;
+    }
+  }
+
+  main .code-block-label {
+    @apply border-b border-white/10 px-5 py-2 font-mono text-[11px] font-medium uppercase tracking-wider text-white/40;
+  }
+
   main pre {
-    @apply mt-2 overflow-x-auto rounded-md bg-ink p-5 font-mono text-[13px] leading-relaxed text-white/70 shadow-editor;
+    @apply overflow-x-auto p-5 font-mono text-[13px] leading-relaxed text-white/70;
   }
 
   main pre code {
@@ -354,6 +366,10 @@
   x-browser {
     @apply relative mt-6 block overflow-hidden rounded-lg border border-ink/15 bg-white shadow-lg;
     padding-top: calc(2.25rem);
+
+    .code-block-label {
+      display: none;
+    }
   }
 
   x-browser :first-child {

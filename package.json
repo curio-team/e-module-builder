@@ -33,7 +33,6 @@
     "@tailwindcss/vite": "^4.1.8",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.5",
-    "marked-highlight": "^2.2.4",
     "monaco-editor": "^0.53.0",
     "pdfkit": "^0.19.1",
     "tailwindcss": "^4.1.8",

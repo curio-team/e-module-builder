@@ -3,7 +3,6 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import matter from '@11ty/gray-matter'
 import { Marked } from 'marked'
-import { markedHighlight } from "marked-highlight";
 import hljs from 'highlight.js';
 
 const PKG_DIR = path.dirname(fileURLToPath(import.meta.url))
@@ -13,16 +12,44 @@ const SRC_DATA = path.join(PROJECT_DIR, 'src/data')
 const PAGES = path.join(PROJECT_DIR, 'pages')
 const TEMPLATES = path.join(PKG_DIR, 'templates/pages')
 
-const marked = new Marked(
-  markedHighlight({
-    emptyLangClass: 'hljs',
-    langPrefix: 'hljs language-',
-    highlight(code, lang, info) {
-      const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-      return hljs.highlight(code, { language }).value;
-    }
-  })
-)
+// Human-readable labels for language identifiers that don't just look good
+// upper-cased (e.g. "php" -> "PHP", "js" -> "JavaScript").
+const LANGUAGE_LABELS = {
+  js: 'JavaScript',
+  jsx: 'JavaScript',
+  ts: 'TypeScript',
+  tsx: 'TypeScript',
+  php: 'PHP',
+  html: 'HTML',
+  xml: 'XML',
+  css: 'CSS',
+  scss: 'SCSS',
+  json: 'JSON',
+  yml: 'YAML',
+  yaml: 'YAML',
+  sh: 'Shell',
+  bash: 'Bash',
+  sql: 'SQL',
+  py: 'Python',
+  md: 'Markdown',
+}
+
+function languageLabel(lang) {
+  return LANGUAGE_LABELS[lang] ?? (lang.charAt(0).toUpperCase() + lang.slice(1))
+}
+
+const marked = new Marked({
+  renderer: {
+    code({ text, lang }) {
+      const rawLang = (lang ?? '').trim().split(/\s+/)[0].toLowerCase()
+      const language = hljs.getLanguage(rawLang) ? rawLang : 'plaintext'
+      const highlighted = hljs.highlight(text, { language }).value
+      const label = rawLang && rawLang !== 'plaintext' ? languageLabel(rawLang) : null
+      const labelHtml = label ? `<div class="code-block-label">${label}</div>` : ''
+      return `<div class="code-block-wrapper">${labelHtml}<pre><code class="hljs language-${language}">${highlighted}</code></pre></div>\n`
+    },
+  },
+})
 
 const SECTION_RE = /^([a-zA-Z]+)(\d+)$/
 

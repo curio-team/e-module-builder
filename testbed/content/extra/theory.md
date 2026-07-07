@@ -78,6 +78,16 @@ Hier lijsten met witregels ertussen en code-block:
   
    2. Subitem 3.2
 
+4. Hier wat HTML
+
+    ```html
+    <div class="parent">
+      <div class="child">Child 1</div>
+      <div class="child">Child 2</div>
+      <div class="child">Child 3</div>
+    </div>
+    ```
+
 ## Alle callout types
 
 <x-callout type="tip">
