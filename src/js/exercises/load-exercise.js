@@ -20,8 +20,8 @@ function showMissingContent(weekNum) {
   panel?.insertAdjacentHTML(
     'beforeend',
     `<div class="card border-l-4 border-l-amber-500">
-      <p class="font-medium text-zinc-900">Content ontbreekt</p>
-      <p class="mt-2 text-sm text-zinc-600">De oefening staat in de navigatie, maar de inhoud is niet beschikbaar.</p>
+      <p class="font-medium text-ink">Content ontbreekt</p>
+      <p class="mt-2 text-sm text-muted">De oefening staat in de navigatie, maar de inhoud is niet beschikbaar.</p>
     </div>`
   )
 }

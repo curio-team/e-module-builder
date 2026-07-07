@@ -30,8 +30,8 @@ export async function initTheory(sectionId) {
 
   container.innerHTML = `
     ${data.week != null ? `<span class="week-label">Week ${data.week}</span>` : ''}
-    <h1 class="text-3xl font-semibold tracking-tight text-zinc-900">${esc(data.title)}</h1>
-    <p class="mt-2 text-lg text-zinc-600">Leerdoel: ${data.goal}</p>
+    <h1 class="text-3xl font-semibold tracking-tight text-ink">${esc(data.title)}</h1>
+    <p class="mt-2 text-lg text-muted">Leerdoel: ${data.goal}</p>
     <div class="prose-theory mt-8">
       ${data.html}
     </div>

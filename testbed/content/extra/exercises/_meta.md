@@ -1,4 +1,4 @@
 ---
 title: 'Extra'
-color: violet
+color: primary
 ---

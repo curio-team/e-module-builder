@@ -2,7 +2,7 @@
 week: 1
 title: De grote bouwstenen
 goal: je begrijpt wat CSS Grid is en kunt een eenvoudige pagina-indeling maken
-accent: indigo
+accent: primary
 summary: CSS Grid is een tweedimensionaal layout-systeem voor rijen én kolommen.
 leeruitkomsten:
   - "Ik weet wat display: grid doet"

@@ -37,15 +37,15 @@ export function initExerciseHub(weekData, sectionId) {
       return `
         <a
           href="${sitePath(`/pages/${sectionId}-oefening.html`)}?id=${ex.id}"
-          class="group flex items-start gap-5 px-6 py-5 transition hover:bg-zinc-50"
+          class="group flex items-start gap-5 px-6 py-5 transition hover:bg-surface-subtle"
         >
-          <span class="mt-0.5 font-mono text-sm text-zinc-300 transition group-hover:text-zinc-900">${String(ex.id).padStart(2, '0')}</span>
+          <span class="mt-0.5 font-mono text-sm text-ink/25 transition group-hover:text-ink">${String(ex.id).padStart(2, '0')}</span>
           <div class="flex-1">
             <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <h3 class="font-medium text-zinc-900">${ex.title}</h3>
+              <h3 class="font-medium text-ink">${ex.title}</h3>
               ${done ? '<span class="badge-done">Voltooid</span>' : ''}
             </div>
-            <p class="mt-1.5 text-sm leading-relaxed text-zinc-500">${ex.descriptionInlineHtml ?? ex.description ?? ''}</p>
+            <p class="mt-1.5 text-sm leading-relaxed text-muted">${ex.descriptionInlineHtml ?? ex.description ?? ''}</p>
             ${modeBadge}
           </div>
         </a>
@@ -53,7 +53,7 @@ export function initExerciseHub(weekData, sectionId) {
     })
     .join('')
 
-  container.innerHTML = `<div class="card divide-y divide-zinc-100 p-0">${items}</div>`
+  container.innerHTML = `<div class="card divide-y divide-ink/10 p-0">${items}</div>`
 
   const progressEl = document.querySelector('[data-hub-progress-text]')
   const progressBar = document.querySelector('[data-hub-progress-bar]')
