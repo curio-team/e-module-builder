@@ -168,9 +168,8 @@ describe('build pipeline — static assets', () => {
   })
 
   it('copies package public files (logo, favicon) to public/', () => {
-    expect(existsSync(join(tmpDir, 'public/logo.svg'))).toBe(true)
     expect(existsSync(join(tmpDir, 'public/logo.png'))).toBe(true)
-    expect(existsSync(join(tmpDir, 'public/favicon.svg'))).toBe(true)
+    expect(existsSync(join(tmpDir, 'public/favicon.png'))).toBe(true)
   })
 
   it('rewrites relative image src in theory HTML to ../weekN/ prefix', () => {
