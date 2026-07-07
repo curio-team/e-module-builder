@@ -153,34 +153,37 @@ for (const weekDir of activeWeeks) {
     writeJson(SRC_DATA, `meetmoment-quiz-week${weekNum}.json`, quizOut)
   }
 
-  // exercises/ subfolder → src/data/exercises/weekN.json
+  // exercises/ subfolder → src/data/exercises/weekN.json (optional)
   const exDir = path.join(dir, 'exercises')
-  const metaMd = readMd(path.join(exDir, '_meta.md'))
-  const exerciseFiles = fs.readdirSync(exDir)
-    .filter(f => f.endsWith('.md') && f !== '_meta.md')
-    .sort((a, b) => parseInt(a) - parseInt(b))
-  const exercises = exerciseFiles.map(f => {
-    const { data: ex, content } = readMd(path.join(exDir, f))
-    if (!ex.type || ex.type === 'text') {
-      const src = content?.trim() ? content : (ex.description ?? '')
-      ex.descriptionHtml = rewriteAssetPaths(marked.parse(src), `week${weekNum}/exercises`)
+  const hasExercises = fs.existsSync(exDir) && fs.existsSync(path.join(exDir, '_meta.md'))
+  if (hasExercises) {
+    const metaMd = readMd(path.join(exDir, '_meta.md'))
+    const exerciseFiles = fs.readdirSync(exDir)
+      .filter(f => f.endsWith('.md') && f !== '_meta.md')
+      .sort((a, b) => parseInt(a) - parseInt(b))
+    const exercises = exerciseFiles.map(f => {
+      const { data: ex, content } = readMd(path.join(exDir, f))
+      if (!ex.type || ex.type === 'text') {
+        const src = content?.trim() ? content : (ex.description ?? '')
+        ex.descriptionHtml = rewriteAssetPaths(marked.parse(src), `week${weekNum}/exercises`)
+      }
+      ex.descriptionInlineHtml = marked.parseInline(ex.description ?? '')
+      if (ex.type === 'external') {
+        if (ex.task) ex.taskHtml = marked.parseInline(ex.task)
+        if (ex.hint) ex.hintHtml = marked.parse(ex.hint)
+        if (ex.solution) ex.solutionHtml = marked.parse(ex.solution)
+      }
+      return ex
+    })
+    const exOut = {
+      week: metaMd.data.week ?? weekNum,
+      title: metaMd.data.title,
+      color: metaMd.data.color,
+      ...(metaMd.data.mode ? { mode: metaMd.data.mode } : {}),
+      exercises,
     }
-    ex.descriptionInlineHtml = marked.parseInline(ex.description ?? '')
-    if (ex.type === 'external') {
-      if (ex.task) ex.taskHtml = marked.parseInline(ex.task)
-      if (ex.hint) ex.hintHtml = marked.parse(ex.hint)
-      if (ex.solution) ex.solutionHtml = marked.parse(ex.solution)
-    }
-    return ex
-  })
-  const exOut = {
-    week: metaMd.data.week ?? weekNum,
-    title: metaMd.data.title,
-    color: metaMd.data.color,
-    ...(metaMd.data.mode ? { mode: metaMd.data.mode } : {}),
-    exercises,
+    writeJson(path.join(SRC_DATA, 'exercises'), `week${weekNum}.json`, exOut)
   }
-  writeJson(path.join(SRC_DATA, 'exercises'), `week${weekNum}.json`, exOut)
 
   // assignment.md → src/data/inleveropdracht-weekN.json
   const hwMd = readMd(path.join(dir, 'assignment.md'))
@@ -202,6 +205,7 @@ for (const weekDir of activeWeeks) {
     dirName: weekDir,
     prefix: sectionPrefix,
     hasQuiz,
+    hasExercises,
     title: theoryMd.data.title,
     summary: marked.parseInline(theoryMd.data.summary ?? ''),
     goal: theoryMd.data.goal,
@@ -209,9 +213,9 @@ for (const weekDir of activeWeeks) {
     color: theoryMd.data.accent,
     pages: [
       { key: 'theorie', href: `/pages/${weekDir}-theorie.html`, label: 'Theorie' },
-      { key: 'oefeningen', href: `/pages/${weekDir}-oefeningen.html`, label: 'Oefeningen' },
+      ...(hasExercises ? [{ key: 'oefeningen', href: `/pages/${weekDir}-oefeningen.html`, label: 'Oefeningen' }] : []),
       ...(hasQuiz ? [{ key: 'meetmoment', href: `/pages/${weekDir}-meetmoment.html`, label: 'Meetmoment' }] : []),
-      { key: 'oefening', href: `/pages/${weekDir}-oefening.html`, label: 'Oefening' },
+      ...(hasExercises ? [{ key: 'oefening', href: `/pages/${weekDir}-oefening.html`, label: 'Oefening' }] : []),
       { key: 'inleveropdracht', href: `/pages/${weekDir}-inleveropdracht.html`, label: 'Inleveropdracht' },
     ],
   })
@@ -398,7 +402,7 @@ const manifest = {
         ]
         : [
           { href: `/pages/${sec.dirName}-theorie.html`, label: 'Theorie' },
-          { href: `/pages/${sec.dirName}-oefeningen.html`, label: 'Oefeningen' },
+          ...(sec.hasExercises ? [{ href: `/pages/${sec.dirName}-oefeningen.html`, label: 'Oefeningen' }] : []),
           ...(sec.hasQuiz ? [{ href: `/pages/${sec.dirName}-meetmoment.html`, label: 'Quiz' }] : []),
           { href: `/pages/${sec.dirName}-inleveropdracht.html`, label: 'Inleveropdracht' },
         ],
@@ -421,9 +425,9 @@ const manifest = {
     ],
     week: weeksData.flatMap(wk => [
       `pages/${wk.dirName}-theorie.html`,
-      `pages/${wk.dirName}-oefeningen.html`,
+      ...(wk.hasExercises ? [`pages/${wk.dirName}-oefeningen.html`] : []),
       ...(wk.hasQuiz ? [`pages/${wk.dirName}-meetmoment.html`] : []),
-      `pages/${wk.dirName}-oefening.html`,
+      ...(wk.hasExercises ? [`pages/${wk.dirName}-oefening.html`] : []),
       `pages/${wk.dirName}-inleveropdracht.html`,
     ]),
     extra: extraSectionsData.flatMap(s => [
@@ -518,6 +522,7 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
   const tpl = fs.readFileSync(path.join(TEMPLATES, tplFile), 'utf8')
   for (const wk of weeksData) {
     if (suffix === 'meetmoment' && !wk.hasQuiz) continue
+    if ((suffix === 'oefeningen' || suffix === 'oefening') && !wk.hasExercises) continue
     const out = applyTemplate(tpl, {
       dirName: wk.dirName,
       sectionLabel: sectionLabel(wk.prefix, wk.week),
