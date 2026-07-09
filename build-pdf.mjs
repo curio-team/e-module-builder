@@ -25,7 +25,7 @@ function collectSpans(tokens, spans, ctx) {
     switch (token.type) {
       case 'text':
         if (token.tokens?.length) collectSpans(token.tokens, spans, ctx)
-        else if (token.text) spans.push({ ...ctx, text: token.text })
+        else if (token.text) spans.push({ ...ctx, text: token.text.replace(/\n/g, ' ') })
         break
       case 'strong':
         collectSpans(token.tokens ?? [], spans, { ...ctx, font: boldOf(ctx.font) })
@@ -109,9 +109,10 @@ function renderLocalImage(doc, href, contentDir) {
 // ─── Block token renderer ─────────────────────────────────────────────────────
 
 function renderTokens(doc, tokens, contentDir, opts = {}) {
-  for (const token of tokens) {
-    renderToken(doc, token, contentDir, opts)
-  }
+  tokens.forEach((token, i) => {
+    const isLast = i === tokens.length - 1
+    renderToken(doc, token, contentDir, { ...opts, skipTrailingGap: opts.tight && isLast })
+  })
 }
 
 function renderToken(doc, token, contentDir, opts = {}) {
@@ -138,29 +139,31 @@ function renderToken(doc, token, contentDir, opts = {}) {
     case 'paragraph': {
       doc.font(base.font).fontSize(base.fontSize).fillColor('#000')
       renderParagraphTokens(doc, token.tokens ?? [], contentDir, ctx)
-      doc.moveDown(0.5)
+      if (!opts.skipTrailingGap) doc.moveDown(0.5)
       break
     }
 
     case 'code': {
       doc.moveDown(0.3)
-      const lineH = 13
-      const estimatedH = token.text.split('\n').length * lineH + 18
+      const rw = doc.page.width - doc.page.margins.left - doc.page.margins.right
+      doc.font('Courier').fontSize(9)
+      const textH = doc.heightOfString(token.text, { width: rw - 16, lineGap: 2 })
+      const boxH = textH + 18
 
-      if (doc.y + estimatedH > doc.page.height - doc.page.margins.bottom - 20) {
+      if (doc.y + boxH > doc.page.height - doc.page.margins.bottom - 20) {
         doc.addPage()
       }
 
       const rx = doc.page.margins.left
       const ry = doc.y
-      const rw = doc.page.width - doc.page.margins.left - doc.page.margins.right
 
-      doc.save().rect(rx, ry, rw, estimatedH).fill('#F4F4F4').restore()
+      doc.save().rect(rx, ry, rw, boxH).fill('#F4F4F4').restore()
       doc.font('Courier').fontSize(9).fillColor('#333')
         .text(token.text, rx + 8, ry + 9, { width: rw - 16, lineGap: 2, paragraphGap: 0 })
 
+      doc.y = ry + boxH
       doc.font(base.font).fontSize(base.fontSize).fillColor('#000')
-      doc.moveDown(0.5)
+      if (!opts.skipTrailingGap) doc.moveDown(0.5)
       break
     }
 
@@ -169,7 +172,7 @@ function renderToken(doc, token, contentDir, opts = {}) {
       doc.font('Helvetica-Oblique').fontSize(base.fontSize).fillColor('#555')
       renderTokens(doc, token.tokens ?? [], contentDir, { ...base, font: 'Helvetica-Oblique' })
       doc.font(base.font).fontSize(base.fontSize).fillColor('#000')
-      doc.moveDown(0.3)
+      if (!opts.skipTrailingGap) doc.moveDown(0.3)
       break
     }
 
@@ -187,7 +190,7 @@ function renderToken(doc, token, contentDir, opts = {}) {
         if (allSpans.length) flushSpans(doc, allSpans)
         doc.moveDown(0.15)
       })
-      doc.moveDown(0.3)
+      if (!opts.skipTrailingGap) doc.moveDown(0.3)
       break
     }
 
@@ -197,7 +200,7 @@ function renderToken(doc, token, contentDir, opts = {}) {
       const hrW = doc.page.width - doc.page.margins.left - doc.page.margins.right
       doc.save().moveTo(hrX, doc.y).lineTo(hrX + hrW, doc.y)
         .strokeColor('#DDD').lineWidth(1).stroke().restore()
-      doc.moveDown(0.5)
+      if (!opts.skipTrailingGap) doc.moveDown(0.5)
       break
     }
 
@@ -232,9 +235,10 @@ function renderCustomElement(doc, tagName, attrs, inner, contentDir, base) {
       doc.moveDown(0.3)
       const origLeft = doc.page.margins.left
       const startY = doc.y
+      doc.y = startY + 5 // nudge down: glyph ink sits high in its line box, so top-align reads as too high
       doc.page.margins.left = origLeft + 14
       doc.font('Helvetica').fontSize(base.fontSize).fillColor('#333')
-      renderTokens(doc, marked.lexer(inner.trim()), contentDir, { ...base, font: 'Helvetica' })
+      renderTokens(doc, marked.lexer(inner.trim()), contentDir, { ...base, font: 'Helvetica', tight: true })
       const endY = doc.y
       doc.page.margins.left = origLeft
       const accentColor = attrs.type === 'warning' ? '#F59E0B' : '#FF6D6D'

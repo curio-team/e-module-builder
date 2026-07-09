@@ -170,3 +170,20 @@ let not = ~a;
 let leftShift = a << 2;
 let rightShift = a >> 2;
 ```
+
+## setTimeout — één keer, na een vertraging
+
+`setTimeout` voert een functie **één keer** uit, nadat een aantal milliseconden is
+verstreken. Het blokkeert de rest van je code niet — JavaScript gaat gewoon verder
+en voert de functie pas later uit.
+
+```js
+setTimeout(() => {
+  console.log("Drie seconden zijn voorbij!");
+}, 3000);
+
+console.log("Dit wordt meteen getoond, nog vóór de melding hierboven.");
+```
+
+`setTimeout` geeft een **id** terug. Die heb je nodig als je de timeout wilt
+annuleren vóórdat hij afgaat, met `clearTimeout(id)`.
