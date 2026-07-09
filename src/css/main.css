@@ -390,6 +390,10 @@
     .code-block-label {
       display: none;
     }
+
+    p {
+      @apply p-4;
+    }
   }
 
   x-browser :first-child {

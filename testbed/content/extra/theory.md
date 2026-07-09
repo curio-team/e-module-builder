@@ -137,6 +137,10 @@ This browser component can be used to show the output of a browser, for example,
   ```
 </x-browser>
 
+<x-browser>
+  Dit is een browser met enkel tekst.
+</x-browser>
+
 ## Testing readability of code symbols
 
 Here's inline `==`, `!=`, `<=`, `>=`, `+`, `-`, `*`, `/`, `%`, `&`, `|`, `^`, `~`, `<<`, and `>>` symbols.
