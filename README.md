@@ -271,15 +271,87 @@ linked_theory:
 
 ---
 
-**Interactive (Monaco editor) exercise:**
+**Exercise types** are controlled by the `type:` field:
+
+| Type | What it renders |
+| ---- | ---------------- |
+| `css-playground` | Monaco CSS editor with live preview and automated checks |
+| `areas` | Drag-and-drop grid-template-areas builder |
+| `responsive` | Monaco CSS editor with resizable viewport preview |
+| `js-playground` | Monaco JS editor, sandboxed execution (iframe, no same-origin), console output + automated checks |
+| `external` | Link-out card with a URL |
+| `text` | Description-only card (no interactive element) |
+
+**CSS playground exercise:**
 
 ```yaml
 ---
-type: interactive
+type: css-playground
 title: Add a gap
-starterHtml: "<div class='grid'>…</div>"
 starterCss: ".grid { display: grid; }"
+previewHtml: "<!DOCTYPE html><html>…<div class='grid'>…</div>…</html>"
 solution: ".grid { display: grid; gap: 16px; }"
+checks:
+  - type: includes
+    value: gap
+    msg: 'display: gap'
+---
+```
+
+**Areas exercise (grid-template-areas builder):**
+
+```yaml
+---
+type: areas
+title: Header over full width
+areaItems: [header, main, sidebar]
+areaOptions: [header, main, sidebar]
+gridColumns: 1fr 1fr
+expected:
+  container: |-
+    "header header"
+    "main sidebar"
+  items:
+    header: header
+    main: main
+    sidebar: sidebar
+---
+```
+
+**Responsive exercise (resizable viewport preview):**
+
+```yaml
+---
+type: responsive
+title: Mobile layout
+starterCss: ".grid { grid-template-columns: repeat(2, 1fr); }"
+previewHtml: "<!DOCTYPE html><html>…</html>"
+solution: "@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }"
+checks:
+  - type: mediaQuery
+    values: ['600px', '1fr']
+    msg: media query with 1 column at 600px
+---
+```
+
+**JS playground exercise (sandboxed execution):**
+
+```yaml
+---
+type: js-playground
+title: Fetch a to-do item
+starterJs: "// TODO: use fetch() and console.log()"
+solution: |-
+  fetch('https://jsonplaceholder.typicode.com/todos/1')
+    .then((response) => response.json())
+    .then((data) => console.log(data.title))
+checks:
+  - type: sourceIncludesAll
+    values: [fetch]
+    msg: 'uses fetch() to call the API'
+  - type: consoleIncludes
+    value: delectus aut autem
+    msg: 'logs the todo title to the console'
 ---
 ```
 
