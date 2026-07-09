@@ -4,8 +4,104 @@ import { Writable } from 'stream'
 import matter from '@11ty/gray-matter'
 import { Marked } from 'marked'
 import PDFDocument from 'pdfkit'
+import hljs from 'highlight.js'
 
 const marked = new Marked()
+
+// ─── Code syntax highlighting ─────────────────────────────────────────────────
+
+// Light-theme colors (github.css) for hljs token classes, tuned to read on the
+// code block's light grey background used in the PDF.
+const HLJS_COLORS = {
+  comment: '#6A737D',
+  quote: '#6A737D',
+  keyword: '#D73A49',
+  'selector-tag': '#D73A49',
+  subst: '#24292E',
+  string: '#032F62',
+  regexp: '#032F62',
+  attr: '#005CC5',
+  'attr-value': '#032F62',
+  literal: '#005CC5',
+  number: '#005CC5',
+  meta: '#005CC5',
+  'meta-keyword': '#D73A49',
+  title: '#6F42C1',
+  'title.function': '#6F42C1',
+  'title.class': '#6F42C1',
+  section: '#005CC5',
+  name: '#22863A',
+  'selector-id': '#6F42C1',
+  'selector-class': '#6F42C1',
+  built_in: '#E36209',
+  type: '#D73A49',
+  params: '#24292E',
+  variable: '#E36209',
+  tag: '#22863A',
+  bullet: '#735C0F',
+  symbol: '#005CC5',
+  deletion: '#B31D28',
+  addition: '#22863A',
+  emphasis: '#24292E',
+  strong: '#24292E',
+}
+
+const HLJS_ENTITIES = { lt: '<', gt: '>', amp: '&', quot: '"', '#39': "'" }
+const HLJS_TAG_RE = /<span class="hljs-([\w.-]+)">|<\/span>|&(lt|gt|amp|quot|#39);/g
+
+// Parses highlight.js's HTML output (simple nested <span class="hljs-x">
+// tags, no other attributes) into flat {text, color} spans, without a real
+// HTML parser — highlight.js already did the actual tokenization/grammar work.
+function hljsHtmlToSpans(html, defaultColor) {
+  const spans = []
+  const colorStack = [defaultColor]
+  let lastIndex = 0
+  let m
+  HLJS_TAG_RE.lastIndex = 0
+  while ((m = HLJS_TAG_RE.exec(html)) !== null) {
+    if (m.index > lastIndex) {
+      const text = html.slice(lastIndex, m.index)
+      if (text) spans.push({ text, color: colorStack[colorStack.length - 1] })
+    }
+    if (m[1] !== undefined) {
+      colorStack.push(HLJS_COLORS[m[1]] ?? colorStack[colorStack.length - 1])
+    } else if (m[0] === '</span>') {
+      if (colorStack.length > 1) colorStack.pop()
+    } else {
+      spans.push({ text: HLJS_ENTITIES[m[2]], color: colorStack[colorStack.length - 1] })
+    }
+    lastIndex = HLJS_TAG_RE.lastIndex
+  }
+  if (lastIndex < html.length) {
+    spans.push({ text: html.slice(lastIndex), color: colorStack[colorStack.length - 1] })
+  }
+  return spans
+}
+
+function highlightCodeSpans(text, lang, defaultColor) {
+  const rawLang = (lang ?? '').trim().split(/\s+/)[0].toLowerCase()
+  const language = hljs.getLanguage(rawLang) ? rawLang : 'plaintext'
+  const html = hljs.highlight(text, { language }).value
+  return groupSpansIntoLines(hljsHtmlToSpans(html, defaultColor))
+}
+
+// pdfkit only advances to a new line at the end of a `continued: true` chain
+// (the final, non-continued call) — a lone "\n" passed as its own continued
+// span is silently dropped rather than breaking the line. So spans can't
+// carry embedded newlines through a single chain; instead, split them into
+// per-line arrays here and give each source line its own continued chain
+// when rendering (see the 'code' case in renderToken).
+function groupSpansIntoLines(spans) {
+  const lines = [[]]
+  for (const { text, color } of spans) {
+    const parts = text.split('\n')
+    parts.forEach((part, i) => {
+      if (part) lines[lines.length - 1].push({ text: part, color })
+      if (i < parts.length - 1) lines.push([])
+    })
+  }
+  return lines
+}
 
 const SECTION_RE = /^([a-zA-Z]+)(\d+)$/
 const IGNORED_DIRS = new Set(['assessments'])
@@ -190,8 +286,17 @@ function renderToken(doc, token, contentDir, opts = {}) {
       const ry = doc.y
 
       doc.save().rect(rx, ry, rw, boxH).fill('#F4F4F4').restore()
+      const codeLines = highlightCodeSpans(token.text, token.lang, '#333')
       doc.font('Courier').fontSize(9).fillColor('#333')
-        .text(token.text, rx + 8, ry + 9, { width: rw - 16, lineGap: 2, paragraphGap: 0 })
+      doc.y = ry + 9
+      for (const line of codeLines) {
+        doc.x = rx + 8
+        const spans = line.length ? line : [{ text: ' ', color: '#333' }]
+        for (let i = 0; i < spans.length; i++) {
+          doc.fillColor(spans[i].color)
+          doc.text(spans[i].text, { continued: i < spans.length - 1, width: rw - 16, lineGap: 2, paragraphGap: 0 })
+        }
+      }
 
       doc.y = ry + boxH
       doc.font(base.font).fontSize(base.fontSize).fillColor('#000')
