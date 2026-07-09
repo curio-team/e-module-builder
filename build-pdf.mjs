@@ -171,7 +171,7 @@ function collectSpans(tokens, spans, ctx) {
         collectSpans(
           token.tokens ?? [{ type: 'text', text: token.text || token.href }],
           spans,
-          { ...ctx, color: '#0057B8' }
+          { ...ctx, color: '#0057B8', link: token.href }
         )
         break
       case 'image':
@@ -196,9 +196,14 @@ function flushSpans(doc, spans) {
   const items = spans.filter(s => s.text)
   if (!items.length) return
   for (let i = 0; i < items.length; i++) {
-    const { text, font, fontSize, color } = items[i]
+    const { text, font, fontSize, color, link } = items[i]
     doc.font(font).fontSize(fontSize).fillColor(color)
-    doc.text(text, { continued: i < items.length - 1, lineGap: 2 })
+    const opts = { continued: i < items.length - 1, lineGap: 2 }
+    if (link) {
+      opts.link = link
+      opts.underline = true
+    }
+    doc.text(text, opts)
   }
 }
 
