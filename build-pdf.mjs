@@ -208,18 +208,31 @@ function renderToken(doc, token, contentDir, opts = {}) {
     }
 
     case 'list': {
-      doc.moveDown(0.2)
+      const depth = opts.listDepth ?? 0
+      const indent = depth * 16
+      const baseX = doc.x
+      if (depth === 0) doc.moveDown(0.2)
       token.items?.forEach((item, idx) => {
         const bullet = token.ordered ? `${idx + 1}.` : '•'
         const spans = []
+        const nestedLists = []
         for (const t of (item.tokens ?? [])) {
           if (t.type === 'text' || t.type === 'paragraph') {
             collectSpans(t.tokens ?? [t], spans, ctx)
+          } else if (t.type === 'list') {
+            nestedLists.push(t)
           }
         }
         const allSpans = [{ ...ctx, color: '#444', text: `${bullet}  ` }, ...spans.filter(s => s.text)]
-        if (allSpans.length) flushSpans(doc, allSpans)
+        if (allSpans.length) {
+          doc.x = baseX + indent
+          flushSpans(doc, allSpans)
+          doc.x = baseX
+        }
         doc.moveDown(0.15)
+        for (const nested of nestedLists) {
+          renderToken(doc, nested, contentDir, { ...opts, listDepth: depth + 1, skipTrailingGap: true })
+        }
       })
       if (!opts.skipTrailingGap) doc.moveDown(0.3)
       break
