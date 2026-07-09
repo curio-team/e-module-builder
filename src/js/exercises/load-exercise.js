@@ -104,6 +104,9 @@ export async function initExercisePage(sectionId) {
     return
   }
 
+  const loader = document.querySelector('[data-exercise-loading]')
+  loader?.classList.remove('hidden')
+
   const {
     initCssPlayground,
     initAreasExercise,
@@ -113,7 +116,6 @@ export async function initExercisePage(sectionId) {
   } = await import('./exercise-runner.js')
 
   document.querySelector('[data-exercise-external]')?.classList.add('hidden')
-  document.querySelector('[data-exercise-interactive]')?.classList.remove('hidden')
 
   const cssPanel = document.querySelector('[data-exercise-css-panel]')
   const areasPanel = document.querySelector('[data-exercise-areas-panel]')
@@ -159,6 +161,9 @@ export async function initExercisePage(sectionId) {
       initCssPlayground(exercise, { onSolved })
     }
   }
+
+  loader?.classList.add('hidden')
+  document.querySelector('[data-exercise-interactive]')?.classList.remove('hidden')
 
   renderNavButtons(sectionId, id, weekData.exercises.length)
   initCompletionToggle(sectionId, id)
