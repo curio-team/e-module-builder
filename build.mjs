@@ -365,6 +365,13 @@ for (const d of fs.readdirSync(CONTENT)) {
     hasQuiz,
     hasAssignment,
     isExtra: true,
+    pages: [
+      { key: 'theorie', href: `/pages/${d}-theorie.html`, label: 'Theorie' },
+      ...(hasExercises ? [{ key: 'oefeningen', href: `/pages/${d}-oefeningen.html`, label: 'Oefeningen' }] : []),
+      ...(hasQuiz ? [{ key: 'meetmoment', href: `/pages/${d}-meetmoment.html`, label: 'Meetmoment' }] : []),
+      ...(hasExercises ? [{ key: 'oefening', href: `/pages/${d}-oefening.html`, label: 'Oefening' }] : []),
+      ...(hasAssignment ? [{ key: 'inleveropdracht', href: `/pages/${d}-inleveropdracht.html`, label: 'Inleveropdracht' }] : []),
+    ],
   })
 }
 
@@ -434,6 +441,16 @@ const manifest = {
     exerciseMode: mod.exerciseMode ?? 'external',
   },
   weeks: weeksData,
+  curriculum: allNavSections.map(sec => ({
+    dirName: sec.dirName,
+    isExtra: !!sec.isExtra,
+    label: sec.isExtra
+      ? sec.dirName.charAt(0).toUpperCase() + sec.dirName.slice(1)
+      : sectionLabel(sec.prefix, sec.week),
+    title: sec.title,
+    summary: sec.summary,
+    pages: sec.pages,
+  })),
   nav: {
     home: { href: '/index.html', label: 'Home' },
     weeks: allNavSections.map(sec => ({

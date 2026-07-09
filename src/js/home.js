@@ -20,20 +20,20 @@ export function initHome() {
   if (readyEl) readyEl.classList.toggle('hidden', !isReady)
   if (!isReady || !curriculumEl) return
 
-  const weekLinks = (week) => week.pages
+  const sectionLinks = (section) => section.pages
     .filter((p) => p.key !== 'oefening')
     .map((p) => `<a href="${sitePath(p.href)}" class="text-link">${p.label}</a>`)
     .join('\n                  ')
 
-  curriculumEl.innerHTML = manifest.weeks
+  curriculumEl.innerHTML = manifest.curriculum
     .map(
-      (w) => `
+      (sec) => `
               <div class="card-interactive bg-white">
-                <span class="week-label">Week ${String(w.week).padStart(2, '0')}</span>
-                <h3 class="text-lg font-medium text-ink">${w.title}</h3>
-                <p class="mt-2 text-sm leading-relaxed text-muted">${w.summary}</p>
+                <span class="week-label">${sec.label}</span>
+                <h3 class="text-lg font-medium text-ink">${sec.title}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-muted">${sec.summary}</p>
                 <div class="mt-6 flex flex-wrap gap-5">
-                  ${weekLinks(w)}
+                  ${sectionLinks(sec)}
                 </div>
               </div>`
     )
