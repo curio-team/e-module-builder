@@ -9,7 +9,37 @@ const marked = new Marked()
 const SECTION_RE = /^([a-zA-Z]+)(\d+)$/
 const IGNORED_DIRS = new Set(['assessments'])
 const CUSTOM_EL_RE = /^<(x-[a-z-]+|details)([^>]*)>([\s\S]*?)<\/\1>/i
+const CUSTOM_OPEN_ONLY_RE = /^<(x-[a-z-]+|details)([^>]*)>$/i
 const SUMMARY_RE = /<summary>([\s\S]*?)<\/summary>/i
+
+// marked splits a custom block like <x-callout>\n\nfoo\n\n</x-callout> into separate
+// open-tag / content / close-tag tokens (CommonMark HTML block rule 7 ends at the
+// first blank line). Re-merge those into a single html token so CUSTOM_EL_RE can match.
+function mergeSplitCustomElements(tokens) {
+  const result = []
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i]
+    const openMatch = token.type === 'html' ? CUSTOM_OPEN_ONLY_RE.exec(token.raw.trim()) : null
+    if (openMatch) {
+      const tagName = openMatch[1]
+      const closeRe = new RegExp(`^<\\/${tagName}>$`, 'i')
+      let j = i + 1
+      let innerRaw = ''
+      while (j < tokens.length && !(tokens[j].type === 'html' && closeRe.test(tokens[j].raw.trim()))) {
+        innerRaw += tokens[j].raw
+        j++
+      }
+      if (j < tokens.length) {
+        const merged = token.raw + innerRaw + tokens[j].raw
+        result.push({ type: 'html', block: true, raw: merged, text: merged })
+        i = j
+        continue
+      }
+    }
+    result.push(token)
+  }
+  return result
+}
 
 // ─── Inline token → span list ─────────────────────────────────────────────────
 
@@ -109,6 +139,7 @@ function renderLocalImage(doc, href, contentDir) {
 // ─── Block token renderer ─────────────────────────────────────────────────────
 
 function renderTokens(doc, tokens, contentDir, opts = {}) {
+  tokens = mergeSplitCustomElements(tokens)
   tokens.forEach((token, i) => {
     const isLast = i === tokens.length - 1
     renderToken(doc, token, contentDir, { ...opts, skipTrailingGap: opts.tight && isLast })
@@ -232,17 +263,27 @@ function parseAttrs(attrStr) {
 function renderCustomElement(doc, tagName, attrs, inner, contentDir, base) {
   switch (tagName) {
     case 'x-callout': {
+      const CALLOUT_STYLES = {
+        tip: { accent: '#10B981', text: '#065F46' },
+        warning: { accent: '#F59E0B', text: '#92400E' },
+        danger: { accent: '#F43F5E', text: '#9F1239' },
+        info: { accent: '#0EA5E9', text: '#075985' },
+        note: { accent: '#A1A1AA', text: '#27272A' },
+      }
+      const style = CALLOUT_STYLES[attrs.type] ?? CALLOUT_STYLES.note
+
       doc.moveDown(0.3)
       const origLeft = doc.page.margins.left
       const startY = doc.y
       doc.y = startY + 5 // nudge down: glyph ink sits high in its line box, so top-align reads as too high
       doc.page.margins.left = origLeft + 14
-      doc.font('Helvetica').fontSize(base.fontSize).fillColor('#333')
+      doc.x = origLeft + 14
+      doc.font('Helvetica').fontSize(base.fontSize).fillColor(style.text)
       renderTokens(doc, marked.lexer(inner.trim()), contentDir, { ...base, font: 'Helvetica', tight: true })
       const endY = doc.y
       doc.page.margins.left = origLeft
-      const accentColor = attrs.type === 'warning' ? '#F59E0B' : '#FF6D6D'
-      doc.save().rect(origLeft, startY, 3, Math.max(endY - startY, 8)).fill(accentColor).restore()
+      doc.x = origLeft
+      doc.save().rect(origLeft, startY, 3, Math.max(endY - startY, 8)).fill(style.accent).restore()
       doc.font(base.font).fontSize(base.fontSize).fillColor('#000').moveDown(0.3)
       break
     }
