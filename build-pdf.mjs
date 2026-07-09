@@ -270,6 +270,49 @@ function renderCustomElement(doc, tagName, attrs, inner, contentDir, base) {
     case 'x-nav':
       break  // Navigation links have no place in a PDF
 
+    case 'x-browser': {
+      doc.moveDown(0.4)
+      const origLeft = doc.page.margins.left
+      const origRight = doc.page.margins.right
+      const rx = origLeft
+      const rw = doc.page.width - origLeft - origRight
+      const startY = doc.y
+      const headerH = 22
+      const pad = 10
+
+      doc.save().roundedRect(rx, startY, rw, headerH, 6).clip()
+        .rect(rx, startY, rw, headerH).fill('#ECECEF').restore()
+
+      const dotY = startY + headerH / 2
+      doc.save()
+      doc.circle(rx + 16, dotY, 4).fill('#FF5F57')
+      doc.circle(rx + 30, dotY, 4).fill('#FEBC2E')
+      doc.circle(rx + 44, dotY, 4).fill('#28C840')
+      doc.restore()
+
+      const title = attrs.title || 'Browser'
+      doc.font('Helvetica').fontSize(8).fillColor('#71717A')
+        .text(title, rx, dotY - 4, { width: rw, align: 'center' })
+
+      doc.page.margins.left = origLeft + pad
+      doc.page.margins.right = origRight + pad
+      doc.x = origLeft + pad
+      doc.y = startY + headerH + pad
+      doc.font(base.font).fontSize(base.fontSize).fillColor('#000')
+      renderTokens(doc, marked.lexer(inner.trim()), contentDir, { ...base, tight: true })
+
+      const endY = doc.y + pad
+      doc.page.margins.left = origLeft
+      doc.page.margins.right = origRight
+
+      doc.save().roundedRect(rx, startY, rw, endY - startY, 6)
+        .lineWidth(1.5).strokeColor('#D4D4D8').stroke().restore()
+
+      doc.y = endY
+      doc.moveDown(0.4)
+      break
+    }
+
     case 'details': {
       const summaryMatch = SUMMARY_RE.exec(inner)
       const summaryText = summaryMatch?.[1].trim()
