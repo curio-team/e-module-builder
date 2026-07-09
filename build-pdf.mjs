@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { Writable } from 'stream'
 import matter from '@11ty/gray-matter'
 import { Marked } from 'marked'
 import PDFDocument from 'pdfkit'
@@ -263,6 +264,21 @@ function renderToken(doc, token, contentDir, opts = {}) {
   }
 }
 
+// Renders into a throwaway tall-page document to measure how much vertical
+// space a block would need, without affecting the real document's pagination.
+function measureRenderedHeight(pageWidth, marginLeft, marginRight, renderFn) {
+  const measureDoc = new PDFDocument({
+    size: [pageWidth, 10000],
+    margins: { top: 0, bottom: 0, left: marginLeft, right: marginRight },
+    autoFirstPage: true,
+  })
+  measureDoc.pipe(new Writable({ write(chunk, enc, cb) { cb() } }))
+  renderFn(measureDoc)
+  const height = measureDoc.y
+  measureDoc.end()
+  return height
+}
+
 // ─── Custom elements ──────────────────────────────────────────────────────────
 
 function parseAttrs(attrStr) {
@@ -330,9 +346,20 @@ function renderCustomElement(doc, tagName, attrs, inner, contentDir, base) {
       const origRight = doc.page.margins.right
       const rx = origLeft
       const rw = doc.page.width - origLeft - origRight
-      const startY = doc.y
       const headerH = 22
       const pad = 10
+
+      const innerH = measureRenderedHeight(doc.page.width, rx + pad, origRight + pad, mdoc => {
+        mdoc.font(base.font).fontSize(base.fontSize).fillColor('#000')
+        renderTokens(mdoc, marked.lexer(inner.trim()), contentDir, { ...base, tight: true })
+      })
+      const boxH = headerH + pad + innerH + pad
+
+      if (doc.y + boxH > doc.page.height - doc.page.margins.bottom) {
+        doc.addPage()
+      }
+
+      const startY = doc.y
 
       doc.save().roundedRect(rx, startY, rw, headerH, 6).clip()
         .rect(rx, startY, rw, headerH).fill('#ECECEF').restore()
