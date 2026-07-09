@@ -1,5 +1,4 @@
-const SETTLE_QUIET_MS = 400
-const SETTLE_MAX_MS = 3000
+const GRADE_DELAY_MS = 1500
 
 function buildSandboxDoc(code) {
   // Embedded directly as inline script text (not via Function/eval) so the CSP
@@ -51,10 +50,16 @@ ${safeCode}
  * Runs `code` inside a freshly created sandboxed iframe (no allow-same-origin,
  * so it gets an opaque origin with no access to the parent page).
  *
+ * Console output is forwarded to `onConsole` for as long as the iframe lives —
+ * that includes anything logged from a setTimeout/setInterval/promise callback,
+ * no matter how late it fires. There's no "is it done yet" detection here; the
+ * listener is only torn down when the caller starts a new run (see `dispose`)
+ * or, if `onSettled` is given, after a fixed grading delay.
+ *
  * @param {HTMLElement} container - element that will hold the sandbox iframe
  * @param {string} code
  * @param {{ onConsole?: (entry: {level: string, args: string[]}) => void, onSettled?: (lines: {level: string, args: string[]}[]) => void }} [options]
- * @returns {HTMLIFrameElement}
+ * @returns {() => void} dispose - call before starting another run in the same container
  */
 export function runInSandbox(container, code, { onConsole, onSettled } = {}) {
   container.innerHTML = ''
@@ -66,17 +71,12 @@ export function runInSandbox(container, code, { onConsole, onSettled } = {}) {
   container.appendChild(iframe)
 
   const collected = []
-  let quietTimer = null
-  let maxTimer = null
-  let settled = false
+  let disposed = false
 
-  function finishSettle() {
-    if (settled) return
-    settled = true
-    clearTimeout(quietTimer)
-    clearTimeout(maxTimer)
+  function dispose() {
+    if (disposed) return
+    disposed = true
     window.removeEventListener('message', onMessage)
-    onSettled?.(collected)
   }
 
   function onMessage(event) {
@@ -86,16 +86,17 @@ export function runInSandbox(container, code, { onConsole, onSettled } = {}) {
     const entry = { level: event.data.level, args: event.data.args }
     collected.push(entry)
     onConsole?.(entry)
-
-    clearTimeout(quietTimer)
-    quietTimer = setTimeout(finishSettle, SETTLE_QUIET_MS)
   }
 
   window.addEventListener('message', onMessage)
-  quietTimer = setTimeout(finishSettle, SETTLE_QUIET_MS)
-  maxTimer = setTimeout(finishSettle, SETTLE_MAX_MS)
+
+  if (onSettled) {
+    setTimeout(() => {
+      onSettled(collected)
+    }, GRADE_DELAY_MS)
+  }
 
   iframe.srcdoc = buildSandboxDoc(code)
 
-  return iframe
+  return dispose
 }

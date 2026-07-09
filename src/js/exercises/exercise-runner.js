@@ -83,17 +83,38 @@ export function initJsPlayground(exercise, { onSolved } = {}) {
   if (!container || !output || !sandboxHost) return
 
   const editor = createJsEditor(container, exercise.starterJs)
+  let disposeSandbox = null
 
   function run(code, onSettled) {
     output.innerHTML = ''
-    runInSandbox(sandboxHost, code, {
+    disposeSandbox?.()
+    disposeSandbox = runInSandbox(sandboxHost, code, {
       onConsole: (entry) => appendConsoleLine(output, entry),
-      onSettled,
+      onSettled
     })
   }
 
-  document.querySelector('[data-run]')?.addEventListener('click', () => {
+  const runBtn = document.querySelector('[data-run]')
+  const runBtnLabel = runBtn?.textContent
+  let runBtnResetTimer = null
+
+  runBtn?.addEventListener('click', () => {
     run(getEditorValue(editor))
+
+    runBtn.textContent = '✓ Uitgevoerd'
+    clearTimeout(runBtnResetTimer)
+    runBtnResetTimer = setTimeout(() => {
+      runBtn.textContent = runBtnLabel
+    }, 1200)
+  })
+
+  document.querySelector('[data-clear-output]')?.addEventListener('click', () => {
+    disposeSandbox?.()
+    disposeSandbox = null
+    // Destroying the iframe (rather than just clearing text) actually stops any
+    // running setInterval/setTimeout in the learner's code, not just the display.
+    sandboxHost.innerHTML = ''
+    output.innerHTML = ''
   })
 
   document.querySelector('[data-hint]')?.addEventListener('click', () => {

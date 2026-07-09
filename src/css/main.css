@@ -129,7 +129,7 @@
   }
 
   .preview-panel {
-    @apply mt-2 overflow-hidden rounded-md bg-white shadow-card;
+    @apply overflow-hidden rounded-md bg-white shadow-card;
   }
 
   .panel-header {
