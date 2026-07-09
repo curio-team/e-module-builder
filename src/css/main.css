@@ -77,11 +77,11 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center bg-primary px-5 py-2.5 text-sm font-medium text-white no-underline transition hover:bg-primary-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center bg-primary px-5 py-2.5 text-sm font-medium text-white no-underline transition hover:bg-primary-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-ink/20 disabled:text-ink/40 disabled:hover:bg-ink/20;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center border border-ink/20 bg-white px-5 py-2.5 text-sm font-medium text-ink/80 no-underline transition hover:border-ink/30 hover:bg-surface-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-muted focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center border border-ink/20 bg-white px-5 py-2.5 text-sm font-medium text-ink/80 no-underline transition hover:border-ink/30 hover:bg-surface-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-muted focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:border-ink/10 disabled:bg-surface-subtle disabled:text-ink/30 disabled:hover:border-ink/10 disabled:hover:bg-surface-subtle;
   }
 
   .card {

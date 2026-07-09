@@ -1,5 +1,3 @@
-const GRADE_DELAY_MS = 1500
-
 function buildSandboxDoc(code) {
   // Embedded directly as inline script text (not via Function/eval) so the CSP
   // can allow 'unsafe-inline' without needing 'unsafe-eval'. Guard against the
@@ -53,15 +51,15 @@ ${safeCode}
  * Console output is forwarded to `onConsole` for as long as the iframe lives —
  * that includes anything logged from a setTimeout/setInterval/promise callback,
  * no matter how late it fires. There's no "is it done yet" detection here; the
- * listener is only torn down when the caller starts a new run (see `dispose`)
- * or, if `onSettled` is given, after a fixed grading delay.
+ * listener is only torn down when the caller starts a new run (see the
+ * returned `dispose` function).
  *
  * @param {HTMLElement} container - element that will hold the sandbox iframe
  * @param {string} code
- * @param {{ onConsole?: (entry: {level: string, args: string[]}) => void, onSettled?: (lines: {level: string, args: string[]}[]) => void }} [options]
+ * @param {{ onConsole?: (entry: {level: string, args: string[]}) => void }} [options]
  * @returns {() => void} dispose - call before starting another run in the same container
  */
-export function runInSandbox(container, code, { onConsole, onSettled } = {}) {
+export function runInSandbox(container, code, { onConsole } = {}) {
   container.innerHTML = ''
 
   const iframe = document.createElement('iframe')
@@ -70,7 +68,6 @@ export function runInSandbox(container, code, { onConsole, onSettled } = {}) {
   iframe.title = 'JS sandbox'
   container.appendChild(iframe)
 
-  const collected = []
   let disposed = false
 
   function dispose() {
@@ -83,18 +80,10 @@ export function runInSandbox(container, code, { onConsole, onSettled } = {}) {
     if (event.source !== iframe.contentWindow) return
     if (event.data?.source !== 'js-playground' || event.data?.type !== 'console') return
 
-    const entry = { level: event.data.level, args: event.data.args }
-    collected.push(entry)
-    onConsole?.(entry)
+    onConsole?.({ level: event.data.level, args: event.data.args })
   }
 
   window.addEventListener('message', onMessage)
-
-  if (onSettled) {
-    setTimeout(() => {
-      onSettled(collected)
-    }, GRADE_DELAY_MS)
-  }
 
   iframe.srcdoc = buildSandboxDoc(code)
 

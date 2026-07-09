@@ -84,22 +84,44 @@ export function initJsPlayground(exercise, { onSolved } = {}) {
 
   const editor = createJsEditor(container, exercise.starterJs)
   let disposeSandbox = null
+  let lastRunCode = null
+  let lastRunLines = []
 
-  function run(code, onSettled) {
+  function run(code) {
     output.innerHTML = ''
+    lastRunCode = code
+    lastRunLines = []
     disposeSandbox?.()
     disposeSandbox = runInSandbox(sandboxHost, code, {
-      onConsole: (entry) => appendConsoleLine(output, entry),
-      onSettled
+      onConsole: (entry) => {
+        lastRunLines.push(entry)
+        appendConsoleLine(output, entry)
+      },
     })
   }
 
   const runBtn = document.querySelector('[data-run]')
   const runBtnLabel = runBtn?.textContent
+  const checkBtn = document.querySelector('[data-check]')
   let runBtnResetTimer = null
+
+  const checkDisabledHint = 'Klik eerst op "Uitvoeren" om je code uit te voeren, pas daarna kun je de code en output laten controleren.'
+
+  function setCheckEnabled(enabled) {
+    if (!checkBtn) return
+    checkBtn.disabled = !enabled
+    if (enabled) {
+      checkBtn.removeAttribute('title')
+    } else {
+      checkBtn.title = checkDisabledHint
+    }
+  }
+
+  setCheckEnabled(false)
 
   runBtn?.addEventListener('click', () => {
     run(getEditorValue(editor))
+    setCheckEnabled(true)
 
     runBtn.textContent = '✓ Uitgevoerd'
     clearTimeout(runBtnResetTimer)
@@ -115,6 +137,9 @@ export function initJsPlayground(exercise, { onSolved } = {}) {
     // running setInterval/setTimeout in the learner's code, not just the display.
     sandboxHost.innerHTML = ''
     output.innerHTML = ''
+    lastRunCode = null
+    lastRunLines = []
+    setCheckEnabled(false)
   })
 
   document.querySelector('[data-hint]')?.addEventListener('click', () => {
@@ -126,22 +151,23 @@ export function initJsPlayground(exercise, { onSolved } = {}) {
     showFeedback(feedback, '<p class="text-muted">Oplossing geladen. Bestudeer de code en probeer het daarna zelf.</p>')
   })
 
-  document.querySelector('[data-check]')?.addEventListener('click', () => {
+  checkBtn?.addEventListener('click', () => {
     const code = getEditorValue(editor)
-    run(code, (consoleLines) => {
-      const results = runJsChecks(code, consoleLines, exercise.checks)
-      const failed = results.filter((r) => !r.ok)
+    // Grades against the output of the last "Uitvoeren" run rather than
+    // re-running the code, so async output (setTimeout/setInterval) that the
+    // learner already waited for is actually there to check.
+    const results = runJsChecks(lastRunCode ?? code, lastRunLines, exercise.checks)
+    const failed = results.filter((r) => !r.ok)
 
-      if (failed.length === 0) {
-        showFeedback(feedback, '<p class="font-medium text-ink">Goed gedaan — oefening voltooid.</p>')
-        onSolved?.(exercise.id)
-      } else {
-        showFeedback(
-          feedback,
-          `<p class="font-medium text-ink">Nog niet compleet:</p><ul class="mt-2 list-inside list-disc text-sm text-muted">${failed.map((f) => `<li>${f.msg}</li>`).join('')}</ul>`
-        )
-      }
-    })
+    if (failed.length === 0) {
+      showFeedback(feedback, '<p class="font-medium text-ink">Goed gedaan — oefening voltooid.</p>')
+      onSolved?.(exercise.id)
+    } else {
+      showFeedback(
+        feedback,
+        `<p class="font-medium text-ink">Nog niet compleet:</p><ul class="mt-2 list-inside list-disc text-sm text-muted">${failed.map((f) => `<li>${f.msg}</li>`).join('')}</ul>`
+      )
+    }
   })
 
   return editor
