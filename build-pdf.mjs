@@ -5,6 +5,7 @@ import matter from '@11ty/gray-matter'
 import { Marked } from 'marked'
 import PDFDocument from 'pdfkit'
 import hljs from 'highlight.js'
+import { languageLabel } from './src/lib/language-labels.mjs'
 
 const marked = new Marked()
 
@@ -47,7 +48,10 @@ const HLJS_COLORS = {
 }
 
 const HLJS_ENTITIES = { lt: '<', gt: '>', amp: '&', quot: '"', '#39': "'" }
-const HLJS_TAG_RE = /<span class="hljs-([\w.-]+)">|<\/span>|&(lt|gt|amp|quot|#39);/g
+// highlight.js sometimes emits a second, non-"hljs-" modifier class after the
+// base one (e.g. `class="hljs-title function_"`, `class="hljs-variable language_"`)
+// — capture only the base class and ignore any trailing modifier tokens.
+const HLJS_TAG_RE = /<span class="hljs-([\w.-]+)(?:\s+[\w-]+)*">|<\/span>|&(lt|gt|amp|quot|#39);/g
 
 // Parses highlight.js's HTML output (simple nested <span class="hljs-x">
 // tags, no other attributes) into flat {text, color} spans, without a real
@@ -278,11 +282,22 @@ function renderToken(doc, token, contentDir, opts = {}) {
       const textH = doc.heightOfString(token.text, { width: rw - 16, lineGap: 2 })
       const boxH = textH + 18
 
-      if (doc.y + boxH > doc.page.height - doc.page.margins.bottom - 20) {
+      const rawLang = (token.lang ?? '').trim().split(/\s+/)[0].toLowerCase()
+      const label = rawLang && hljs.getLanguage(rawLang) ? languageLabel(rawLang) : null
+      const labelH = label ? 14 : 0
+
+      if (doc.y + labelH + boxH > doc.page.height - doc.page.margins.bottom - 20) {
         doc.addPage()
       }
 
       const rx = doc.page.margins.left
+
+      if (label) {
+        doc.font('Helvetica-Bold').fontSize(8).fillColor('#666')
+        doc.text(label, rx, doc.y, { width: rw, lineGap: 0 })
+        doc.moveDown(0.1)
+      }
+
       const ry = doc.y
 
       doc.save().rect(rx, ry, rw, boxH).fill('#F4F4F4').restore()

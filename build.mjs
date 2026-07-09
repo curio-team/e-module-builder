@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 import matter from '@11ty/gray-matter'
 import { Marked } from 'marked'
 import hljs from 'highlight.js';
+import { languageLabel } from './src/lib/language-labels.mjs'
 
 const PKG_DIR = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_DIR = process.env.E_MODULE_PROJECT_DIR ?? process.cwd()
@@ -11,32 +12,6 @@ const CONTENT = path.join(PROJECT_DIR, 'content')
 const SRC_DATA = path.join(PROJECT_DIR, 'src/data')
 const PAGES = path.join(PROJECT_DIR, 'pages')
 const TEMPLATES = path.join(PKG_DIR, 'templates/pages')
-
-// Human-readable labels for language identifiers that don't just look good
-// upper-cased (e.g. "php" -> "PHP", "js" -> "JavaScript").
-const LANGUAGE_LABELS = {
-  js: 'JavaScript',
-  jsx: 'JavaScript',
-  ts: 'TypeScript',
-  tsx: 'TypeScript',
-  php: 'PHP',
-  html: 'HTML',
-  xml: 'XML',
-  css: 'CSS',
-  scss: 'SCSS',
-  json: 'JSON',
-  yml: 'YAML',
-  yaml: 'YAML',
-  sh: 'Shell',
-  bash: 'Bash',
-  sql: 'SQL',
-  py: 'Python',
-  md: 'Markdown',
-}
-
-function languageLabel(lang) {
-  return LANGUAGE_LABELS[lang] ?? (lang.charAt(0).toUpperCase() + lang.slice(1))
-}
 
 const marked = new Marked({
   renderer: {
