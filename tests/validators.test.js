@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { normalizeCss, runChecks, validateAreas } from '../src/js/exercises/validators.js'
+import { normalizeCss, runChecks, runJsChecks, validateAreas } from '../src/js/exercises/validators.js'
 
 describe('normalizeCss', () => {
   it('lowercases and collapses whitespace', () => {
@@ -84,6 +84,44 @@ describe('runChecks — unknown type', () => {
   it('returns ok: false for an unrecognised check type', () => {
     const checks = [{ type: 'nonexistent', msg: 'unknown check' }]
     expect(runChecks('anything', checks)).toEqual([{ ok: false, msg: 'unknown check' }])
+  })
+})
+
+describe('runJsChecks — sourceIncludes / sourceIncludesAll / sourceRegex', () => {
+  it('sourceIncludes is case-sensitive', () => {
+    const checks = [{ type: 'sourceIncludes', value: 'fetch(', msg: 'needs fetch' }]
+    expect(runJsChecks('fetch("/api")', [], checks)[0].ok).toBe(true)
+    expect(runJsChecks('FETCH("/api")', [], checks)[0].ok).toBe(false)
+  })
+
+  it('sourceIncludesAll requires every value', () => {
+    const checks = [{ type: 'sourceIncludesAll', values: ['fetch(', '.then('], msg: 'needs fetch chain' }]
+    expect(runJsChecks('fetch("/x").then(r => r.json())', [], checks)[0].ok).toBe(true)
+    expect(runJsChecks('fetch("/x")', [], checks)[0].ok).toBe(false)
+  })
+
+  it('sourceRegex matches against raw source', () => {
+    const checks = [{ type: 'sourceRegex', pattern: 'const\\s+\\w+\\s*=\\s*await fetch', msg: 'needs await fetch' }]
+    expect(runJsChecks('const res = await fetch("/x")', [], checks)[0].ok).toBe(true)
+    expect(runJsChecks('fetch("/x")', [], checks)[0].ok).toBe(false)
+  })
+})
+
+describe('runJsChecks — consoleIncludes', () => {
+  const checks = [{ type: 'consoleIncludes', value: 'delectus aut autem', msg: 'logs the todo title' }]
+
+  it('returns ok when captured console output contains the value', () => {
+    const lines = [{ level: 'log', args: ['delectus aut autem'] }]
+    expect(runJsChecks('', lines, checks)[0].ok).toBe(true)
+  })
+
+  it('returns not ok when console output does not contain the value', () => {
+    const lines = [{ level: 'log', args: ['something else'] }]
+    expect(runJsChecks('', lines, checks)[0].ok).toBe(false)
+  })
+
+  it('returns not ok when no console output was captured', () => {
+    expect(runJsChecks('', [], checks)[0].ok).toBe(false)
   })
 })
 

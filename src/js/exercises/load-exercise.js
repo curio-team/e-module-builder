@@ -93,9 +93,11 @@ export async function initExercisePage(sectionId) {
   renderExerciseMeta(exercise)
 
   const missingContent =
-    (exercise.type === 'areas' ? !exercise.starterAreas?.trim() : !exercise.starterCss?.trim()) ||
-    !exercise.previewHtml?.trim() ||
-    (exercise.type !== 'areas' && !exercise.checks?.length)
+    exercise.type === 'areas'
+      ? !exercise.starterAreas?.trim() || !exercise.previewHtml?.trim()
+      : exercise.type === 'js-playground'
+        ? !exercise.starterJs?.trim() || !exercise.checks?.length
+        : !exercise.starterCss?.trim() || !exercise.previewHtml?.trim() || !exercise.checks?.length
 
   if (missingContent) {
     showMissingContent(sectionId)
@@ -106,6 +108,7 @@ export async function initExercisePage(sectionId) {
     initCssPlayground,
     initAreasExercise,
     initResponsiveExercise,
+    initJsPlayground,
     renderAreaSelects,
   } = await import('./exercise-runner.js')
 
@@ -114,11 +117,13 @@ export async function initExercisePage(sectionId) {
 
   const cssPanel = document.querySelector('[data-exercise-css-panel]')
   const areasPanel = document.querySelector('[data-exercise-areas-panel]')
+  const jsPanel = document.querySelector('[data-exercise-js-panel]')
   const responsiveBar = document.querySelector('[data-responsive-bar]')
   const onSolved = () => markExerciseSolved(sectionId, exercise.id)
 
   if (exercise.type === 'areas') {
     cssPanel?.classList.add('hidden')
+    jsPanel?.classList.add('hidden')
     areasPanel?.classList.remove('hidden')
     responsiveBar?.classList.add('hidden')
     document.querySelector('[data-solution]')?.classList.add('hidden')
@@ -134,8 +139,16 @@ export async function initExercisePage(sectionId) {
     }
 
     initAreasExercise(exercise, { onSolved })
+  } else if (exercise.type === 'js-playground') {
+    cssPanel?.classList.add('hidden')
+    areasPanel?.classList.add('hidden')
+    responsiveBar?.classList.add('hidden')
+    jsPanel?.classList.remove('hidden')
+
+    initJsPlayground(exercise, { onSolved })
   } else {
     areasPanel?.classList.add('hidden')
+    jsPanel?.classList.add('hidden')
     cssPanel?.classList.remove('hidden')
 
     if (exercise.type === 'responsive') {

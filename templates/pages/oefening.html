@@ -102,6 +102,32 @@
             </div>
           </div>
 
+          <div data-exercise-js-panel
+               class="hidden grid gap-4 lg:grid-cols-2">
+            <div class="editor-panel">
+              <div class="panel-header">JS Editor</div>
+
+              <div data-editor
+                   class="monaco-container"></div>
+            </div>
+
+            <div class="preview-panel js-output-panel">
+              <div class="panel-header flex items-center justify-between">
+                <span>Output</span>
+
+                <button data-run
+                        type="button"
+                        class="btn-secondary">Uitvoeren</button>
+              </div>
+
+              <div data-js-output
+                   class="js-output"></div>
+
+              <div data-js-sandbox
+                   class="hidden"></div>
+            </div>
+          </div>
+
           <div data-exercise-areas-panel
                class="hidden space-y-4">
             <div class="card">

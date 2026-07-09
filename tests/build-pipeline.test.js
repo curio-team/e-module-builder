@@ -82,6 +82,25 @@ describe('build pipeline — exercises', () => {
     expect(types).toContain('text')
   })
 
+  it('round-trips starterJs and checks for js-playground exercises untouched', () => {
+    const ex = readJson('src/data/exercises/week2.json')
+    const jsEx = ex.exercises.find(e => e.type === 'js-playground')
+    expect(jsEx.starterJs).toContain('fetch')
+    expect(jsEx.checks).toEqual([
+      {
+        type: 'sourceIncludesAll',
+        values: ['fetch', 'jsonplaceholder.typicode.com'],
+        msg: 'gebruikt fetch() om de JSONPlaceholder API aan te roepen',
+      },
+      {
+        type: 'consoleIncludes',
+        value: 'delectus aut autem',
+        msg: 'logt de titel van het to-do item naar de console',
+      },
+    ])
+    expect(jsEx.descriptionHtml).toBeUndefined()
+  })
+
   it('adds descriptionHtml only to text-type exercises', () => {
     const ex = readJson('src/data/exercises/week2.json')
     const textEx = ex.exercises.find(e => e.type === 'text')

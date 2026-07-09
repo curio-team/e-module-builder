@@ -156,6 +156,26 @@
     @apply h-80 min-h-80 w-full overflow-hidden;
   }
 
+  .js-output-panel {
+    @apply bg-ink text-white/80;
+  }
+
+  .js-output {
+    @apply h-80 min-h-80 w-full overflow-y-auto p-3 font-mono text-[13px] leading-relaxed;
+  }
+
+  .console-line {
+    @apply whitespace-pre-wrap border-b border-white/5 py-1 text-white/70;
+  }
+
+  .console-line--warn {
+    @apply text-amber-400;
+  }
+
+  .console-line--error {
+    @apply text-red-400;
+  }
+
   .nav-overlay {
     @apply fixed inset-0 z-40 hidden bg-black/40 backdrop-blur-sm md:hidden;
   }
