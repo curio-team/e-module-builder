@@ -222,18 +222,25 @@ function renderParagraphTokens(doc, tokens, contentDir, ctx) {
   flush()
 }
 
+function renderImageWarning(doc) {
+  doc.font('Helvetica-Oblique').fontSize(9).fillColor('#92400E')
+    .text('[ Deze afbeelding is niet beschikbaar in deze PDF — zie online materiaal. ]', { lineGap: 2 })
+  doc.font('Helvetica').fontSize(11).fillColor('#000').moveDown(0.3)
+}
+
 function renderLocalImage(doc, href, contentDir) {
-  if (!href || /^https?:\/\/|^data:/.test(href)) return
+  if (!href) return
+  if (/^https?:\/\/|^data:/.test(href)) return renderImageWarning(doc)
   const imgPath = path.resolve(contentDir, href)
-  if (!fs.existsSync(imgPath)) return
+  if (!fs.existsSync(imgPath)) return renderImageWarning(doc)
   const ext = path.extname(imgPath).toLowerCase()
-  if (!['.jpg', '.jpeg', '.png'].includes(ext)) return  // pdfkit only supports jpg/png natively
+  if (!['.jpg', '.jpeg', '.png'].includes(ext)) return renderImageWarning(doc)  // pdfkit only supports jpg/png natively
   try {
     const maxW = doc.page.width - doc.page.margins.left - doc.page.margins.right
     doc.image(imgPath, { fit: [maxW, 280], align: 'left' })
     doc.moveDown(0.3)
   } catch {
-    // unsupported or corrupt — skip silently
+    renderImageWarning(doc)
   }
 }
 
