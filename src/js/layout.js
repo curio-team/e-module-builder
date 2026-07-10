@@ -9,7 +9,7 @@ const MENU_SVG = `<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="c
  */
 export function mountLayout() {
   const icon = document.querySelector('link[rel="icon"]')
-  if (icon) icon.href = sitePath('/favicon.svg')
+  if (icon) icon.href = sitePath('/favicon.png')
 
   const contentEl = document.querySelector('[data-page-content]')
   if (!contentEl || document.querySelector('[data-app-shell]')) return

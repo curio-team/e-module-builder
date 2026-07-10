@@ -1,11 +1,15 @@
 import * as monaco from 'monaco-editor'
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
+import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 
 self.MonacoEnvironment = {
   getWorker(_, label) {
     if (label === 'css' || label === 'scss' || label === 'less') {
       return new cssWorker()
+    }
+    if (label === 'javascript' || label === 'typescript') {
+      return new tsWorker()
     }
     return new editorWorker()
   },
@@ -20,6 +24,34 @@ export function createCssEditor(container, initialValue = '', onChange) {
   const editor = monaco.editor.create(container, {
     value: initialValue,
     language: 'css',
+    theme: 'vs-dark',
+    fontSize: 14,
+    fontFamily: "'Google Sans Code', ui-monospace, monospace",
+    minimap: { enabled: false },
+    lineNumbers: 'on',
+    scrollBeyondLastLine: false,
+    automaticLayout: true,
+    tabSize: 2,
+    wordWrap: 'on',
+    padding: { top: 12 },
+  })
+
+  if (onChange) {
+    editor.onDidChangeModelContent(() => onChange(editor.getValue()))
+  }
+
+  return editor
+}
+
+/**
+ * @param {HTMLElement} container
+ * @param {string} initialValue
+ * @param {(value: string) => void} [onChange]
+ */
+export function createJsEditor(container, initialValue = '', onChange) {
+  const editor = monaco.editor.create(container, {
+    value: initialValue,
+    language: 'javascript',
     theme: 'vs-dark',
     fontSize: 14,
     fontFamily: "'Google Sans Code', ui-monospace, monospace",

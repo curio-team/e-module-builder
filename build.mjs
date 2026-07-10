@@ -3,12 +3,12 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import matter from '@11ty/gray-matter'
 import { Marked } from 'marked'
-import { markedHighlight } from "marked-highlight";
 import hljs from 'highlight.js';
 import YAML from 'yaml'
 import { INTERACTIVE_TAGS, getComponentMeta } from './src/js/x-components/registry.js'
 import { renderComponentLabel } from './src/js/x-components/shared.js'
 import { extractKeywordsFromMarkdown, mergeKeywordLists } from './src/js/components/word-search/keywords.js'
+import { languageLabel } from './src/lib/language-labels.mjs'
 
 const PKG_DIR = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_DIR = process.env.E_MODULE_PROJECT_DIR ?? process.cwd()
@@ -17,16 +17,18 @@ const SRC_DATA = path.join(PROJECT_DIR, 'src/data')
 const PAGES = path.join(PROJECT_DIR, 'pages')
 const TEMPLATES = path.join(PKG_DIR, 'templates/pages')
 
-const marked = new Marked(
-  markedHighlight({
-    emptyLangClass: 'hljs',
-    langPrefix: 'hljs language-',
-    highlight(code, lang, info) {
-      const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-      return hljs.highlight(code, { language }).value;
-    }
-  })
-)
+const marked = new Marked({
+  renderer: {
+    code({ text, lang }) {
+      const rawLang = (lang ?? '').trim().split(/\s+/)[0].toLowerCase()
+      const language = hljs.getLanguage(rawLang) ? rawLang : 'plaintext'
+      const highlighted = hljs.highlight(text, { language }).value
+      const label = rawLang && rawLang !== 'plaintext' ? languageLabel(rawLang) : null
+      const labelHtml = label ? `<div class="code-block-label">${label}</div>` : ''
+      return `<div class="code-block-wrapper">${labelHtml}<pre><code class="hljs language-${language}">${highlighted}</code></pre></div>\n`
+    },
+  },
+})
 
 const SECTION_RE = /^([a-zA-Z]+)(\d+)$/
 
@@ -36,16 +38,37 @@ function sectionLabel(prefix, num) {
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
+// Content pages are always rendered into pages/*.html, so a root-absolute
+// link written in Markdown (e.g. "/pages/week1-oefeningen.html") must be
+// resolved relative to that directory — mirrors sitePath.js's runtime logic,
+// but baked in at build time so links work without JS and under any
+// GitHub Pages subpath.
+function resolveSiteAbsolutePath(sitePath) {
+  const trimmed = sitePath.slice(1)
+  if (trimmed.startsWith('pages/')) return trimmed.slice('pages/'.length)
+  return `../${trimmed}`
+}
+
 function rewriteAssetPaths(html, basePath) {
-  if (!basePath || !html) return html
-  const prefix = `../${basePath}/`
+  if (!html) return html
+  if (basePath) {
+    const prefix = `../${basePath}/`
+    html = html.replace(
+      /(<img\s[^>]*\bsrc=")(?!https?:\/\/|\/|data:|\.\.)([^"]+)(")/g,
+      `$1${prefix}$2$3`
+    )
+    html = html.replace(
+      /(<a\s[^>]*\bhref=")(?!https?:\/\/|\/|#|mailto:|\.\.)([^"]+)(")/g,
+      `$1${prefix}$2$3`
+    )
+  }
   html = html.replace(
-    /(<img\s[^>]*\bsrc=")(?!https?:\/\/|\/|data:|\.\.)([^"]+)(")/g,
-    `$1${prefix}$2$3`
+    /(<img\s[^>]*\bsrc=")\/(?!\/)([^"]+)(")/g,
+    (_, pre, sitePath, post) => `${pre}${resolveSiteAbsolutePath('/' + sitePath)}${post}`
   )
   html = html.replace(
-    /(<a\s[^>]*\bhref=")(?!https?:\/\/|\/|#|mailto:|\.\.)([^"]+)(")/g,
-    `$1${prefix}$2$3`
+    /(<a\s[^>]*\bhref=")\/(?!\/)([^"]+)(")/g,
+    (_, pre, sitePath, post) => `${pre}${resolveSiteAbsolutePath('/' + sitePath)}${post}`
   )
   return html
 }
@@ -202,34 +225,37 @@ for (const weekDir of activeWeeks) {
     writeJson(SRC_DATA, `meetmoment-quiz-week${weekNum}.json`, quizOut)
   }
 
-  // exercises/ subfolder → src/data/exercises/weekN.json
+  // exercises/ subfolder → src/data/exercises/weekN.json (optional)
   const exDir = path.join(dir, 'exercises')
-  const metaMd = readMd(path.join(exDir, '_meta.md'))
-  const exerciseFiles = fs.readdirSync(exDir)
-    .filter(f => f.endsWith('.md') && f !== '_meta.md')
-    .sort((a, b) => parseInt(a) - parseInt(b))
-  const exercises = exerciseFiles.map(f => {
-    const { data: ex, content } = readMd(path.join(exDir, f))
-    if (!ex.type || ex.type === 'text') {
-      const src = content?.trim() ? content : (ex.description ?? '')
-      ex.descriptionHtml = rewriteAssetPaths(marked.parse(src), `week${weekNum}/exercises`)
+  const hasExercises = fs.existsSync(exDir) && fs.existsSync(path.join(exDir, '_meta.md'))
+  if (hasExercises) {
+    const metaMd = readMd(path.join(exDir, '_meta.md'))
+    const exerciseFiles = fs.readdirSync(exDir)
+      .filter(f => f.endsWith('.md') && f !== '_meta.md')
+      .sort((a, b) => parseInt(a) - parseInt(b))
+    const exercises = exerciseFiles.map(f => {
+      const { data: ex, content } = readMd(path.join(exDir, f))
+      if (!ex.type || ex.type === 'text') {
+        const src = content?.trim() ? content : (ex.description ?? '')
+        ex.descriptionHtml = rewriteAssetPaths(marked.parse(src), `week${weekNum}/exercises`)
+      }
+      ex.descriptionInlineHtml = marked.parseInline(ex.description ?? '')
+      if (ex.type === 'external') {
+        if (ex.task) ex.taskHtml = marked.parseInline(ex.task)
+        if (ex.hint) ex.hintHtml = marked.parse(ex.hint)
+        if (ex.solution) ex.solutionHtml = marked.parse(ex.solution)
+      }
+      return ex
+    })
+    const exOut = {
+      week: metaMd.data.week ?? weekNum,
+      title: metaMd.data.title,
+      color: metaMd.data.color,
+      ...(metaMd.data.mode ? { mode: metaMd.data.mode } : {}),
+      exercises,
     }
-    ex.descriptionInlineHtml = marked.parseInline(ex.description ?? '')
-    if (ex.type === 'external') {
-      if (ex.task) ex.taskHtml = marked.parseInline(ex.task)
-      if (ex.hint) ex.hintHtml = marked.parse(ex.hint)
-      if (ex.solution) ex.solutionHtml = marked.parse(ex.solution)
-    }
-    return ex
-  })
-  const exOut = {
-    week: metaMd.data.week ?? weekNum,
-    title: metaMd.data.title,
-    color: metaMd.data.color,
-    ...(metaMd.data.mode ? { mode: metaMd.data.mode } : {}),
-    exercises,
+    writeJson(path.join(SRC_DATA, 'exercises'), `week${weekNum}.json`, exOut)
   }
-  writeJson(path.join(SRC_DATA, 'exercises'), `week${weekNum}.json`, exOut)
 
   // assignment.md → src/data/inleveropdracht-weekN.json
   const hwMd = readMd(path.join(dir, 'assignment.md'))
@@ -253,6 +279,7 @@ for (const weekDir of activeWeeks) {
     dirName: weekDir,
     prefix: sectionPrefix,
     hasQuiz,
+    hasExercises,
     title: theoryMd.data.title,
     summary: marked.parseInline(theoryMd.data.summary ?? ''),
     goal: theoryMd.data.goal,
@@ -260,9 +287,9 @@ for (const weekDir of activeWeeks) {
     color: theoryMd.data.accent,
     pages: [
       { key: 'theorie', href: `/pages/${weekDir}-theorie.html`, label: 'Theorie' },
-      { key: 'oefeningen', href: `/pages/${weekDir}-oefeningen.html`, label: 'Oefeningen' },
+      ...(hasExercises ? [{ key: 'oefeningen', href: `/pages/${weekDir}-oefeningen.html`, label: 'Oefeningen' }] : []),
       ...(hasQuiz ? [{ key: 'meetmoment', href: `/pages/${weekDir}-meetmoment.html`, label: 'Meetmoment' }] : []),
-      { key: 'oefening', href: `/pages/${weekDir}-oefening.html`, label: 'Oefening' },
+      ...(hasExercises ? [{ key: 'oefening', href: `/pages/${weekDir}-oefening.html`, label: 'Oefening' }] : []),
       { key: 'inleveropdracht', href: `/pages/${weekDir}-inleveropdracht.html`, label: 'Inleveropdracht' },
     ],
   })
@@ -364,6 +391,13 @@ for (const d of fs.readdirSync(CONTENT)) {
     hasQuiz,
     hasAssignment,
     isExtra: true,
+    pages: [
+      { key: 'theorie', href: `/pages/${d}-theorie.html`, label: 'Theorie' },
+      ...(hasExercises ? [{ key: 'oefeningen', href: `/pages/${d}-oefeningen.html`, label: 'Oefeningen' }] : []),
+      ...(hasQuiz ? [{ key: 'meetmoment', href: `/pages/${d}-meetmoment.html`, label: 'Meetmoment' }] : []),
+      ...(hasExercises ? [{ key: 'oefening', href: `/pages/${d}-oefening.html`, label: 'Oefening' }] : []),
+      ...(hasAssignment ? [{ key: 'inleveropdracht', href: `/pages/${d}-inleveropdracht.html`, label: 'Inleveropdracht' }] : []),
+    ],
   })
 
   woordzoekerData.weeks[d] = extractKeywordsFromMarkdown(collectSectionMarkdown(dir))
@@ -435,6 +469,16 @@ const manifest = {
     exerciseMode: mod.exerciseMode ?? 'external',
   },
   weeks: weeksData,
+  curriculum: allNavSections.map(sec => ({
+    dirName: sec.dirName,
+    isExtra: !!sec.isExtra,
+    label: sec.isExtra
+      ? sec.dirName.charAt(0).toUpperCase() + sec.dirName.slice(1)
+      : sectionLabel(sec.prefix, sec.week),
+    title: sec.title,
+    summary: sec.summary,
+    pages: sec.pages,
+  })),
   nav: {
     home: { href: '/index.html', label: 'Home' },
     weeks: allNavSections.map(sec => ({
@@ -451,7 +495,7 @@ const manifest = {
         ]
         : [
           { href: `/pages/${sec.dirName}-theorie.html`, label: 'Theorie' },
-          { href: `/pages/${sec.dirName}-oefeningen.html`, label: 'Oefeningen' },
+          ...(sec.hasExercises ? [{ href: `/pages/${sec.dirName}-oefeningen.html`, label: 'Oefeningen' }] : []),
           ...(sec.hasQuiz ? [{ href: `/pages/${sec.dirName}-meetmoment.html`, label: 'Quiz' }] : []),
           { href: `/pages/${sec.dirName}-inleveropdracht.html`, label: 'Inleveropdracht' },
         ],
@@ -474,9 +518,9 @@ const manifest = {
     ],
     week: weeksData.flatMap(wk => [
       `pages/${wk.dirName}-theorie.html`,
-      `pages/${wk.dirName}-oefeningen.html`,
+      ...(wk.hasExercises ? [`pages/${wk.dirName}-oefeningen.html`] : []),
       ...(wk.hasQuiz ? [`pages/${wk.dirName}-meetmoment.html`] : []),
-      `pages/${wk.dirName}-oefening.html`,
+      ...(wk.hasExercises ? [`pages/${wk.dirName}-oefening.html`] : []),
       `pages/${wk.dirName}-inleveropdracht.html`,
     ]),
     extra: extraSectionsData.flatMap(s => [
@@ -579,6 +623,7 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
   const tpl = fs.readFileSync(path.join(TEMPLATES, tplFile), 'utf8')
   for (const wk of weeksData) {
     if (suffix === 'meetmoment' && !wk.hasQuiz) continue
+    if ((suffix === 'oefeningen' || suffix === 'oefening') && !wk.hasExercises) continue
     const out = applyTemplate(tpl, {
       dirName: wk.dirName,
       sectionLabel: sectionLabel(wk.prefix, wk.week),

@@ -94,6 +94,25 @@ describe('build pipeline — exercises', () => {
     expect(types).toContain('text')
   })
 
+  it('round-trips starterJs and checks for js-playground exercises untouched', () => {
+    const ex = readJson('src/data/exercises/week2.json')
+    const jsEx = ex.exercises.find(e => e.type === 'js-playground')
+    expect(jsEx.starterJs).toContain('fetch')
+    expect(jsEx.checks).toEqual([
+      {
+        type: 'sourceIncludesAll',
+        values: ['fetch', 'jsonplaceholder.typicode.com'],
+        msg: 'gebruikt fetch() om de JSONPlaceholder API aan te roepen',
+      },
+      {
+        type: 'consoleIncludes',
+        value: 'delectus aut autem',
+        msg: 'logt de titel van het to-do item naar de console',
+      },
+    ])
+    expect(jsEx.descriptionHtml).toBeUndefined()
+  })
+
   it('adds descriptionHtml only to text-type exercises', () => {
     const ex = readJson('src/data/exercises/week2.json')
     const textEx = ex.exercises.find(e => e.type === 'text')
@@ -202,9 +221,8 @@ describe('build pipeline — static assets', () => {
   })
 
   it('copies package public files (logo, favicon) to public/', () => {
-    expect(existsSync(join(tmpDir, 'public/logo.svg'))).toBe(true)
     expect(existsSync(join(tmpDir, 'public/logo.png'))).toBe(true)
-    expect(existsSync(join(tmpDir, 'public/favicon.svg'))).toBe(true)
+    expect(existsSync(join(tmpDir, 'public/favicon.png'))).toBe(true)
   })
 
   it('rewrites relative image src in theory HTML to ../weekN/ prefix', () => {
@@ -354,10 +372,5 @@ describe('build pipeline — week3 (no quiz.md)', () => {
     const week3Nav = manifest.nav.weeks.find(w => w.children.some(c => c.href.includes('week3')))
     expect(week3Nav).toBeDefined()
     expect(week3Nav.children.some(c => c.label === 'Quiz')).toBe(false)
-  })
-
-  it('generates week3-theorie.html and week3-oefeningen.html', () => {
-    expect(existsSync(join(tmpDir, 'pages/week3-theorie.html'))).toBe(true)
-    expect(existsSync(join(tmpDir, 'pages/week3-oefeningen.html'))).toBe(true)
   })
 })

@@ -78,6 +78,16 @@ Hier lijsten met witregels ertussen en code-block:
   
    2. Subitem 3.2
 
+4. Hier wat HTML
+
+    ```html
+    <div class="parent">
+      <div class="child">Child 1</div>
+      <div class="child">Child 2</div>
+      <div class="child">Child 3</div>
+    </div>
+    ```
+
 ## Alle callout types
 
 <x-callout type="tip">
@@ -127,6 +137,10 @@ This browser component can be used to show the output of a browser, for example,
   ```
 </x-browser>
 
+<x-browser>
+  Dit is een browser met enkel tekst.
+</x-browser>
+
 ## Testing readability of code symbols
 
 Here's inline `==`, `!=`, `<=`, `>=`, `+`, `-`, `*`, `/`, `%`, `&`, `|`, `^`, `~`, `<<`, and `>>` symbols.
@@ -167,3 +181,19 @@ words:
   - column
   - row
 </x-woordzoeker>
+## setTimeout — één keer, na een vertraging
+
+`setTimeout` voert een functie **één keer** uit, nadat een aantal milliseconden is
+verstreken. Het blokkeert de rest van je code niet — JavaScript gaat gewoon verder
+en voert de functie pas later uit.
+
+```js
+setTimeout(() => {
+  console.log("Drie seconden zijn voorbij!");
+}, 3000);
+
+console.log("Dit wordt meteen getoond, nog vóór de melding hierboven.");
+```
+
+`setTimeout` geeft een **id** terug. Die heb je nodig als je de timeout wilt
+annuleren vóórdat hij afgaat, met `clearTimeout(id)`.

@@ -62,7 +62,13 @@
           <p class="text-sm text-muted">Deze opdracht voer je uit buiten deze website — in je editor, op je machine of in de aangegeven tool.</p>
         </div>
 
-        <div data-exercise-interactive>
+        <div data-exercise-loading
+             class="hidden flex items-center justify-center py-16">
+          <div class="h-8 w-8 animate-spin rounded-full border-2 border-ink/15 border-t-primary"></div>
+        </div>
+
+        <div data-exercise-interactive
+             class="hidden">
           <div data-responsive-bar
                class="mb-4 hidden flex flex-wrap items-center gap-2">
 
@@ -99,6 +105,38 @@
               <iframe data-preview
                       class="preview-frame"
                       title="Preview"></iframe>
+            </div>
+          </div>
+
+          <div data-exercise-js-panel
+               class="hidden grid gap-4 lg:grid-cols-2">
+            <div class="editor-panel">
+              <div class="panel-header flex items-center justify-between">
+                <span>JS Editor</span>
+
+                <button data-run
+                        type="button"
+                        class="btn-secondary">▶ Uitvoeren</button>
+              </div>
+
+              <div data-editor
+                   class="monaco-container"></div>
+            </div>
+
+            <div class="preview-panel js-output-panel">
+              <div class="panel-header flex items-center justify-between">
+                <span>Output</span>
+
+                <button data-clear-output
+                        type="button"
+                        class="btn-secondary">✕ Wissen</button>
+              </div>
+
+              <div data-js-output
+                   class="js-output"></div>
+
+              <div data-js-sandbox
+                   class="hidden"></div>
             </div>
           </div>
 
@@ -146,18 +184,30 @@
     </main>
   </div>
 
-  <div data-theory-panel class="theory-panel panel-hidden">
+  <div data-theory-panel
+       class="theory-panel panel-hidden">
     <div class="theory-panel-header">
-      <div data-theory-tabs class="theory-panel-tabs"></div>
+      <div data-theory-tabs
+           class="theory-panel-tabs"></div>
       <button data-theory-panel-close
               type="button"
               class="theory-panel-close"
               aria-label="Sluit theorievenster">
-        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+        <svg class="h-4 w-4"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke="currentColor"
+             stroke-width="1.5"
+             aria-hidden="true">
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18 18 6M6 6l12 12" />
+        </svg>
       </button>
     </div>
     <div class="theory-panel-body">
-      <div data-theory-loader class="theory-panel-loader">
+      <div data-theory-loader
+           class="theory-panel-loader">
         <div class="theory-panel-spinner"></div>
       </div>
       <iframe data-theory-iframe
@@ -171,7 +221,16 @@
           class="theory-panel-toggle hidden"
           aria-label="Toon theorie"
           aria-expanded="false">
-    <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.966 8.966 0 0 0-6 2.292m0-14.25v14.25" /></svg>
+    <svg class="h-4 w-4 shrink-0"
+         fill="none"
+         viewBox="0 0 24 24"
+         stroke="currentColor"
+         stroke-width="1.5"
+         aria-hidden="true">
+      <path stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.966 8.966 0 0 0-6 2.292m0-14.25v14.25" />
+    </svg>
     Theorie
   </button>
 

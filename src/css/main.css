@@ -77,11 +77,11 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center bg-primary px-5 py-2.5 text-sm font-medium text-white no-underline transition hover:bg-primary-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center bg-primary px-5 py-2.5 text-sm font-medium text-white no-underline transition hover:bg-primary-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-ink/20 disabled:text-ink/40 disabled:hover:bg-ink/20;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center border border-ink/20 bg-white px-5 py-2.5 text-sm font-medium text-ink/80 no-underline transition hover:border-ink/30 hover:bg-surface-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-muted focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center border border-ink/20 bg-white px-5 py-2.5 text-sm font-medium text-ink/80 no-underline transition hover:border-ink/30 hover:bg-surface-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-muted focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:border-ink/10 disabled:bg-surface-subtle disabled:text-ink/30 disabled:hover:border-ink/10 disabled:hover:bg-surface-subtle;
   }
 
   .card {
@@ -129,7 +129,7 @@
   }
 
   .preview-panel {
-    @apply mt-2 overflow-hidden rounded-md bg-white shadow-card;
+    @apply overflow-hidden rounded-md bg-white shadow-card;
   }
 
   .panel-header {
@@ -154,6 +154,26 @@
 
   .monaco-container {
     @apply h-80 min-h-80 w-full overflow-hidden;
+  }
+
+  .js-output-panel {
+    @apply bg-ink text-white/80;
+  }
+
+  .js-output {
+    @apply h-80 min-h-80 w-full overflow-y-auto p-3 font-mono text-[13px] leading-relaxed;
+  }
+
+  .console-line {
+    @apply whitespace-pre-wrap border-b border-white/5 py-1 text-white/70;
+  }
+
+  .console-line--warn {
+    @apply text-amber-400;
+  }
+
+  .console-line--error {
+    @apply text-red-400;
   }
 
   .nav-overlay {
@@ -240,12 +260,24 @@
     @apply font-medium text-ink underline decoration-ink/25 underline-offset-4 transition hover:decoration-ink;
   }
 
-  main :not(pre) > code {
+  main :not(pre)>code {
     @apply rounded-md bg-[#FF8989]/12 px-1.5 py-0.5 font-mono text-[0.8em] text-zinc-900 ring-1 ring-[#FF8989]/45;
   }
 
+  main .code-block-wrapper {
+    @apply mt-2 overflow-hidden rounded-md bg-ink shadow-editor;
+
+    .hljs {
+      background: transparent !important;
+    }
+  }
+
+  main .code-block-label {
+    @apply border-b border-white/10 px-5 py-2 font-mono text-[11px] font-medium uppercase tracking-wider text-white/40;
+  }
+
   main pre {
-    @apply mt-2 overflow-x-auto rounded-md bg-ink p-5 font-mono text-[13px] leading-relaxed text-white/70 shadow-editor;
+    @apply overflow-x-auto p-5 font-mono text-[13px] leading-relaxed text-white/70;
   }
 
   main pre code {
@@ -352,8 +384,16 @@
   }
 
   x-browser {
-    @apply relative mt-6 block overflow-hidden rounded-lg border border-ink/15 bg-white shadow-lg;
-    padding-top: calc(2.25rem);
+    @apply relative my-8 mx-10 block overflow-hidden rounded-xl border-2 border-ink/15 bg-white shadow-2xl ring-1 ring-black/5;
+    padding-top: calc(2.5rem);
+
+    .code-block-label {
+      display: none;
+    }
+
+    p {
+      @apply p-4;
+    }
   }
 
   x-browser :first-child {
@@ -362,7 +402,7 @@
 
   x-browser::before {
     content: "Browser";
-    @apply absolute inset-x-0 top-0 flex h-9 pl-4 items-center bg-ink text-xs font-medium text-muted;
+    @apply absolute inset-x-0 top-0 flex h-10 items-center justify-center border-b border-ink/10 bg-gradient-to-b from-zinc-100 to-zinc-200 pl-16 pr-4 text-xs font-medium text-ink/50;
   }
 
   x-browser[title]::before {
@@ -370,8 +410,13 @@
   }
 
   x-browser::after {
-    content: "−   □   ✕";
-    @apply pointer-events-none absolute right-0 top-0 flex h-9 items-center pr-3 text-[0.65rem] tracking-widest text-muted;
+    content: "";
+    @apply pointer-events-none absolute left-4 h-[11px] w-[11px] rounded-full;
+    top: calc((2.5rem - 11px) / 2);
+    background: #ff5f57;
+    box-shadow:
+      18px 0 0 #febc2e,
+      36px 0 0 #28c840;
   }
 
   /* ── Interactive x-components ────────────────────────────────────────────── */

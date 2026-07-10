@@ -33,6 +33,39 @@ export function runChecks(css, checks) {
   })
 }
 
+/**
+ * @param {string} code - raw JS source, case-sensitive
+ * @param {{level: string, args: string[]}[]} consoleLines - captured sandbox console output
+ * @param {Array<{type: string, value?: string, values?: string[], pattern?: string, msg: string}>} checks
+ */
+export function runJsChecks(code, consoleLines, checks) {
+  const output = consoleLines.map((l) => l.args.join(' ')).join('\n')
+
+  return checks.map((check) => {
+    let ok = false
+    switch (check.type) {
+      case 'sourceIncludes':
+        ok = code.includes(check.value)
+        break
+      case 'sourceIncludesAll':
+        ok = check.values.every((v) => code.includes(v))
+        break
+      case 'sourceIncludesAny':
+        ok = check.values.some((v) => code.includes(v))
+        break
+      case 'sourceRegex':
+        ok = new RegExp(check.pattern).test(code)
+        break
+      case 'consoleIncludes':
+        ok = output.includes(check.value)
+        break
+      default:
+        ok = false
+    }
+    return { ok, msg: check.msg }
+  })
+}
+
 export function validateAreas(containerValue, selects, expected) {
   const errors = []
   const normalized = containerValue.replace(/\s+/g, ' ').trim().toLowerCase()

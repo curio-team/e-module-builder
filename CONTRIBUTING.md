@@ -62,6 +62,7 @@ testbed/content/
 | `css-playground` | Monaco CSS editor with live preview and automated checks |
 | `areas` | Drag-and-drop grid-template-areas builder |
 | `responsive` | Monaco CSS editor with resizable viewport preview |
+| `js-playground` | Monaco JS editor, sandboxed execution (iframe, no same-origin), console output + automated checks |
 | `external` | Link-out card with a URL |
 | `text` | Description-only card (no interactive element); supports inline x-components in the markdown body |
 
