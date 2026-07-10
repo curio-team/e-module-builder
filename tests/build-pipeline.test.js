@@ -56,6 +56,18 @@ describe('build pipeline — theory', () => {
     const theory = readJson('src/data/theory-week1.json')
     expect(theory.html).toContain('<h2>')
   })
+
+  it('theory HTML contains interactive x-components with data-config', () => {
+    const theory = readJson('src/data/theory-week1.json')
+    expect(theory.html).toContain('<x-keuzevraag')
+    expect(theory.html).toContain('data-config=')
+    expect(theory.html).toContain('<x-koppelvraag')
+    expect(theory.html).toContain('<x-vind-de-fout')
+    expect(theory.html).toContain('<x-invul')
+    expect(theory.html).toContain('class="x-component-label">Meerkeuzevraag')
+    expect(theory.html).toContain('class="x-component-label">Invuloefening')
+    expect(theory.html).toContain('data-component-body')
+  })
 })
 
 describe('build pipeline — quiz', () => {
@@ -115,6 +127,13 @@ describe('build pipeline — exercises', () => {
     expect(bodyEx.descriptionHtml).toContain('<strong>')
     expect(bodyEx.descriptionHtml).toContain('<h2>')
   })
+
+  it('parses interactive x-components in text exercise bodies', () => {
+    const ex = readJson('src/data/exercises/week2.json')
+    const textEx = ex.exercises.find(e => e.id === 2)
+    expect(textEx.descriptionHtml).toContain('<x-keuzevraag')
+    expect(textEx.descriptionHtml).toContain('data-config=')
+  })
 })
 
 describe('build pipeline — assignment', () => {
@@ -163,6 +182,14 @@ describe('build pipeline — checklist', () => {
   })
 })
 
+describe('build pipeline — woordzoeker', () => {
+  it('generates woordzoeker.json with module and week keywords', () => {
+    const data = readJson('src/data/woordzoeker.json')
+    expect(data.module.length).toBeGreaterThan(0)
+    expect(data.weeks.week1.length).toBeGreaterThan(0)
+  })
+})
+
 describe('build pipeline — assessments', () => {
   it('generates meetmoment-theorie.json with questions', () => {
     const assessment = readJson('src/data/meetmoment-theorie.json')
@@ -173,6 +200,13 @@ describe('build pipeline — assessments', () => {
     const assessment = readJson('src/data/meetmoment-praktijk.json')
     expect(typeof assessment.html).toBe('string')
     expect(assessment.html.length).toBeGreaterThan(0)
+  })
+
+  it('parses interactive x-components in practical assessment HTML', () => {
+    const assessment = readJson('src/data/meetmoment-praktijk.json')
+    expect(assessment.html).toContain('<x-keuzevraag')
+    expect(assessment.html).toContain('data-config=')
+    expect(assessment.html).toContain('class="x-component-label">Meerkeuzevraag')
   })
 })
 
@@ -226,6 +260,11 @@ describe('build pipeline — HTML pages', () => {
     expect(existsSync(join(tmpDir, 'pages/checklist.html'))).toBe(true)
     expect(existsSync(join(tmpDir, 'pages/meetmoment-theorie.html'))).toBe(true)
     expect(existsSync(join(tmpDir, 'pages/meetmoment-praktijk.html'))).toBe(true)
+  })
+
+  it('meetmoment-praktijk page hydrates interactive x-components', () => {
+    const html = readFileSync(join(tmpDir, 'pages/meetmoment-praktijk.html'), 'utf8')
+    expect(html).toContain('initProseContent')
   })
 
   it('generates index.html in the project root', () => {

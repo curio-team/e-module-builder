@@ -64,7 +64,42 @@ testbed/content/
 | `responsive` | Monaco CSS editor with resizable viewport preview |
 | `js-playground` | Monaco JS editor, sandboxed execution (iframe, no same-origin), console output + automated checks |
 | `external` | Link-out card with a URL |
-| `text` | Description-only card (no interactive element) |
+| `text` | Description-only card (no interactive element); supports inline x-components in the markdown body |
+
+**Interactieve x-components** kunnen ingebed worden in theorie, tekstoefeningen, inleveropdrachten en het praktijk-meetmoment (`assessments/practical-assessment.md`). Labels en metadata staan centraal in `src/js/x-components/registry.js` — elke module krijgt ze automatisch via de build pipeline en runtime hydration via `initProseContent()`.
+
+| Tag | Bestand | Wat het doet |
+|-----|---------|--------------|
+| `<x-keuzevraag>` | `keuzevraag.js` | Meerkeuzevraag met directe feedback |
+| `<x-koppelvraag>` | `koppelvraag.js` | Koppel termen aan definities |
+| `<x-vind-de-fout>` | `vind-de-fout.js` | Vind de fout in een codestuk |
+| `<x-woordzoeker>` | `woordzoeker.js` → [`components/word-search/`](../src/js/components/word-search/) | Woordzoeker met module-trefwoorden |
+| `<x-invul>` | `invul.js` → [`components/fill-blank/`](../src/js/components/fill-blank/) | Invuloefening met dropdowns of vrije invoer |
+
+Nieuwe component toevoegen? Registreer tag + label in `registry.js`; build, PDF en hydration pakken het automatisch op.
+
+**Invuloefening hergebruiken buiten `<x-invul>`:**
+
+```js
+import { mountFillBlank } from '/src/js/components/fill-blank/index.js'
+
+mountFillBlank(document.querySelector('#blanks'), {
+  code: '.box { display: ___; }',
+  blanks: [{ answer: 'grid', options: ['flex', 'grid'] }],
+  onCheck: ({ allCorrect }) => console.log(allCorrect),
+})
+```
+
+**Woordzoeker hergebruiken buiten `<x-woordzoeker>`:**
+
+```js
+import { mountWordSearch } from '/src/js/components/word-search/index.js'
+
+mountWordSearch(document.querySelector('#puzzle'), {
+  words: ['GRID', 'GAP', 'FLEX'],
+  onComplete: () => console.log('klaar!'),
+})
+```
 
 ## Running tests
 
@@ -104,7 +139,7 @@ Produces a static site in `testbed/dist/` — the same output a real content pro
 | `build.mjs` | Content pipeline — reads `content/`, writes `src/data/` + `pages/` |
 | `vite.config.js` | Vite configuration factory (`createConfig`) |
 | `vite-plugin-html-includes.js` | Custom plugin: replaces `<!-- include:name -->` with partials |
-| `src/js/` | Frontend JavaScript (exercises, quiz, nav, …) |
+| `src/js/` | Frontend JavaScript (exercises, quiz, x-components, nav, …). Copied to consumer projects on every `build`/`dev` — do not patch locally in content projects. |
 | `src/css/` | Tailwind CSS entry |
 | `src/partials/` | Shared HTML snippets (e.g. `head.html`) |
 | `templates/` | HTML stubs filled in by `build.mjs` |

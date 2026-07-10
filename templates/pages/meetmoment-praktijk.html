@@ -21,6 +21,7 @@
   </div>
   <script type="module">
     import { initPage } from '/src/js/nav.js'
+    import { initProseContent } from '/src/js/x-components/index.js'
     import data from '/src/data/meetmoment-praktijk.json'
     initPage({ breadcrumbs: [{ label: 'Home', href: '/index.html' }, { label: data.navLabel ?? '{{assessmentTitle}}' }] })
     const titleEl = document.querySelector('[data-praktijk-title]')
@@ -28,7 +29,10 @@
     const descEl = document.querySelector('[data-praktijk-description]')
     if (descEl) descEl.innerHTML = data.description
     const contentEl = document.querySelector('[data-praktijk-content]')
-    if (contentEl) contentEl.innerHTML = data.html
+    if (contentEl) {
+      contentEl.innerHTML = data.html
+      initProseContent(contentEl)
+    }
   </script>
 </body>
 

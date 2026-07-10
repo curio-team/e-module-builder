@@ -4,6 +4,10 @@ import { fileURLToPath } from 'url'
 import matter from '@11ty/gray-matter'
 import { Marked } from 'marked'
 import hljs from 'highlight.js';
+import YAML from 'yaml'
+import { INTERACTIVE_TAGS, getComponentMeta } from './src/js/x-components/registry.js'
+import { renderComponentLabel } from './src/js/x-components/shared.js'
+import { extractKeywordsFromMarkdown, mergeKeywordLists } from './src/js/components/word-search/keywords.js'
 import { languageLabel } from './src/lib/language-labels.mjs'
 
 const PKG_DIR = path.dirname(fileURLToPath(import.meta.url))
@@ -110,6 +114,44 @@ function applyTemplate(tpl, vars) {
   )
 }
 
+function collectSectionMarkdown(dir) {
+  const chunks = []
+  for (const name of ['theory.md', 'quiz.md', 'assignment.md']) {
+    const filePath = path.join(dir, name)
+    if (fs.existsSync(filePath)) chunks.push(fs.readFileSync(filePath, 'utf8'))
+  }
+  const exDir = path.join(dir, 'exercises')
+  if (fs.existsSync(exDir)) {
+    for (const file of fs.readdirSync(exDir)) {
+      if (file.endsWith('.md')) chunks.push(fs.readFileSync(path.join(exDir, file), 'utf8'))
+    }
+  }
+  return chunks.join('\n')
+}
+
+const woordzoekerData = { weeks: {}, module: [] }
+const INTERACTIVE_TAG_SET = INTERACTIVE_TAGS
+
+function escapeHtmlAttr(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+}
+
+function prepareInteractiveConfig(tag, body) {
+  const config = YAML.parse(body.trim()) ?? {}
+
+  if (typeof config.question === 'string') {
+    config.question = marked.parseInline(config.question)
+  }
+  if (typeof config.prompt === 'string') {
+    config.prompt = marked.parseInline(config.prompt)
+  }
+
+  return config
+}
+
 // Recognize <x-*> tags as block-level elements so marked doesn't wrap them in <p>.
 marked.use({
   extensions: [{
@@ -123,6 +165,13 @@ marked.use({
       }
     },
     renderer(token) {
+      if (INTERACTIVE_TAG_SET.has(token.tag)) {
+        const meta = getComponentMeta(token.tag)
+        const config = prepareInteractiveConfig(token.tag, token.html)
+        const attrs = token.attrs ? `${token.attrs} ` : ''
+        return `<${token.tag} ${attrs}data-component="${meta.slug}" data-config="${escapeHtmlAttr(JSON.stringify(config))}">${renderComponentLabel(meta.label)}<div data-component-body></div></${token.tag}>\n`
+      }
+
       return `<${token.tag}${token.attrs ? ' ' + token.attrs : ''}>${marked.parse(token.html)}</${token.tag}>\n`
     },
   }],
@@ -222,6 +271,8 @@ for (const weekDir of activeWeeks) {
     ...(hwMd.data.linked_theory ? { linked_theory: hwMd.data.linked_theory } : {}),
   }
   writeJson(SRC_DATA, `inleveropdracht-week${weekNum}.json`, hwOut)
+
+  woordzoekerData.weeks[weekDir] = extractKeywordsFromMarkdown(collectSectionMarkdown(dir))
 
   weeksData.push({
     week: weekNum,
@@ -348,6 +399,8 @@ for (const d of fs.readdirSync(CONTENT)) {
       ...(hasAssignment ? [{ key: 'inleveropdracht', href: `/pages/${d}-inleveropdracht.html`, label: 'Inleveropdracht' }] : []),
     ],
   })
+
+  woordzoekerData.weeks[d] = extractKeywordsFromMarkdown(collectSectionMarkdown(dir))
 }
 
 // ─── 4. assessment data (parsed early so navLabel is available for manifest) ───────
@@ -520,6 +573,14 @@ if (mod.algemeen?.length) {
 }
 
 writeJson(SRC_DATA, 'checklist.json', { groups: checklistGroups })
+
+woordzoekerData.module = mergeKeywordLists(
+  Object.values(woordzoekerData.weeks).flat(),
+  extractKeywordsFromMarkdown((mod.algemeen ?? []).join('\n')),
+  mod.woordzoeker ?? []
+)
+
+writeJson(SRC_DATA, 'woordzoeker.json', woordzoekerData)
 
 // ─── 5b. write assessment data JSON files ──────────────────────────────────────────
 

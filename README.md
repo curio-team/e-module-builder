@@ -390,6 +390,48 @@ Theory pages support these custom block elements in Markdown:
 | `<x-compare>` / `<x-compare-item title="…">` | Side-by-side comparison columns. |
 | `<x-nav label="…">` | Bottom navigation links (one Markdown link per line). |
 | `<x-browser>` | Browser window mockup with a dark titlebar and non-functional min/max/close controls. Add `title="…"` to set a custom titlebar label (default: `Browser`). |
+| `<x-keuzevraag>` | **Meerkeuzevraag** — één vraag met antwoordopties en directe feedback. Body is YAML config. |
+| `<x-koppelvraag>` | **Koppelvraag** — koppel termen links aan definities rechts. Body is YAML config. |
+| `<x-vind-de-fout>` | **Vind de fout** — klik op de foutieve regel in een codestuk. Body is YAML config. |
+| `<x-woordzoeker>` | **Woordzoeker** — zoek trefwoorden uit de module. Lege body = alle module-trefwoorden; optioneel `scope: week1` voor één week. |
+| `<x-invul>` | **Invuloefening** — vul ontbrekende stukken in een codestuk in. Gebruik `___` als placeholder; elk gat krijgt een `blanks`-item met `answer` en optioneel `options`. |
+
+**Interactieve x-components** (`<x-keuzevraag>`, `<x-koppelvraag>`, `<x-vind-de-fout>`, `<x-woordzoeker>`, `<x-invul>`) werken op de volgende plekken. De YAML-body wordt bij build omgezet naar een `data-config` attribuut; labels komen automatisch uit `src/js/x-components/registry.js`. Trefwoorden voor de woordzoeker staan in `src/data/woordzoeker.json` (automatisch geëxtraheerd uit alle content).
+
+| Plek | Bronbestand | Automatisch? |
+|------|-------------|--------------|
+| Theoriepagina | `theory.md` | Ja |
+| Tekstoefening | `exercises/*.md` (`type: text`) | Ja |
+| Inleveropdracht | `assignment.md` | Ja |
+| Meetmoment praktijk | `assessments/practical-assessment.md` | Ja |
+| Quiz (meetmoment) | `quiz.md` / `theory-assessment.md` | Nee — gestructureerde vragen, geen markdown-prose |
+| Monaco-oefeningen | `css-playground`, `areas`, `responsive` | Nee |
+| Eigen `content/*.html` | handgeschreven HTML | Nee — roep `initProseContent()` handmatig aan |
+
+Voor eigen HTML-pagina's of custom scripts:
+
+```js
+import { initProseContent } from '/src/js/x-components/index.js'
+
+const container = document.querySelector('.prose')
+container.innerHTML = htmlFromSomewhere
+initProseContent(container)
+```
+
+> **Let op:** `e-module-builder build` kopieert `src/js` en `src/css` uit het package naar je project. Pas frontend-code aan in dit repository, niet lokaal in een consumer project — lokale wijzigingen worden bij elke build overschreven.
+
+Voorbeeld `<x-keuzevraag>`:
+
+```markdown
+<x-keuzevraag>
+question: Welke property activeert CSS Grid?
+options:
+  - "display: flex"
+  - "display: grid"
+correct: 1
+explanation: "display: grid maakt het element een grid container."
+</x-keuzevraag>
+```
 
 Example:
 

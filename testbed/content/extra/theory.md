@@ -171,6 +171,16 @@ let leftShift = a << 2;
 let rightShift = a >> 2;
 ```
 
+## Woordzoeker
+
+<x-woordzoeker>
+words:
+  - gridarea
+  - template
+  - gap
+  - column
+  - row
+</x-woordzoeker>
 ## setTimeout — één keer, na een vertraging
 
 `setTimeout` voert een functie **één keer** uit, nadat een aantal milliseconden is

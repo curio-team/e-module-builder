@@ -4,6 +4,8 @@ import { Writable } from 'stream'
 import matter from '@11ty/gray-matter'
 import { Marked } from 'marked'
 import PDFDocument from 'pdfkit'
+import YAML from 'yaml'
+import { INTERACTIVE_TAGS, getComponentMeta } from './src/js/x-components/registry.js'
 import hljs from 'highlight.js'
 import { languageLabel } from './src/lib/language-labels.mjs'
 
@@ -413,6 +415,69 @@ function measureRenderedHeight(pageWidth, marginLeft, marginRight, renderFn) {
 
 // ─── Custom elements ──────────────────────────────────────────────────────────
 
+function renderInteractivePdf(doc, tagName, inner, base) {
+  const meta = getComponentMeta(tagName)
+  const config = YAML.parse(inner.trim()) ?? {}
+
+  doc.moveDown(0.3)
+  doc.font('Helvetica-Bold').fontSize(base.fontSize).fillColor('#333')
+    .text(`${meta?.label ?? tagName}:`)
+  doc.moveDown(0.2)
+
+  switch (tagName) {
+    case 'x-keuzevraag':
+      doc.font('Helvetica').fontSize(base.fontSize).fillColor('#333')
+        .text(String(config.question ?? ''))
+      doc.moveDown(0.2)
+      if (config.options) {
+        config.options.forEach((opt, i) => {
+          const marker = i === config.correct ? '→ ' : '  '
+          doc.font(base.font).fontSize(base.fontSize - 0.5).fillColor('#555')
+            .text(`${marker}${opt}`)
+        })
+      }
+      break
+
+    case 'x-koppelvraag':
+      if (config.prompt) {
+        doc.font('Helvetica').fontSize(base.fontSize).fillColor('#333').text(String(config.prompt))
+        doc.moveDown(0.2)
+      }
+      for (const pair of config.pairs ?? []) {
+        doc.font(base.font).fontSize(base.fontSize - 0.5).fillColor('#555')
+          .text(`${pair.left} → ${pair.right}`)
+      }
+      break
+
+    case 'x-vind-de-fout':
+      doc.font('Courier').fontSize(base.fontSize - 1).fillColor('#333')
+        .text(config.code ?? '', { lineGap: 2 })
+      break
+
+    case 'x-woordzoeker':
+      doc.font(base.font).fontSize(base.fontSize - 0.5).fillColor('#555')
+        .text(`Zoek de woorden: ${(config.words ?? []).join(', ')}`)
+      break
+
+    case 'x-invul': {
+      if (config.prompt) {
+        doc.font('Helvetica').fontSize(base.fontSize).fillColor('#333').text(String(config.prompt))
+        doc.moveDown(0.2)
+      }
+      let codeText = String(config.code ?? '')
+      const blanks = config.blanks ?? []
+      for (const blank of blanks) {
+        codeText = codeText.replace('___', `[${blank.answer}]`)
+      }
+      doc.font('Courier').fontSize(base.fontSize - 1).fillColor('#333')
+        .text(codeText, { lineGap: 2 })
+      break
+    }
+  }
+
+  doc.moveDown(0.3)
+}
+
 function parseAttrs(attrStr) {
   const attrs = {}
   const re = /([\w-]+)="([^"]*)"/g
@@ -544,7 +609,11 @@ function renderCustomElement(doc, tagName, attrs, inner, contentDir, base) {
     }
 
     default:
-      renderTokens(doc, marked.lexer(inner.trim()), contentDir, base)
+      if (INTERACTIVE_TAGS.has(tagName)) {
+        renderInteractivePdf(doc, tagName, inner, base)
+      } else {
+        renderTokens(doc, marked.lexer(inner.trim()), contentDir, base)
+      }
   }
 }
 

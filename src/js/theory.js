@@ -1,4 +1,4 @@
-import { initHeadings } from './headings.js'
+import { initProseContent } from './x-components/index.js'
 
 function esc(s) {
   return String(s)
@@ -36,5 +36,6 @@ export async function initTheory(sectionId) {
       ${data.html}
     </div>
   `
-  initHeadings(container.querySelector('.prose-theory'))
+  const prose = container.querySelector('.prose-theory')
+  initProseContent(prose)
 }
