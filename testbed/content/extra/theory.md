@@ -156,3 +156,14 @@ let not = ~a;
 let leftShift = a << 2;
 let rightShift = a >> 2;
 ```
+
+## Woordzoeker
+
+<x-woordzoeker>
+words:
+  - gridarea
+  - template
+  - gap
+  - column
+  - row
+</x-woordzoeker>

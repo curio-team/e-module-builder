@@ -22,3 +22,15 @@ Zorg dat de lay-out er goed uitziet op zowel desktop (minimaal 3 kolommen) als m
 Lever je bestanden (minimaal `index.html` en `styles.css`) in via het inleverkanaal van je docent. Zorg dat je naam en studentnummer in een commentaarregel bovenaan `index.html` staan.
 
 Je docent geeft feedback binnen 5 werkdagen.
+
+## Check je kennis
+
+<x-keuzevraag>
+question: Welke property maakt een element een grid container?
+options:
+  - "display: flex"
+  - "display: grid"
+  - "layout: grid"
+correct: 1
+explanation: "Alleen display: grid activeert CSS Grid."
+</x-keuzevraag>

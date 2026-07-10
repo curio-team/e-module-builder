@@ -2,6 +2,7 @@ import { renderExerciseMeta, markExerciseSolved, markExerciseUnsolved, getSolved
 import { sitePath } from '../site-path.js'
 import { initExternalExercise } from './external-exercise.js'
 import { initTheoryPanel } from './theory-panel.js'
+import { initProseContent } from '../x-components/index.js'
 
 async function loadWeekData(sectionId) {
   return import(`../../data/exercises/${sectionId}.json`).then((m) => m.default)
@@ -65,6 +66,7 @@ export async function initExercisePage(sectionId) {
     if (descEl) {
       descEl.classList.remove('hidden')
       descEl.innerHTML = exercise.descriptionHtml ?? ''
+      initProseContent(descEl)
     }
 
     renderExerciseMeta(exercise)

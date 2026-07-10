@@ -72,6 +72,71 @@ Flexbox is geweldig voor kleine componenten, maar wordt onhandig voor hele pagin
 - [CSS Grid op MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout)
 - [CSS Grid Generator](https://cssgrid-generator.netlify.app/)
 
+## Check je kennis
+
+<x-keuzevraag>
+question: Welke property maakt een element een grid container?
+options:
+  - "display: flex"
+  - "display: grid"
+  - "layout: grid"
+correct: 1
+explanation: "Alleen display: grid activeert CSS Grid."
+</x-keuzevraag>
+
+<x-koppelvraag>
+prompt: Koppel de term aan de definitie
+pairs:
+  - left: grid-template-columns
+    right: Kolombreedtes definiëren
+  - left: gap
+    right: Ruimte tussen grid-items
+shuffle: true
+</x-koppelvraag>
+
+<x-vind-de-fout>
+language: css
+code: |
+  .grid {
+    display: flex;
+    gap: 16px;
+  }
+errorLine: 2
+hint: "Kijk naar de display property."
+explanation: "Grid vereist display: grid, niet flex."
+</x-vind-de-fout>
+
+<x-invul>
+prompt: Vul de ontbrekende CSS-eigenschappen in.
+code: |
+  .pagina {
+    display: ___;
+    grid-template-columns: 1fr 200px;
+    ___: 16px;
+  }
+blanks:
+  - answer: grid
+    options:
+      - flex
+      - grid
+      - block
+  - answer: gap
+    options:
+      - gap
+      - margin
+      - padding
+explanation: "display: grid maakt een grid container; gap zet ruimte tussen items."
+</x-invul>
+
+<x-woordzoeker>
+words:
+  - gridarea
+  - template
+  - gap
+  - column
+  - row
+</x-woordzoeker>
+
 <x-nav label="Klaar met de theorie?">
 [Oefeningen](/pages/week1-oefeningen.html)
 [Meetmoment](/pages/week1-meetmoment.html)
