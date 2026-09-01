@@ -16,9 +16,7 @@ export function initExerciseHub(weekData, sectionId) {
 
   const subtitle = document.querySelector('[data-hub-subtitle]')
   if (subtitle) {
-    subtitle.textContent = external
-      ? `${weekData.title} — 8 opdrachten voor je eigen omgeving`
-      : `${weekData.title} — 8 oefeningen met oplopende moeilijkheid`
+    subtitle.textContent = weekData.title
   }
 
   const meetmomentCta = document.querySelector('[data-meetmoment-cta]')
