@@ -33,6 +33,9 @@ export function initQuiz(quizData, options = {}) {
   const container = document.querySelector(containerSelector)
   if (!container) return
 
+  const inleveropdrachtCta = document.querySelector('[data-inleveropdracht-cta]')
+  if (inleveropdrachtCta && !sectionPages(section).inleveropdracht) inleveropdrachtCta.remove()
+
   const previous = getQuizScore(quizData.title)
   if (previous) {
     showResults(container, quizData, previous, { section, fromStorage: true })

@@ -114,6 +114,22 @@ function applyTemplate(tpl, vars) {
   )
 }
 
+function warnDeadNavLinks(markdown, filePath, dirName, { hasQuiz, hasAssignment, hasTheoryAssessment, hasPracticalAssessment }) {
+  const linkRe = /\[[^\]]+\]\(([^)]+)\)/g
+  let m
+  while ((m = linkRe.exec(markdown ?? ''))) {
+    const file = m[1].split('/').pop()
+    if (file === `${dirName}-meetmoment.html` && !hasQuiz)
+      console.warn(`⚠ ${filePath}: link naar "${file}" maar er is geen quiz.md voor ${dirName}`)
+    else if (file === `${dirName}-inleveropdracht.html` && !hasAssignment)
+      console.warn(`⚠ ${filePath}: link naar "${file}" maar er is geen assignment.md voor ${dirName}`)
+    else if (file === 'meetmoment-theorie.html' && !hasTheoryAssessment)
+      console.warn(`⚠ ${filePath}: link naar "meetmoment-theorie.html" maar er is geen theory-assessment.md`)
+    else if (file === 'meetmoment-praktijk.html' && !hasPracticalAssessment)
+      console.warn(`⚠ ${filePath}: link naar "meetmoment-praktijk.html" maar er is geen practical-assessment.md`)
+  }
+}
+
 function collectSectionMarkdown(dir) {
   const chunks = []
   for (const name of ['theory.md', 'quiz.md', 'assignment.md']) {
@@ -191,6 +207,12 @@ const weekDirs = fs
 
 const weekCount = mod.weeks > 0 ? mod.weeks : weekDirs.length
 const activeWeeks = weekDirs.slice(0, weekCount)
+
+// ─── 2b. module-level assessment existence (needed while scanning sections below) ──
+
+const ASSESSMENTS_DIR = path.join(CONTENT, 'assessments')
+const hasTheoryAssessment = fs.existsSync(path.join(ASSESSMENTS_DIR, 'theory-assessment.md'))
+const hasPracticalAssessment = fs.existsSync(path.join(ASSESSMENTS_DIR, 'practical-assessment.md'))
 
 // ─── 3. process each week ────────────────────────────────────────────────────
 
@@ -271,6 +293,13 @@ for (const weekDir of activeWeeks) {
     ...(hwMd.data.linked_theory ? { linked_theory: hwMd.data.linked_theory } : {}),
   }
   writeJson(SRC_DATA, `inleveropdracht-week${weekNum}.json`, hwOut)
+
+  warnDeadNavLinks(theoryMd.content, path.join(dir, 'theory.md'), weekDir, {
+    hasQuiz,
+    hasAssignment: true,
+    hasTheoryAssessment,
+    hasPracticalAssessment,
+  })
 
   woordzoekerData.weeks[weekDir] = extractKeywordsFromMarkdown(collectSectionMarkdown(dir))
 
@@ -380,6 +409,13 @@ for (const d of fs.readdirSync(CONTENT)) {
     })
   }
 
+  warnDeadNavLinks(theoryMd.content, path.join(dir, 'theory.md'), d, {
+    hasQuiz,
+    hasAssignment,
+    hasTheoryAssessment,
+    hasPracticalAssessment,
+  })
+
   extraSectionsData.push({
     dirName: d,
     sortKey,
@@ -404,8 +440,6 @@ for (const d of fs.readdirSync(CONTENT)) {
 }
 
 // ─── 4. assessment data (parsed early so navLabel is available for manifest) ───────
-
-const ASSESSMENTS_DIR = path.join(CONTENT, 'assessments')
 
 function buildAssessmentData(filePath, fallbackTitle, fallbackNavLabel, fallbackDescription) {
   if (fs.existsSync(filePath)) {
@@ -447,9 +481,6 @@ const practicalAssessmentData = buildPracticalAssessmentData(
 )
 
 // ─── 5. manifest.json ────────────────────────────────────────────────────────
-
-const hasTheoryAssessment = fs.existsSync(path.join(ASSESSMENTS_DIR, 'theory-assessment.md'))
-const hasPracticalAssessment = fs.existsSync(path.join(ASSESSMENTS_DIR, 'practical-assessment.md'))
 
 const allNavSections = [
   ...weeksData.map(wk => ({ ...wk, sortKey: wk.week })),
@@ -723,7 +754,11 @@ for (const f of htmlFiles) {
 // ─── 8b. generate index.html from template ───────────────────────────────────
 
 const indexTpl = fs.readFileSync(path.join(PKG_DIR, 'templates/index.html'), 'utf8')
-fs.writeFileSync(path.join(PROJECT_DIR, 'index.html'), applyTemplate(indexTpl, { pageTitle: mod.name }))
+fs.writeFileSync(path.join(PROJECT_DIR, 'index.html'), applyTemplate(indexTpl, {
+  pageTitle: mod.name,
+  hasTheoryAssessment: hasTheoryAssessment ? 'true' : '',
+  hasPracticalAssessment: hasPracticalAssessment ? 'true' : '',
+}))
 
 copyStaticAssets()
 

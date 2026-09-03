@@ -18,6 +18,12 @@ export function initHome() {
 
   if (setupEl) setupEl.classList.toggle('hidden', isReady)
   if (readyEl) readyEl.classList.toggle('hidden', !isReady)
+
+  const theorieCta = document.querySelector('[data-theorie-cta]')
+  if (theorieCta && theorieCta.dataset.theorieCta !== 'true') theorieCta.remove()
+  const praktijkCta = document.querySelector('[data-praktijk-cta]')
+  if (praktijkCta && praktijkCta.dataset.praktijkCta !== 'true') praktijkCta.remove()
+
   if (!isReady || !curriculumEl) return
 
   const sectionLinks = (section) => section.pages
