@@ -666,7 +666,7 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
       dirName: wk.dirName,
       sectionLabel: sectionLabel(wk.prefix, wk.week),
       sectionDataKey: wk.dirName,
-      sectionHeaderLabel: `Week ${String(wk.week).padStart(2, '0')}`,
+      sectionHeaderLabel: sectionLabel(wk.prefix, wk.week),
       hasMeetmoment: wk.hasQuiz ? 'true' : '',
       week: String(wk.week),
       weekPadded: String(wk.week).padStart(2, '0'),
