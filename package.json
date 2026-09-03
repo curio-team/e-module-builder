@@ -1,6 +1,6 @@
 {
   "name": "e-module-builder",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "type": "module",
   "description": "A tool for building e-modules for Curio SD",
   "repository": {
