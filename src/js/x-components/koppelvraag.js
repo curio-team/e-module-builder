@@ -94,7 +94,8 @@ function applyMatches(el, matches) {
 
 export function initKoppelvraag(el, config) {
   const pairs = config.pairs ?? []
-  const rightItems = config.shuffle !== false ? shuffleArray(pairs.map((p) => p.right)) : pairs.map((p) => p.right)
+  const uniqueRights = [...new Set(pairs.map((p) => p.right))]
+  const rightItems = config.shuffle !== false ? shuffleArray(uniqueRights) : uniqueRights
 
   el.innerHTML = `
     ${config.prompt ? `<p class="x-koppelvraag-prompt mb-4 text-sm text-ink/80">${config.prompt}</p>` : ''}
@@ -150,10 +151,8 @@ export function initKoppelvraag(el, config) {
 
       const right = btn.dataset.right
 
-      matches.forEach((val, idx) => {
-        if (idx !== selectedLeft && val === right) matches[idx] = null
-      })
-
+      // Multiple left items may connect to the same right item, so we don't
+      // clear other lefts that already point here.
       matches[selectedLeft] = right
       selectedLeft = null
 
@@ -191,7 +190,7 @@ export function initKoppelvraag(el, config) {
 
       const matchedRight = matches[r.index]
       el.querySelectorAll('.x-koppelvraag-item[data-side="right"]').forEach((rightBtn) => {
-        if (rightBtn.dataset.right === matchedRight) {
+        if (rightBtn.dataset.right === matchedRight && rightBtn.dataset.state !== 'incorrect') {
           rightBtn.dataset.state = r.correct ? 'correct' : 'incorrect'
         }
       })

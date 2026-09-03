@@ -221,3 +221,16 @@ In de DevCitySim-opdracht eerder in dit hoofdstuk hebben we gegevens uit de data
 
    ![De bewoners getoond in een ListView](/hoofdstuk3/assets/img071.png)
 7. Probeer de XAML zelf uit te breiden zodat je ook een `TextBlock` hebt om de `Job`-eigenschap in te tonen.
+
+<x-koppelvraag>
+prompt: "Welke gebruiker hoort deze taak uit te voeren: de beperkte app-gebruiker of de beheerder?"
+pairs:
+  - left: Een game toevoegen vanuit de applicatie
+    right: App-gebruiker
+  - left: Een kolom toevoegen met Update-Database
+    right: Beheerder
+  - left: Een game bijwerken vanuit de applicatie
+    right: App-gebruiker
+  - left: Een back-up maken door alle tabellen te exporteren
+    right: Beheerder
+</x-koppelvraag>
