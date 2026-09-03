@@ -46,7 +46,7 @@ export function mountFillBlank(container, {
     .join('')
 
   container.innerHTML = `
-    ${prompt ? `<p class="fill-blank-prompt mb-3 text-sm text-ink/80">${escapeHtml(prompt)}</p>` : ''}
+    ${prompt ? `<p class="fill-blank-prompt mb-3 text-sm text-ink/80">${prompt}</p>` : ''}
     <pre class="fill-blank-code" tabindex="0"><code>${codeHtml}</code></pre>
     <button type="button" class="fill-blank-check btn-primary mt-4">Controleer</button>
     <div data-feedback class="mt-3"></div>
