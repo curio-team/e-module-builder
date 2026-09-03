@@ -223,18 +223,19 @@ for (const weekDir of activeWeeks) {
   const weekNum = parseInt(sectionNumStr)
   const dir = path.join(CONTENT, weekDir)
 
-  // theory.md → src/data/theory-weekN.json
+  // theory.md → src/data/theory-<dirName>.json (keyed by folder name, so a
+  // numbered section works under any prefix — week1, hoofdstuk1, mod2, …)
   const theoryMd = readMd(path.join(dir, 'theory.md'))
   const theoryOut = {
     week: theoryMd.data.week ?? weekNum,
     title: theoryMd.data.title,
     goal: theoryMd.data.goal,
     accent: theoryMd.data.accent,
-    html: rewriteAssetPaths(marked.parse(theoryMd.content ?? ''), `week${weekNum}`),
+    html: rewriteAssetPaths(marked.parse(theoryMd.content ?? ''), weekDir),
   }
-  writeJson(SRC_DATA, `theory-week${weekNum}.json`, theoryOut)
+  writeJson(SRC_DATA, `theory-${weekDir}.json`, theoryOut)
 
-  // quiz.md → src/data/meetmoment-quiz-weekN.json (optional)
+  // quiz.md → src/data/meetmoment-quiz-<dirName>.json (optional)
   const quizPath = path.join(dir, 'quiz.md')
   const hasQuiz = fs.existsSync(quizPath)
   if (hasQuiz) {
@@ -244,10 +245,10 @@ for (const weekDir of activeWeeks) {
       passScore: quizMd.data.passScore ?? 70,
       questions: quizMd.data.questions ?? [],
     }
-    writeJson(SRC_DATA, `meetmoment-quiz-week${weekNum}.json`, quizOut)
+    writeJson(SRC_DATA, `meetmoment-quiz-${weekDir}.json`, quizOut)
   }
 
-  // exercises/ subfolder → src/data/exercises/weekN.json (optional)
+  // exercises/ subfolder → src/data/exercises/<dirName>.json (optional)
   const exDir = path.join(dir, 'exercises')
   const hasExercises = fs.existsSync(exDir) && fs.existsSync(path.join(exDir, '_meta.md'))
   if (hasExercises) {
@@ -259,7 +260,7 @@ for (const weekDir of activeWeeks) {
       const { data: ex, content } = readMd(path.join(exDir, f))
       if (!ex.type || ex.type === 'text') {
         const src = content?.trim() ? content : (ex.description ?? '')
-        ex.descriptionHtml = rewriteAssetPaths(marked.parse(src), `week${weekNum}/exercises`)
+        ex.descriptionHtml = rewriteAssetPaths(marked.parse(src), `${weekDir}/exercises`)
       }
       ex.descriptionInlineHtml = marked.parseInline(ex.description ?? '')
       if (ex.type === 'external') {
@@ -276,10 +277,10 @@ for (const weekDir of activeWeeks) {
       ...(metaMd.data.mode ? { mode: metaMd.data.mode } : {}),
       exercises,
     }
-    writeJson(path.join(SRC_DATA, 'exercises'), `week${weekNum}.json`, exOut)
+    writeJson(path.join(SRC_DATA, 'exercises'), `${weekDir}.json`, exOut)
   }
 
-  // assignment.md → src/data/inleveropdracht-weekN.json (optional)
+  // assignment.md → src/data/inleveropdracht-<dirName>.json (optional)
   const assignmentPath = path.join(dir, 'assignment.md')
   const hasAssignment = fs.existsSync(assignmentPath)
   if (hasAssignment) {
@@ -288,14 +289,14 @@ for (const weekDir of activeWeeks) {
       week: hwMd.data.week ?? weekNum,
       title: hwMd.data.title,
       subtitle: hwMd.data.subtitle ?? '',
-      html: rewriteAssetPaths(marked.parse(hwMd.content ?? ''), `week${weekNum}`),
+      html: rewriteAssetPaths(marked.parse(hwMd.content ?? ''), weekDir),
       deliverables: hwMd.data.deliverables ?? [],
       criteria: hwMd.data.criteria ?? [],
       maxPoints: hwMd.data.maxPoints ?? 0,
       tips: hwMd.data.tips ?? [],
       ...(hwMd.data.linked_theory ? { linked_theory: hwMd.data.linked_theory } : {}),
     }
-    writeJson(SRC_DATA, `inleveropdracht-week${weekNum}.json`, hwOut)
+    writeJson(SRC_DATA, `inleveropdracht-${weekDir}.json`, hwOut)
   }
 
   warnDeadNavLinks(theoryMd.content, path.join(dir, 'theory.md'), weekDir, {
@@ -664,7 +665,7 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
     const out = applyTemplate(tpl, {
       dirName: wk.dirName,
       sectionLabel: sectionLabel(wk.prefix, wk.week),
-      sectionDataKey: `week${wk.week}`,
+      sectionDataKey: wk.dirName,
       sectionHeaderLabel: `Week ${String(wk.week).padStart(2, '0')}`,
       hasMeetmoment: wk.hasQuiz ? 'true' : '',
       week: String(wk.week),

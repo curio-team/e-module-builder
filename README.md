@@ -57,7 +57,7 @@ content/
 
 ### Numbered sections (`week1`, `week2`, …)
 
-Folders whose name matches the pattern `<prefix><number>` (e.g. `week1`, `mod2`) are treated as **numbered sections**. The number determines their sort order in the navigation. The `weeks` field in `module.md` limits how many are processed.
+Folders whose name matches the pattern `<prefix><number>` (e.g. `week1`, `hoofdstuk1`, `mod2`) are treated as **numbered sections**. The number determines their sort order in the navigation; the prefix is free to choose. The `weeks` field in `module.md` limits how many are processed. Generated data files and pages are keyed by the full folder name (`theory-hoofdstuk1.json`, `pages/hoofdstuk1-theorie.html`), so any prefix works.
 
 Each numbered section can contain any combination of `theory.md`, `quiz.md`, `assignment.md`, and `exercises/`. Only `theory.md` is required — the others are all optional:
 
@@ -475,11 +475,10 @@ The build pipeline runs before Vite and produces:
 | Output | Source |
 | ------ | ------ |
 | `src/data/manifest.json` | `module.md` + all section frontmatter |
-| `src/data/theory-weekN.json` | `weekN/theory.md` |
-| `src/data/theory-<folder>.json` | `<folder>/theory.md` (arbitrary sections) |
-| `src/data/meetmoment-quiz-weekN.json` | `weekN/quiz.md` _(if present)_ |
-| `src/data/exercises/weekN.json` | `weekN/exercises/` _(if present)_ |
-| `src/data/inleveropdracht-weekN.json` | `weekN/assignment.md` _(if present)_ |
+| `src/data/theory-<folder>.json` | `<folder>/theory.md` (data files are keyed by folder name for every section — `week1`, `hoofdstuk1`, arbitrary sections, …) |
+| `src/data/meetmoment-quiz-<folder>.json` | `<folder>/quiz.md` _(if present)_ |
+| `src/data/exercises/<folder>.json` | `<folder>/exercises/` _(if present)_ |
+| `src/data/inleveropdracht-<folder>.json` | `<folder>/assignment.md` _(if present)_ |
 | `src/data/checklist.json` | `leeruitkomsten` from all sections |
 | `src/data/meetmoment-theorie.json` | `assessments/theory-assessment.md` _(if present)_ |
 | `src/data/meetmoment-praktijk.json` | `assessments/practical-assessment.md` _(if present)_ |

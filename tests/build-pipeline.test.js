@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { execFileSync } from 'child_process'
-import { cpSync, existsSync, mkdtempSync, rmSync, readFileSync, unlinkSync } from 'fs'
+import { cpSync, existsSync, mkdtempSync, rmSync, readFileSync, unlinkSync, writeFileSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { fileURLToPath } from 'url'
 import os from 'os'
@@ -413,5 +413,89 @@ describe('build pipeline — week4 (no assignment.md)', () => {
       expect(existsSync(join(tmpDir, `pages/${week}-inleveropdracht.html`))).toBe(true)
       expect(manifest.pages.week).toContain(`pages/${week}-inleveropdracht.html`)
     }
+  })
+})
+
+describe('build pipeline — numbered section with non-week prefix', () => {
+  let dir
+
+  beforeAll(() => {
+    dir = mkdtempSync(join(os.tmpdir(), 'e-module-build-prefix-test-'))
+    cpSync(TESTBED_CONTENT, join(dir, 'content'), { recursive: true })
+
+    // A numbered section whose folder is NOT named weekN — data files and pages
+    // must be keyed by the folder name, not `week9`.
+    // testbed module.md caps `weeks: 4`; lift the cap so the new section is processed
+    const modPath = join(dir, 'content', 'module.md')
+    writeFileSync(modPath, readFileSync(modPath, 'utf8').replace(/^weeks: \d+$/m, 'weeks: 0'))
+
+    const sec = join(dir, 'content', 'hoofdstuk9')
+    mkdirSync(join(sec, 'exercises'), { recursive: true })
+    writeFileSync(join(sec, 'theory.md'), [
+      '---',
+      'week: 9',
+      'title: Genummerd met eigen prefix',
+      'goal: je kunt een genummerde sectie onder een eigen prefix plaatsen',
+      'accent: primary',
+      'summary: Test.',
+      'leeruitkomsten:',
+      '  - Ik snap dat de mapnaam de sleutel is',
+      '---',
+      '',
+      '## Kop',
+      '',
+      '![diagram](diagram.svg)',
+      '',
+      'Zie de [uitleg](diagram.svg).',
+      '',
+    ].join('\n'))
+    writeFileSync(join(sec, 'diagram.svg'), '<svg xmlns="http://www.w3.org/2000/svg"></svg>')
+    writeFileSync(join(sec, 'exercises', '_meta.md'), [
+      '---', 'week: 9', 'title: Oefeningen hoofdstuk 9', 'color: primary', '---', '',
+    ].join('\n'))
+    writeFileSync(join(sec, 'exercises', '1.md'), [
+      '---', 'id: 1', 'difficulty: 1', 'title: Oefening', 'type: text',
+      'description: Een korte oefening.', '---', '', 'Werk dit uit.', '',
+    ].join('\n'))
+
+    try {
+      execFileSync(process.execPath, [join(PKG_DIR, 'build.mjs')], {
+        env: { ...process.env, E_MODULE_PROJECT_DIR: dir },
+        stdio: 'pipe',
+      })
+    } catch (err) {
+      console.error('Build pipeline failed:\n', err.stderr?.toString() ?? err.message)
+      throw err
+    }
+  })
+
+  afterAll(() => {
+    if (dir) rmSync(dir, { recursive: true, force: true })
+  })
+
+  it('keys data files by the folder name, not weekN', () => {
+    expect(existsSync(join(dir, 'src/data/theory-hoofdstuk9.json'))).toBe(true)
+    expect(existsSync(join(dir, 'src/data/exercises/hoofdstuk9.json'))).toBe(true)
+    expect(existsSync(join(dir, 'src/data/theory-week9.json'))).toBe(false)
+    expect(existsSync(join(dir, 'src/data/exercises/week9.json'))).toBe(false)
+  })
+
+  it('generates pages that reference the folder name', () => {
+    const theoriePage = join(dir, 'pages/hoofdstuk9-theorie.html')
+    const oefeningenPage = join(dir, 'pages/hoofdstuk9-oefeningen.html')
+    expect(existsSync(theoriePage)).toBe(true)
+    expect(existsSync(oefeningenPage)).toBe(true)
+    expect(readFileSync(oefeningenPage, 'utf8')).toContain('/src/data/exercises/hoofdstuk9.json')
+  })
+
+  it('rewrites relative assets to the folder-name prefix and copies them', () => {
+    const theory = JSON.parse(readFileSync(join(dir, 'src/data/theory-hoofdstuk9.json'), 'utf8'))
+    expect(theory.html).toContain('../hoofdstuk9/diagram.svg')
+    expect(existsSync(join(dir, 'public/hoofdstuk9/diagram.svg'))).toBe(true)
+  })
+
+  it('keeps the numeric week field inside the payload', () => {
+    const theory = JSON.parse(readFileSync(join(dir, 'src/data/theory-hoofdstuk9.json'), 'utf8'))
+    expect(theory.week).toBe(9)
   })
 })
