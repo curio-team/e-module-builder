@@ -1,11 +1,5 @@
 import { splitCodeBlanks, validateFillBlank, assertBlankCount } from './engine.js'
-
-function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-}
+import { escapeHtml } from '../../html.js'
 
 function renderBlankInput(blank, index) {
   if (blank.options?.length) {

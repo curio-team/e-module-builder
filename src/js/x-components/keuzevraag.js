@@ -1,4 +1,5 @@
 import { renderFeedback, celebrateSuccess, setComponentResult } from './shared.js'
+import { escapeHtml } from '../html.js'
 
 export function initKeuzevraag(el, config) {
   const name = `x-keuzevraag-${Math.random().toString(36).slice(2, 9)}`
@@ -12,7 +13,7 @@ export function initKeuzevraag(el, config) {
             (opt, i) => `
           <label class="x-keuzevraag-option">
             <input type="radio" name="${name}" value="${i}" class="h-4 w-4 border-ink/20 text-primary focus:ring-primary" />
-            <span class="x-keuzevraag-option-text text-sm text-ink/80">${opt}</span>
+            <span class="x-keuzevraag-option-text text-sm text-ink/80">${escapeHtml(opt)}</span>
           </label>
         `
           )

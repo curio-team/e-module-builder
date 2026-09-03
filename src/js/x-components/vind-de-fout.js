@@ -1,11 +1,5 @@
 import { renderFeedback, validateVindDeFout, celebrateSuccess, setComponentResult } from './shared.js'
-
-function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-}
+import { escapeHtml } from '../html.js'
 
 export function initVindDeFout(el, config) {
   const lines = (config.code ?? '').replace(/\r\n/g, '\n').split('\n')

@@ -1,4 +1,5 @@
 import { shuffleArray, renderFeedback, validateKoppelvraag, celebrateSuccess, setComponentResult } from './shared.js'
+import { escapeHtml } from '../html.js'
 
 function findRightButton(el, rightValue) {
   return [...el.querySelectorAll('.x-koppelvraag-item[data-side="right"]')].find(
@@ -104,7 +105,7 @@ export function initKoppelvraag(el, config) {
           ${pairs
             .map(
               (pair, i) => `
-            <button type="button" class="x-koppelvraag-item" data-index="${i}" data-side="left">${pair.left}</button>
+            <button type="button" class="x-koppelvraag-item" data-index="${i}" data-side="left">${escapeHtml(pair.left)}</button>
           `
             )
             .join('')}
@@ -113,7 +114,7 @@ export function initKoppelvraag(el, config) {
           ${rightItems
             .map(
               (right) => `
-            <button type="button" class="x-koppelvraag-item" data-right="${right}" data-side="right">${right}</button>
+            <button type="button" class="x-koppelvraag-item" data-right="${escapeHtml(right)}" data-side="right">${escapeHtml(right)}</button>
           `
             )
             .join('')}
