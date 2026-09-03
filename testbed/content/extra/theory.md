@@ -197,3 +197,27 @@ console.log("Dit wordt meteen getoond, nog vóór de melding hierboven.");
 
 `setTimeout` geeft een **id** terug. Die heb je nodig als je de timeout wilt
 annuleren vóórdat hij afgaat, met `clearTimeout(id)`.
+
+## 3.8 Gegevens in een ListView tonen
+
+In de DevCitySim-opdracht eerder in dit hoofdstuk hebben we gegevens uit de database getoond in een `TextBox`. Dat is niet netjes en beperkt ons in hoe we onze data tonen. We willen een mooie lijst waarin we ieder item een eigen stijl kunnen geven.
+
+1. Pak de code van DevCitySim er opnieuw bij.
+2. Verwijder in de `MainWindow.xaml` de `TextBox` én de `StackPanel`.
+3. Voeg deze `ListView` toe:
+
+   ![ListView met een DataTemplate voor Citizen](/hoofdstuk3/assets/img068.png)
+
+   **Let op:** om als datatype de klasse 'Citizen' te gebruiken, moeten we bovenin de `MainWindow` de **`DevCitySim.Data`-namespace** toevoegen:
+
+   ![xmlns-verwijzing naar de Data-namespace toevoegen](/hoofdstuk3/assets/img069.png)
+
+   _We geven in dit voorbeeld de naam 'localData', maar je mag die namespaceverwijzing noemen wat je wilt, zolang je dezelfde naam gebruikt bij `x:DataType` van de DataTemplate._
+4. Verwijder in de code-behind (`MainWindow.xaml.cs`) het deel dat met de `TextBox` te maken heeft.
+5. Spreek de aangemaakte `ListView` aan en stel de `ItemsSource`-eigenschap in op de `DbSet` met alle bewoners:
+
+   ![ItemsSource van de ListView instellen op de citizens](/hoofdstuk3/assets/img070.png)
+6. Na opstarten is dit het resultaat:
+
+   ![De bewoners getoond in een ListView](/hoofdstuk3/assets/img071.png)
+7. Probeer de XAML zelf uit te breiden zodat je ook een `TextBlock` hebt om de `Job`-eigenschap in te tonen.

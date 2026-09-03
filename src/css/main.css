@@ -251,8 +251,17 @@
   main li {
     @apply leading-relaxed;
 
-    p {
-      @apply inline-block;
+    /* First paragraph flows inline with the list marker (list-inside). Using
+       inline-block here makes the whole paragraph drop below the marker as soon
+       as its text wraps to a second line, so short items sat beside the number
+       while longer ones didn't. `inline` wraps naturally under the marker. */
+    >p:first-child {
+      @apply inline;
+    }
+
+    /* Any further paragraphs (images, notes) stay as their own blocks. */
+    >p:not(:first-child) {
+      @apply mt-2 block;
     }
   }
 
