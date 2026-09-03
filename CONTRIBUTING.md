@@ -48,6 +48,8 @@ testbed/content/
       …
   week2/
     …
+  week4/
+    theory.md          ← theory-only fixture: a numbered week with no assignment.md
   assessments/
     theory-assessment.md     ← final theory assessment (questions in YAML)
     practical-assessment.md  ← final practical assessment

@@ -36,7 +36,7 @@ describe('build pipeline — manifest', () => {
   it('generates manifest.json with correct module name and week count', () => {
     const manifest = readJson('src/data/manifest.json')
     expect(manifest.module.name).toBe('CSS Grid Basis')
-    expect(manifest.weeks).toHaveLength(3)
+    expect(manifest.weeks).toHaveLength(4)
     expect(manifest.nav).toBeDefined()
   })
 })
@@ -372,5 +372,46 @@ describe('build pipeline — week3 (no quiz.md)', () => {
     const week3Nav = manifest.nav.weeks.find(w => w.children.some(c => c.href.includes('week3')))
     expect(week3Nav).toBeDefined()
     expect(week3Nav.children.some(c => c.label === 'Quiz')).toBe(false)
+  })
+})
+
+describe('build pipeline — week4 (no assignment.md)', () => {
+  it('generates theory-week4.json and the theory page', () => {
+    const theory = readJson('src/data/theory-week4.json')
+    expect(theory).toMatchObject({
+      week: 4,
+      title: expect.any(String),
+      goal: expect.any(String),
+      html: expect.any(String),
+    })
+    expect(existsSync(join(tmpDir, 'pages/week4-theorie.html'))).toBe(true)
+  })
+
+  it('does not generate inleveropdracht-week4.json because assignment.md is absent', () => {
+    expect(existsSync(join(tmpDir, 'src/data/inleveropdracht-week4.json'))).toBe(false)
+  })
+
+  it('does not generate week4-inleveropdracht.html because assignment.md is absent', () => {
+    expect(existsSync(join(tmpDir, 'pages/week4-inleveropdracht.html'))).toBe(false)
+  })
+
+  it('excludes the Inleveropdracht link/page from week4 in the manifest', () => {
+    const manifest = readJson('src/data/manifest.json')
+    const week4Nav = manifest.nav.weeks.find(w => w.children.some(c => c.href.includes('week4')))
+    expect(week4Nav).toBeDefined()
+    expect(week4Nav.children.some(c => c.label === 'Inleveropdracht')).toBe(false)
+
+    const week4Curr = manifest.curriculum.find(c => c.dirName === 'week4')
+    expect(week4Curr.pages.some(p => p.key === 'inleveropdracht')).toBe(false)
+    expect(manifest.pages.week).not.toContain('pages/week4-inleveropdracht.html')
+  })
+
+  it('still generates the Inleveropdracht entries for weeks that have assignment.md', () => {
+    const manifest = readJson('src/data/manifest.json')
+    for (const week of ['week1', 'week2', 'week3']) {
+      expect(existsSync(join(tmpDir, `src/data/inleveropdracht-${week}.json`))).toBe(true)
+      expect(existsSync(join(tmpDir, `pages/${week}-inleveropdracht.html`))).toBe(true)
+      expect(manifest.pages.week).toContain(`pages/${week}-inleveropdracht.html`)
+    }
   })
 })

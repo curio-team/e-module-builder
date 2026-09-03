@@ -279,24 +279,28 @@ for (const weekDir of activeWeeks) {
     writeJson(path.join(SRC_DATA, 'exercises'), `week${weekNum}.json`, exOut)
   }
 
-  // assignment.md → src/data/inleveropdracht-weekN.json
-  const hwMd = readMd(path.join(dir, 'assignment.md'))
-  const hwOut = {
-    week: hwMd.data.week ?? weekNum,
-    title: hwMd.data.title,
-    subtitle: hwMd.data.subtitle ?? '',
-    html: rewriteAssetPaths(marked.parse(hwMd.content ?? ''), `week${weekNum}`),
-    deliverables: hwMd.data.deliverables ?? [],
-    criteria: hwMd.data.criteria ?? [],
-    maxPoints: hwMd.data.maxPoints ?? 0,
-    tips: hwMd.data.tips ?? [],
-    ...(hwMd.data.linked_theory ? { linked_theory: hwMd.data.linked_theory } : {}),
+  // assignment.md → src/data/inleveropdracht-weekN.json (optional)
+  const assignmentPath = path.join(dir, 'assignment.md')
+  const hasAssignment = fs.existsSync(assignmentPath)
+  if (hasAssignment) {
+    const hwMd = readMd(assignmentPath)
+    const hwOut = {
+      week: hwMd.data.week ?? weekNum,
+      title: hwMd.data.title,
+      subtitle: hwMd.data.subtitle ?? '',
+      html: rewriteAssetPaths(marked.parse(hwMd.content ?? ''), `week${weekNum}`),
+      deliverables: hwMd.data.deliverables ?? [],
+      criteria: hwMd.data.criteria ?? [],
+      maxPoints: hwMd.data.maxPoints ?? 0,
+      tips: hwMd.data.tips ?? [],
+      ...(hwMd.data.linked_theory ? { linked_theory: hwMd.data.linked_theory } : {}),
+    }
+    writeJson(SRC_DATA, `inleveropdracht-week${weekNum}.json`, hwOut)
   }
-  writeJson(SRC_DATA, `inleveropdracht-week${weekNum}.json`, hwOut)
 
   warnDeadNavLinks(theoryMd.content, path.join(dir, 'theory.md'), weekDir, {
     hasQuiz,
-    hasAssignment: true,
+    hasAssignment,
     hasTheoryAssessment,
     hasPracticalAssessment,
   })
@@ -309,6 +313,7 @@ for (const weekDir of activeWeeks) {
     prefix: sectionPrefix,
     hasQuiz,
     hasExercises,
+    hasAssignment,
     title: theoryMd.data.title,
     summary: marked.parseInline(theoryMd.data.summary ?? ''),
     goal: theoryMd.data.goal,
@@ -319,7 +324,7 @@ for (const weekDir of activeWeeks) {
       ...(hasExercises ? [{ key: 'oefeningen', href: `/pages/${weekDir}-oefeningen.html`, label: 'Oefeningen' }] : []),
       ...(hasQuiz ? [{ key: 'meetmoment', href: `/pages/${weekDir}-meetmoment.html`, label: 'Meetmoment' }] : []),
       ...(hasExercises ? [{ key: 'oefening', href: `/pages/${weekDir}-oefening.html`, label: 'Oefening' }] : []),
-      { key: 'inleveropdracht', href: `/pages/${weekDir}-inleveropdracht.html`, label: 'Inleveropdracht' },
+      ...(hasAssignment ? [{ key: 'inleveropdracht', href: `/pages/${weekDir}-inleveropdracht.html`, label: 'Inleveropdracht' }] : []),
     ],
   })
 }
@@ -528,7 +533,7 @@ const manifest = {
           { href: `/pages/${sec.dirName}-theorie.html`, label: 'Theorie' },
           ...(sec.hasExercises ? [{ href: `/pages/${sec.dirName}-oefeningen.html`, label: 'Oefeningen' }] : []),
           ...(sec.hasQuiz ? [{ href: `/pages/${sec.dirName}-meetmoment.html`, label: 'Quiz' }] : []),
-          { href: `/pages/${sec.dirName}-inleveropdracht.html`, label: 'Inleveropdracht' },
+          ...(sec.hasAssignment ? [{ href: `/pages/${sec.dirName}-inleveropdracht.html`, label: 'Inleveropdracht' }] : []),
         ],
     })),
     assessmentSection: {
@@ -552,7 +557,7 @@ const manifest = {
       ...(wk.hasExercises ? [`pages/${wk.dirName}-oefeningen.html`] : []),
       ...(wk.hasQuiz ? [`pages/${wk.dirName}-meetmoment.html`] : []),
       ...(wk.hasExercises ? [`pages/${wk.dirName}-oefening.html`] : []),
-      `pages/${wk.dirName}-inleveropdracht.html`,
+      ...(wk.hasAssignment ? [`pages/${wk.dirName}-inleveropdracht.html`] : []),
     ]),
     extra: extraSectionsData.flatMap(s => [
       `pages/${s.dirName}-theorie.html`,
@@ -655,6 +660,7 @@ for (const { tplFile, suffix, pageTitle } of PAGE_TYPES) {
   for (const wk of weeksData) {
     if (suffix === 'meetmoment' && !wk.hasQuiz) continue
     if ((suffix === 'oefeningen' || suffix === 'oefening') && !wk.hasExercises) continue
+    if (suffix === 'inleveropdracht' && !wk.hasAssignment) continue
     const out = applyTemplate(tpl, {
       dirName: wk.dirName,
       sectionLabel: sectionLabel(wk.prefix, wk.week),
