@@ -77,6 +77,7 @@ testbed/content/
 | `<x-vind-de-fout>` | `vind-de-fout.js` | Vind de fout in een codestuk |
 | `<x-woordzoeker>` | `woordzoeker.js` → [`components/word-search/`](../src/js/components/word-search/) | Woordzoeker met module-trefwoorden |
 | `<x-invul>` | `invul.js` → [`components/fill-blank/`](../src/js/components/fill-blank/) | Invuloefening met dropdowns of vrije invoer |
+| `<x-hints>` | `hints.js` → [`components/step-reveal/`](../src/js/components/step-reveal/) | Cascaderende hints met houd-ingedrukt-onthullen; onthouden per bezoeker |
 
 Nieuwe component toevoegen? Registreer tag + label in `registry.js`; build, PDF en hydration pakken het automatisch op.
 
@@ -100,6 +101,22 @@ import { mountWordSearch } from '/src/js/components/word-search/index.js'
 mountWordSearch(document.querySelector('#puzzle'), {
   words: ['GRID', 'GAP', 'FLEX'],
   onComplete: () => console.log('klaar!'),
+})
+```
+
+**Sequentieel onthullen buiten `<x-hints>`** (bijv. een tijdlijn zonder weerstand):
+
+```js
+import { mountStepReveal } from '/src/js/components/step-reveal/index.js'
+
+mountStepReveal(document.querySelector('#tijdlijn'), {
+  steps: [
+    { title: '1991', body: 'Eerste website online.' },
+    { title: '1996', body: 'CSS1 wordt aanbevolen.' },
+  ],
+  gated: false,   // geen houd-ingedrukt
+  cascade: false, // alles meteen te openen
+  numbered: false,
 })
 ```
 

@@ -181,6 +181,21 @@ words:
   - column
   - row
 </x-woordzoeker>
+
+## Hints (stapsgewijs onthullen)
+
+<x-hints>
+intro: Elke hint zit achter een *houd ingedrukt*-knop en blijft op slot tot de vorige is geopend.
+hints:
+  - title: Denk eerst zelf na
+    body: Wat weet je al? Welk stukje snap je nog niet precies?
+  - Zonder titel — dit is de korte vorm waarbij alleen de tekst wordt opgegeven.
+  - title: Met opmaak
+    body: |
+      Hints ondersteunen **markdown**: lijsten, `code`, en
+      [links naar theorie](/pages/extra-theorie.html).
+</x-hints>
+
 ## setTimeout — één keer, na een vertraging
 
 `setTimeout` voert een functie **één keer** uit, nadat een aantal milliseconden is

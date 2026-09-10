@@ -68,6 +68,15 @@ describe('build pipeline — theory', () => {
     expect(theory.html).toContain('class="x-component-label">Invuloefening')
     expect(theory.html).toContain('data-component-body')
   })
+
+  it('renders <x-hints> with markdown-parsed hint bodies in the config', () => {
+    const theory = readJson('src/data/theory-extra.json')
+    expect(theory.html).toContain('<x-hints')
+    expect(theory.html).toContain('data-component="hints"')
+    expect(theory.html).toContain('class="x-component-label">Hints')
+    // hint bodies are run through marked and escaped into data-config
+    expect(theory.html).toContain('&lt;a href=')
+  })
 })
 
 describe('build pipeline — quiz', () => {
@@ -133,6 +142,14 @@ describe('build pipeline — exercises', () => {
     const textEx = ex.exercises.find(e => e.id === 2)
     expect(textEx.descriptionHtml).toContain('<x-keuzevraag')
     expect(textEx.descriptionHtml).toContain('data-config=')
+  })
+
+  it('renders <x-hints> in the week1 showcase exercise body', () => {
+    const ex = readJson('src/data/exercises/week1.json')
+    const showcase = ex.exercises.find(e => e.id === 4)
+    expect(showcase.descriptionHtml).toContain('<x-hints')
+    expect(showcase.descriptionHtml).toContain('data-component="hints"')
+    expect(showcase.descriptionHtml).toContain('class="x-component-label">Hints')
   })
 })
 

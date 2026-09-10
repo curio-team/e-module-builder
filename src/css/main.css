@@ -454,6 +454,92 @@
     @apply border-rose-400 bg-rose-50/40 ring-2 ring-rose-200;
   }
 
+  /* ── Hints / step-reveal (generic sequential reveal) ─────────────────────── */
+
+  x-hints {
+    @apply my-6 block rounded-md border-2 border-ink/10 bg-white p-5 shadow-card;
+  }
+
+  x-hints .x-component-label {
+    @apply mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary;
+  }
+
+  .step-reveal__intro {
+    @apply mb-4 text-sm leading-relaxed text-ink/70;
+  }
+
+  .step-reveal__list {
+    @apply m-0 list-none p-0;
+  }
+
+  .step-reveal__item {
+    @apply border-t border-ink/10 py-4 first:border-t-0 first:pt-0 last:pb-0;
+  }
+
+  .step-reveal__item[data-state="locked"] {
+    @apply opacity-50;
+  }
+
+  .step-reveal__heading {
+    @apply m-0 text-sm font-semibold text-ink;
+  }
+
+  .step-reveal__gate {
+    @apply mt-2 empty:mt-0;
+  }
+
+  .step-reveal__locked {
+    @apply m-0 text-xs font-medium uppercase tracking-wide text-muted;
+  }
+
+  .step-reveal__hold {
+    @apply relative flex w-full select-none items-center justify-center overflow-hidden rounded-md border-2 border-dashed border-ink/25 bg-surface-subtle px-4 py-2.5 text-sm font-medium text-ink/70 transition;
+    touch-action: none;
+    -webkit-touch-callout: none;
+  }
+
+  .step-reveal__hold:hover {
+    @apply border-ink/40 text-ink;
+  }
+
+  .step-reveal__hold:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2;
+  }
+
+  .step-reveal__hold[data-holding] {
+    @apply border-solid border-primary text-primary;
+  }
+
+  .step-reveal__progress {
+    @apply pointer-events-none absolute inset-y-0 left-0 bg-primary/20;
+    width: var(--step-reveal-progress, 0%);
+    transition: width 120ms linear;
+  }
+
+  .step-reveal__hold-label {
+    @apply relative z-10;
+  }
+
+  .step-reveal__toggle {
+    @apply inline-flex items-center rounded-md border-2 border-ink/20 bg-white px-4 py-2 text-sm font-medium text-ink/80 transition hover:border-ink/35 hover:bg-surface-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+  }
+
+  .step-reveal__body {
+    @apply mt-3 border-l-2 border-primary/30 pl-4 text-sm leading-relaxed text-ink/80;
+  }
+
+  .step-reveal__body:focus-visible {
+    @apply outline-none ring-2 ring-primary/40;
+  }
+
+  .step-reveal__body > :first-child {
+    @apply mt-0;
+  }
+
+  .step-reveal__body > :last-child {
+    @apply mb-0;
+  }
+
   .x-confetti-canvas {
     @apply pointer-events-none fixed inset-0 z-[9999];
   }
@@ -1001,5 +1087,9 @@
   .x-celebrate-ring,
   .x-celebrate-banner {
     animation: none;
+  }
+
+  .step-reveal__progress {
+    transition: none;
   }
 }

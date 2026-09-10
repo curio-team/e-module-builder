@@ -28,6 +28,11 @@ export const COMPONENTS = [
     slug: 'invul',
     label: 'Invuloefening',
   },
+  {
+    tag: 'x-hints',
+    slug: 'hints',
+    label: 'Hints',
+  },
 ]
 
 export const INTERACTIVE_TAGS = new Set(COMPONENTS.map((c) => c.tag))

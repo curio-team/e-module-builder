@@ -164,6 +164,18 @@ function prepareInteractiveConfig(tag, body) {
   if (typeof config.prompt === 'string') {
     config.prompt = marked.parseInline(config.prompt)
   }
+  if (typeof config.intro === 'string') {
+    config.intro = marked.parseInline(config.intro)
+  }
+  if (Array.isArray(config.hints)) {
+    config.hints = config.hints.map((hint) => {
+      const item = typeof hint === 'string' ? { body: hint } : hint
+      return {
+        title: item.title ? marked.parseInline(String(item.title)) : null,
+        body: marked.parse(String(item.body ?? '')),
+      }
+    })
+  }
 
   return config
 }

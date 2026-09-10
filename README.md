@@ -395,8 +395,9 @@ Theory pages support these custom block elements in Markdown:
 | `<x-vind-de-fout>` | **Vind de fout** — klik op de foutieve regel in een codestuk. Body is YAML config. |
 | `<x-woordzoeker>` | **Woordzoeker** — zoek trefwoorden uit de module. Lege body = alle module-trefwoorden; optioneel `scope: week1` voor één week. |
 | `<x-invul>` | **Invuloefening** — vul ontbrekende stukken in een codestuk in. Gebruik `___` als placeholder; elk gat krijgt een `blanks`-item met `answer` en optioneel `options`. |
+| `<x-hints>` | **Hints** — cascaderende hints die je één voor één met _houd ingedrukt_ onthult; hint N blijft op slot tot hint N−1 open is, en geopende hints onthoud je tussen bezoeken. Body is YAML: optioneel `intro`, plus `hints:` — een lijst van `title` + `body` (markdown) of een losse string. |
 
-**Interactieve x-components** (`<x-keuzevraag>`, `<x-koppelvraag>`, `<x-vind-de-fout>`, `<x-woordzoeker>`, `<x-invul>`) werken op de volgende plekken. De YAML-body wordt bij build omgezet naar een `data-config` attribuut; labels komen automatisch uit `src/js/x-components/registry.js`. Trefwoorden voor de woordzoeker staan in `src/data/woordzoeker.json` (automatisch geëxtraheerd uit alle content).
+**Interactieve x-components** (`<x-keuzevraag>`, `<x-koppelvraag>`, `<x-vind-de-fout>`, `<x-woordzoeker>`, `<x-invul>`, `<x-hints>`) werken op de volgende plekken. De YAML-body wordt bij build omgezet naar een `data-config` attribuut; labels komen automatisch uit `src/js/x-components/registry.js`. Trefwoorden voor de woordzoeker staan in `src/data/woordzoeker.json` (automatisch geëxtraheerd uit alle content).
 
 | Plek | Bronbestand | Automatisch? |
 |------|-------------|--------------|

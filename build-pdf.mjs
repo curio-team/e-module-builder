@@ -473,6 +473,23 @@ function renderInteractivePdf(doc, tagName, inner, base) {
         .text(codeText, { lineGap: 2 })
       break
     }
+
+    case 'x-hints': {
+      if (config.intro) {
+        doc.font('Helvetica').fontSize(base.fontSize).fillColor('#333').text(String(config.intro))
+        doc.moveDown(0.2)
+      }
+      ;(config.hints ?? []).forEach((hint, i) => {
+        const item = typeof hint === 'string' ? { body: hint } : hint
+        const title = item.title ? ` — ${item.title}` : ''
+        doc.font('Helvetica-Bold').fontSize(base.fontSize).fillColor('#333')
+          .text(`Hint ${i + 1}${title}`)
+        doc.font('Helvetica').fontSize(base.fontSize - 0.5).fillColor('#555')
+          .text(String(item.body ?? ''), { lineGap: 2 })
+        doc.moveDown(0.2)
+      })
+      break
+    }
   }
 
   doc.moveDown(0.3)

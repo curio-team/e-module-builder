@@ -6,6 +6,7 @@ import { initKoppelvraag } from './koppelvraag.js'
 import { initVindDeFout } from './vind-de-fout.js'
 import { initWoordzoeker } from './woordzoeker.js'
 import { initInvul } from './invul.js'
+import { initHints } from './hints.js'
 
 const INIT_BY_TAG = {
   'x-keuzevraag': initKeuzevraag,
@@ -13,6 +14,7 @@ const INIT_BY_TAG = {
   'x-vind-de-fout': initVindDeFout,
   'x-woordzoeker': initWoordzoeker,
   'x-invul': initInvul,
+  'x-hints': initHints,
 }
 
 function ensureComponentShell(el, label) {
@@ -54,5 +56,5 @@ export function initProseContent(container) {
 }
 
 export { COMPONENTS, INTERACTIVE_TAGS, getComponentMeta } from './registry.js'
-export { initKeuzevraag, initKoppelvraag, initVindDeFout, initWoordzoeker, initInvul }
+export { initKeuzevraag, initKoppelvraag, initVindDeFout, initWoordzoeker, initInvul, initHints }
 export { validateKoppelvraag, validateVindDeFout, shuffleArray } from './shared.js'
