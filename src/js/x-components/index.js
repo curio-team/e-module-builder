@@ -1,6 +1,7 @@
 import { COMPONENTS } from './registry.js'
 import { renderComponentLabel } from './shared.js'
 import { initHeadings } from '../headings.js'
+import { initImageZoom } from '../image-zoom.js'
 import { initKeuzevraag } from './keuzevraag.js'
 import { initKoppelvraag } from './koppelvraag.js'
 import { initVindDeFout } from './vind-de-fout.js'
@@ -52,6 +53,7 @@ export function hydrateXComponents(root = document) {
 export function initProseContent(container) {
   if (!container) return
   initHeadings(container)
+  initImageZoom(container)
   hydrateXComponents(container)
 }
 

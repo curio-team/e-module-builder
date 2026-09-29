@@ -34,6 +34,26 @@
 }
 
 @layer components {
+  img.image-zoomable {
+    @apply cursor-pointer;
+  }
+
+  body.image-lightbox-open {
+    @apply overflow-hidden;
+  }
+
+  .image-lightbox {
+    @apply fixed inset-0 z-[1000] flex items-center justify-center bg-ink/90 p-4;
+  }
+
+  .image-lightbox > img {
+    @apply max-h-full max-w-full cursor-default object-contain;
+  }
+
+  .image-lightbox-close {
+    @apply absolute right-4 top-4 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-white text-ink shadow-editor transition-colors hover:bg-primary hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white;
+  }
+
   .app-shell {
     @apply min-h-screen bg-surface;
   }

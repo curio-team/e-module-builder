@@ -65,7 +65,7 @@ Flexbox is geweldig voor kleine componenten, maar wordt onhandig voor hele pagin
 
 ![Grid diagram](grid-diagram.svg)
 
-![Extern voorbeeld](https://placehold.co/600x400)
+<img src="https://placehold.co/600x400" alt="Extern voorbeeld" width="400" />
 
 ## Linkjes
 
