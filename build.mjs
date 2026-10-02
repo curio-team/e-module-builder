@@ -97,6 +97,11 @@ function copyStaticAssets() {
   walkAndCopy(CONTENT, '')
 }
 
+// The id keys the saved checkbox state, so fall back to the position when an author omits it.
+function normalizeCriteria(criteria) {
+  return (criteria ?? []).map((c, i) => ({ ...c, id: c.id ?? `criterion-${i}` }))
+}
+
 function readMd(filePath) {
   const raw = fs.readFileSync(filePath, 'utf8')
   return matter(raw)
@@ -303,7 +308,7 @@ for (const weekDir of activeWeeks) {
       subtitle: hwMd.data.subtitle ?? '',
       html: rewriteAssetPaths(marked.parse(hwMd.content ?? ''), weekDir),
       deliverables: hwMd.data.deliverables ?? [],
-      criteria: hwMd.data.criteria ?? [],
+      criteria: normalizeCriteria(hwMd.data.criteria),
       maxPoints: hwMd.data.maxPoints ?? 0,
       tips: hwMd.data.tips ?? [],
       ...(hwMd.data.linked_theory ? { linked_theory: hwMd.data.linked_theory } : {}),
@@ -420,7 +425,7 @@ for (const d of fs.readdirSync(CONTENT)) {
       subtitle: hwMd.data.subtitle ?? '',
       html: rewriteAssetPaths(marked.parse(hwMd.content ?? ''), d),
       deliverables: hwMd.data.deliverables ?? [],
-      criteria: hwMd.data.criteria ?? [],
+      criteria: normalizeCriteria(hwMd.data.criteria),
       maxPoints: hwMd.data.maxPoints ?? 0,
       tips: hwMd.data.tips ?? [],
       ...(hwMd.data.linked_theory ? { linked_theory: hwMd.data.linked_theory } : {}),
